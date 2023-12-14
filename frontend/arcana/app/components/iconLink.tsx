@@ -1,6 +1,6 @@
-import Image from "next/image";
-import React from "react";
 import { ReactNode } from "react";
+import React from "react";
+import Link from "next/link";
 
 
 export interface IconLinkProps {
@@ -11,13 +11,15 @@ export interface IconLinkProps {
 
 export function IconLink({ icon, linkname }: IconLinkProps) {
     return (
-        <div className="mb-auto p-4">
-            <a href={linkname} className="p-3" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>
-                {icon}
-                <span className="p-3" style={{ color: 'white', fontSize: '20px' }}>{linkname}</span>
-            </a>
-        </div>
+      <div className="mb-auto p-4">
+        <Link legacyBehavior href={linkname}>
+          <a className="p-3" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>
+            {icon}
+            <span className="p-3" style={{ color: 'white', fontSize: '20px' }}>{linkname}</span>
+          </a>
+        </Link>
+      </div>
     );
-}
-export default IconLink;
+  }
 
+export default IconLink;
