@@ -26,7 +26,7 @@ export const Footer = () => {
             {/* Right Column: Align content to the end and bottom, prevent wrapping */}
             <Col className="flex flex-col justify-end items-end">
               <p className="text-end text-white fw-light m-0 whitespace-nowrap lh-sm fs-6">
-                Data Analysis Center&apos;s Cyber Experimentation & Analysis Divison [DAC CEAD]
+                Data Analysis Center&apos;s Cyber Experimentation & Analysis Divison [DAC-CEAD]
               </p>
             </Col>
           </Row>
