@@ -12,10 +12,10 @@ export default function ManageEventGraphsLayout({
     children: React.ReactNode;
   }) {
     return (
-        <body>
+        <>
             <main className="flex min-h-screen flex-col items-center justify-between p-24">
                 {children}
             </main>
-        </body>
+        </>
     );
   }

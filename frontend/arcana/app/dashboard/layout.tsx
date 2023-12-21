@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 
+import React from 'react'
+
+
 
 export const metadata: Metadata = {
     title: 'ARCANA-Dashboard',
@@ -12,12 +15,13 @@ export default function DashboardLayout({
     children: React.ReactNode;
   }) {
     return (
-        <body>
+        <div>
             <main className="flex min-h-screen flex-col items-center justify-between p-24">
                 {children}
             </main>
-        </body>
+        </div>
     );
   }
+
 
 
