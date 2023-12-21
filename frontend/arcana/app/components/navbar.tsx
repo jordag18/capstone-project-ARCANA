@@ -53,7 +53,7 @@ export function NavBar() {
               alignmentBaseline="middle"
               fill="black">
               {" "}
-              AAA{" "}
+              $$$ {" "}
             </text>
           </svg>
         </Navbar.Collapse>

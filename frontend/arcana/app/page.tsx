@@ -5,13 +5,15 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 import NavBar from './components/navbar';
+import { Footer } from './components/footer';
+
 
 
 
 export default function Home() {
   const router = useRouter();
   return (
-    <>
+  <>
     <NavBar/>
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
@@ -23,6 +25,7 @@ export default function Home() {
           </Container>
         </div>
     </main>
+    <Footer/>
   </>
   )
 }
