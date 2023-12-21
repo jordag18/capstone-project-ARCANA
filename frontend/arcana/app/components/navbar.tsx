@@ -9,10 +9,9 @@ import { Folder2 } from "react-bootstrap-icons";
 import { PcDisplayHorizontal } from "react-bootstrap-icons";
 import { IconLink } from "./iconLink";
 
-
 export function NavBar() {
   return (
-    <div style={{ backgroundColor: "#1b1b1b" }} data-bs-theme="dark">
+    <div>
       <Navbar collapseOnSelect className="bg-body-tertiary align-middle">
         <Navbar.Brand className="p-1">
           <Image
@@ -25,10 +24,10 @@ export function NavBar() {
         </Navbar.Brand>
 
         <Navbar.Brand className="mr-auto p-6" style={{ fontSize: "24px", textDecoration: "none" }}>
-            <Link id="link" href="/" style={{ color: "white", textDecoration: "none" }}>
+            <Link id="link" href="/" className="text-decoration-none text-reset">
                 <strong>ARCANA</strong>
             </Link>
-            </Navbar.Brand>
+        </Navbar.Brand>
         <Navbar.Toggle
           aria-controls="responsive-navbar-nav"
           className="justify-center"
