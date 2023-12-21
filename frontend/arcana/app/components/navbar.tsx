@@ -20,7 +20,7 @@ export function NavBar() {
             src="/devcom.png"
             width={100}
             height={100}
-            className="d-inline-block align-middle"
+            className="d-inline-block align-middle hidden md:block"
           />{" "}
         </Navbar.Brand>
 

@@ -3,7 +3,8 @@ import React from 'react';
 import { useRouter } from 'next/navigation'
 import NavBar from './components/navbar';
 import { Footer } from './components/footer';
-import StartUpPrompt from './components/startUpPrompt';
+import StartUpPrompt from './components/startup-prompt';
+//import ModeToggle from './ui/mode-toggle';
 
 export default function Home() {
   const router = useRouter();
