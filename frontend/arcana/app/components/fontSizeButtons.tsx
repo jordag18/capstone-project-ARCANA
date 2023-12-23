@@ -8,7 +8,7 @@ import FontSizeHandler from "../lib/fontSizeHandler";
 
 const FontSizeButtons: React.FC = () => {
   const [fontSize, setFontSize] = useState<number>(
-    parseInt(localStorage.getItem("fontSize") || "16", 10)
+    parseInt(localStorage.getItem("fontSize") || "18", 10)
   ); // Default font size
 
   const handleFontSizeChange = (
