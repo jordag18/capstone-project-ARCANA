@@ -3,25 +3,23 @@ import React from "react";
 import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
 import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
 import Accordion from "react-bootstrap/Accordion";
 import GuiThemeSetter from "@/app/components/guiThemeSetter";
-import FontSizer from "@/app/components/fontSizer";
-import FontSizeSetter from "@/app/components/fontSetter";
+import FontSizeSetter from "@/app/components/fontSizeSetter";
 
 const ManageSystemPage = () => {
   return (
     <>
       <NavBar />
       <div
-        className="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto "
-        style={{ height: "75%", width: "95%" }}>
-        <Container className="flex-fill justify-content-center align-items-center">
+        className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto"
+        style={{ height: "75%", width: "100%" }}>
+        <Container className="flex justify-content-center align-items-center">
           <Accordion defaultActiveKey="0" alwaysOpen className="rounded">
             <Accordion.Item eventKey="0">
               <Accordion.Header>
                 {" "}
-                Graphical User Interface Configuration Settings
+                <h4>Graphical User Interface Configuration Settings</h4>
               </Accordion.Header>
               <Accordion.Body>
                 <div className="container">
@@ -39,7 +37,7 @@ const ManageSystemPage = () => {
             </Accordion.Item>
 
             <Accordion.Item eventKey="1">
-              <Accordion.Header>User Settings </Accordion.Header>
+              <Accordion.Header><h4>User Settings</h4> </Accordion.Header>
               <Accordion.Body>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -54,7 +52,7 @@ const ManageSystemPage = () => {
             <Accordion.Item eventKey="2">
               <Accordion.Header>
                 {" "}
-                User and System Activity Logs{" "}
+                <h4>User and System Activity Logs</h4>{" "}
               </Accordion.Header>
               <Accordion.Body>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

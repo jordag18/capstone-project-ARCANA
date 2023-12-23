@@ -1,18 +1,23 @@
+/**
+ * Renders a component that allows the user to set the font size in the GUI.
+ * @returns The FontSizeSetter component.
+ */
 import React from "react";
 import Card from "react-bootstrap/Card";
-import FontSizeChanger from "../components/fontSizer";
+import FontSizeButtons from "./fontSizeButtons";
 
 export function FontSizeSetter() {
   return (
     <>
       <Card>
         <Card.Body>
-          <Card.Title> <h2>Font Size</h2> </Card.Title>
+          <Card.Title> <h2>Font Size</h2><hr/> </Card.Title>
           <Card.Text>
             <p>Specify the size of the font in the GUI.</p>
+            <p>[Default: 16]</p>
           </Card.Text>
           <div className="text-center align-middle">
-            <FontSizeChanger />
+            <FontSizeButtons />
           </div>
         </Card.Body>
       </Card>

@@ -1,3 +1,7 @@
+/**
+ * Renders the navigation bar component.
+ * @returns The rendered navigation bar component.
+ */
 import Navbar from "react-bootstrap/Navbar";
 import React from "react";
 
@@ -12,8 +16,8 @@ export function NavBar() {
       <Navbar collapseOnSelect className="bg-body-tertiary align-middle">
         <DacLogo />
         <ArcanaTextLogo />
-        <NavBarItems/>
-        <ActiveAnalyst/>
+        <NavBarItems />
+        <ActiveAnalyst />
       </Navbar>
     </>
   );

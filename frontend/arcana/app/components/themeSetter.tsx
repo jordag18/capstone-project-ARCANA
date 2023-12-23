@@ -1,5 +1,7 @@
+/**
+ * Represents a component that allows the user to switch between light and dark color modes.
+ */
 import React, { useState, useEffect } from "react";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -18,7 +20,7 @@ export function getSystemTheme(): string {
   return "light"; // Default value
 }
 
-const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
+const ThemeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
   const [colorMode, setColorMode] = useState<string>(() => {
     if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem("colorMode");
@@ -41,19 +43,23 @@ const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
 
   return (
     <>
-      <br/>
+      <br />
       <p className="col-form-label fw-semibold m-1">
         Current Theme: {colorMode}
       </p>
       <Form>
         <Col sm={12} className="col-sm-2">
-          <FloatingLabel controlId="floatingSelect" label="Set Theme" className="m-1 p-1">
+          <FloatingLabel
+            controlId="floatingSelect"
+            label="Set Theme"
+            className="m-1 p-1">
             <Form.Select
               aria-label="Floating label select example"
               value={colorMode}
-              onChange={handleSelect}
-            >
-              <option className="m-2" value="light">Light</option>
+              onChange={handleSelect}>
+              <option className="m-2" value="light">
+                Light
+              </option>
               <option value="dark">Dark</option>
             </Form.Select>
           </FloatingLabel>
@@ -62,4 +68,4 @@ const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
     </>
   );
 };
-export default ColorModeSwitcher;
+export default ThemeSwitcher;

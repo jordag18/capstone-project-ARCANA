@@ -1,6 +1,10 @@
+/**
+ * Renders a component for setting the GUI theme.
+ * @returns The GUI theme setter component.
+ */
 import React from "react";
 import Card from "react-bootstrap/Card";
-import ColorModeSwitcher  from "../components/colorMode";
+import ThemeSwitcher  from "./themeSetter";
 
 export function GuiThemeSetter() {
   return (
@@ -18,7 +22,7 @@ export function GuiThemeSetter() {
             <hr/>
           </Card.Text>
           <div className="text-center align-middle mb-auto">
-            <ColorModeSwitcher
+            <ThemeSwitcher
               toggleColorMode={function (): void {
                 throw new Error("Function not implemented.");
               }}
