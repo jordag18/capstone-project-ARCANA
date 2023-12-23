@@ -3,7 +3,9 @@ import { Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-bootstrap-icons'
 
+
 const inter = Inter({ subsets: ['latin'] })
+
 
 export const metadata: Metadata = {
   title: 'ARCANA-TEAM-ONE',
@@ -16,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" data-bs-theme="light">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
