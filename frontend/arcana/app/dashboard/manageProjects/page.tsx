@@ -4,6 +4,7 @@ import NavBar from "../../components/navbar"; // Update the import statement to 
 import Footer from "../../components/footer";
 import Container from 'react-bootstrap/Container';
 import ThemeHandler from "@/app/lib/themeHandler";
+import FontSizeHandler from "@/app/lib/fontSizeHandler";
 
 const ManageProjectsPage = () => {
     return (

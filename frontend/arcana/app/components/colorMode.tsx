@@ -1,8 +1,7 @@
-"use client";
 import React, { useState, useEffect } from "react";
+import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 interface ColorModeSwitcherProps {
@@ -10,50 +9,57 @@ interface ColorModeSwitcherProps {
 }
 
 export function getSystemTheme(): string {
-  if (typeof window !== 'undefined') {
-    const prefersDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (typeof window !== "undefined") {
+    const prefersDarkMode =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     return prefersDarkMode ? "dark" : "light";
   }
-  return 'light'; // Default value
+  return "light"; // Default value
 }
 
 const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
   const [colorMode, setColorMode] = useState<string>(() => {
-    const storedTheme = localStorage.getItem("colorMode");
-    return storedTheme ? storedTheme : getSystemTheme();
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("colorMode");
+      return storedTheme ? storedTheme : getSystemTheme();
+    }
+    return getSystemTheme();
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-bs-theme", colorMode);
-    localStorage.setItem("colorMode", colorMode);
+    if (typeof window !== "undefined") {
+      document.documentElement.setAttribute("data-bs-theme", colorMode);
+      localStorage.setItem("colorMode", colorMode);
+    }
   }, [colorMode]);
 
-  const handleSelect = (eventKey: string | null) => {
-    const newMode = eventKey === "dark" ? "dark" : "light";
+  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMode = event.target.value;
     setColorMode(newMode);
   };
 
   return (
-    <Form>
-      <Form.Group as={Row} className="text-start" controlId="formThemeSet">
-        <Col>
-          <Form.Label column className="fw-semibold">
-            Current Theme: {colorMode}
-          </Form.Label>
-          <FloatingLabel controlId="floatingSelect" label="Set Theme">
+    <>
+      <br/>
+      <p className="col-form-label fw-semibold m-1">
+        Current Theme: {colorMode}
+      </p>
+      <Form>
+        <Col sm={12} className="col-sm-2">
+          <FloatingLabel controlId="floatingSelect" label="Set Theme" className="m-1 p-1">
             <Form.Select
-              aria-label="ThemeSetOptions selection"
-              onChange={(event) => handleSelect(event.target.value)}
+              aria-label="Floating label select example"
               value={colorMode}
+              onChange={handleSelect}
             >
-              <option value="light">Light Mode</option>
-              <option value="dark">Dark Mode</option>
+              <option className="m-2" value="light">Light</option>
+              <option value="dark">Dark</option>
             </Form.Select>
           </FloatingLabel>
         </Col>
-      </Form.Group>
-    </Form>
+      </Form>
+    </>
   );
 };
-
 export default ColorModeSwitcher;

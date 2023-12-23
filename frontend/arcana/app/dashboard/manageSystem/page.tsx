@@ -4,10 +4,10 @@ import NavBar from "../../components/navbar"; // Update the import statement to 
 import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
-import  AccordionItem from "react-bootstrap";
-import ColorModeSwitcher from "@/app/components/colorMode";
+import GuiThemeSetter from "@/app/components/guiThemeSetter";
+import FontSizer from "@/app/components/fontSizer";
+import FontSizeSetter from "@/app/components/fontSetter";
 
 const ManageSystemPage = () => {
   return (
@@ -16,7 +16,7 @@ const ManageSystemPage = () => {
       <div
         className="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto "
         style={{ height: "75%", width: "95%" }}>
-        <Container className="flex-fluid justify-content-center align-items-center">
+        <Container className="flex-fill justify-content-center align-items-center">
           <Accordion defaultActiveKey="0" alwaysOpen className="rounded">
             <Accordion.Item eventKey="0">
               <Accordion.Header>
@@ -24,39 +24,14 @@ const ManageSystemPage = () => {
                 Graphical User Interface Configuration Settings
               </Accordion.Header>
               <Accordion.Body>
-                <div className="container overflow-hidden">
+                <div className="container">
                   <div className="row">
                     <div className="col">
-                      <Card className="align-center">
-                        <Card.Body>
-                          <Card.Title> GUI Theme </Card.Title>
-                          <Card.Text>
-                            Specify the theme of the GUI. This will change the
-                            color
-                          </Card.Text>
-                          <div className="text-center align-middle">
-                            <ColorModeSwitcher
-                              toggleColorMode={function (): void {
-                                throw new Error("Function not implemented.");
-                              }}
-                            />
-                          </div>
-                        </Card.Body>
-                      </Card>
+                      <GuiThemeSetter />
                     </div>
 
                     <div className="col">
-                      <Card>
-                        <Card.Body>
-                          <Card.Title> Font Size </Card.Title>
-                          <Card.Text>
-                            Specify the size of the font in the GUI.
-                          </Card.Text>
-                          <div className="text-center align-middle">
-                            {/* Enter Font Changing Method here  */}
-                          </div>
-                        </Card.Body>
-                      </Card>
+                      <FontSizeSetter />
                     </div>
                   </div>
                 </div>
