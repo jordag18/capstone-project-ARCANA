@@ -9,6 +9,7 @@ import { Folder2 } from "react-bootstrap-icons";
 import { PcDisplayHorizontal } from "react-bootstrap-icons";
 import { IconLink } from "./iconLink";
 
+import '../pages/ManageSystem';
 
 export function NavBar() {
   return (
@@ -35,7 +36,7 @@ export function NavBar() {
         />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto mb-auto">
-            <IconLink icon={<PcDisplayHorizontal />} linkname="Manage System" />
+            <IconLink icon={<PcDisplayHorizontal />} linkname="/pages/ManageSystem" />
             <IconLink icon={<Diagram3 />} linkname="Manage Graphs" />
             <IconLink icon={<UiRadios />} linkname="Manage Events" />
             <IconLink icon={<Folder2 />} linkname="Manage Projects" />
