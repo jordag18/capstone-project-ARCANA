@@ -36,7 +36,7 @@ export function NavBar() {
         />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto mb-auto">
-            <IconLink icon={<PcDisplayHorizontal />} linkname="/pages/ManageSystem" />
+            <IconLink icon={<PcDisplayHorizontal />} linkname="Manage System" />
             <IconLink icon={<Diagram3 />} linkname="Manage Graphs" />
             <IconLink icon={<UiRadios />} linkname="Manage Events" />
             <IconLink icon={<Folder2 />} linkname="Manage Projects" />
