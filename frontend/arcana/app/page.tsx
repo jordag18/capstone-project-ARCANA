@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Footer } from "./components/footer";
 import StartUpPrompt from "./components/startup-prompt";
-import StartUpNavBar from "./components/startup-navbar";
+import NavBar from "./components/navbar";
 import ThemeHandler from "./lib/themeHandler";
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <ThemeHandler />
-      <StartUpNavBar />
+      <NavBar />
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <StartUpPrompt />
       </main>

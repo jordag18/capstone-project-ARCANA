@@ -10,6 +10,8 @@ import { PcDisplayHorizontal } from "react-bootstrap-icons";
 import { Diagram3 } from "react-bootstrap-icons";
 import { UiRadios } from "react-bootstrap-icons";
 import { Folder2 } from "react-bootstrap-icons";
+import { CloudArrowUp } from "react-bootstrap-icons";
+import { HouseDoorFill } from "react-bootstrap-icons";
 
 import IconLink from "../ui/iconLink";
 
@@ -23,6 +25,11 @@ export function NavBarItems() {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto mb-auto">
           <IconLink
+            icon={<HouseDoorFill />}
+            linkName="Home"
+            link="/"
+          />
+          <IconLink
             icon={<PcDisplayHorizontal />}
             linkName="Manage System"
             link="/dashboard/manageSystem"
@@ -31,6 +38,11 @@ export function NavBarItems() {
             icon={<Folder2 />}
             linkName="Manage Projects"
             link="/dashboard/manageProjects"
+          />
+          <IconLink
+            icon={<CloudArrowUp />}
+            linkName="Manage System"
+            link="/dashboard/manageSystem"
           />
           <IconLink
             icon={<UiRadios />}
