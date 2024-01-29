@@ -3,12 +3,12 @@ import React from "react";
 import NavBar from '../components/navbar';
 import Footer from '../components/footer';
 import Container from 'react-bootstrap/Container';
-import ThemeHandler from "@/app/lib/themeHandler";
+//import ThemeHandler from "@/app/util/themeHandler";
 
 export function DashBoardPage() {
     return (
         <div>
-          <ThemeHandler />
+          {/* //<ThemeHandler /> */}
           <NavBar />
             <div className="flex min-h-screen flex-col items-center justify-between p-24">
               <div className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">

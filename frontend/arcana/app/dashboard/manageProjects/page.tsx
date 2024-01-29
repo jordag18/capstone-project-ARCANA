@@ -3,13 +3,13 @@ import React from "react";
 import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
 import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
-import ThemeHandler from "@/app/lib/themeHandler";
+//import ThemeHandler from "@/app/util/themeHandler";
 //import FontSizeHandler from "@/app/lib/fontSizeHandler";
 
 const ManageProjectsPage = () => {
   return (
     <div>
-      <ThemeHandler />
+      {/* //<ThemeHandler /> */}
       <NavBar />
       <div className="flex min-h-screen flex-col items-center justify-between p-24">
         <Container

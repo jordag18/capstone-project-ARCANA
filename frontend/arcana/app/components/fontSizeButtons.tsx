@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import FontSizeHandler from "../lib/fontSizeHandler";
+import FontSizeHandler from "../util/fontSizeHandler";
 
 const FontSizeButtons: React.FC = () => {
   const [fontSize, setFontSize] = useState<number>(
