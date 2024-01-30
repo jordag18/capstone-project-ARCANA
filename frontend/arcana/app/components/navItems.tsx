@@ -47,7 +47,7 @@ export function NavBarItems() {
           <IconLink
             icon={<UiRadios />}
             linkName="Manage Events"
-            link="/dashboard/eventsMenu"
+            link="/dashboard/eventMenu"
           />
           <IconLink
             icon={<Diagram3 />}
