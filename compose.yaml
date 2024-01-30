@@ -1,0 +1,56 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/compose/compose-file/
+
+# Here the instructions define your application as a service called "arcana".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+
+version: '4.26' # version of docker compose being used
+services:
+    arcana:
+        build: # this is the service that will be built from the Dockerfile in the current directory
+            context: .
+            dockerfile: Dockerfile
+            target: final
+        ports:
+            - 3200:3200
+        networks:
+            - arcana-network
+        depends_on:
+            arcana-mongodb:
+                condition: service_healthy
+        volumes:
+            - arcana-data:/data
+            - /mnt/usb:/data/prefetched # location of the prefetched installations and dependencies
+        restart: unless-stopped
+
+
+    arcana-mongodb:
+        image: mongo:latest
+        environment: # environment variables are used to pass information to the container
+            MONGO_INITDB_ROOT_USERNAME: mongo_user
+            MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+        volumes:
+            - arcana-data:/data/db
+        networks:
+            - arcana-network
+        healthcheck:
+            test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet  # this is the command that will be run to check if the container is healthy
+                                                                                        # in this case, it is checking if the database is running and responding to requests
+                                                                                        # if the command returns a non-zero exit code, the container is considered unhealthy
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: always
+
+
+networks:
+    arcana-network:     # define a network to connect your services to each other and to the host machine (if needed)
+        driver: bridge  # or overlay or whatever you want to use for your network
+
+volumes:
+    arcana-data:
+        driver: local   # or nfs or whatever you want to use for persistent storage for the database's data
