@@ -18,14 +18,14 @@ export function StartUpPrompt() {
           <h3> Main Menu </h3>
             <Button className="p-3" variant="secondary">
               <Folder size={48} className="mx-auto mb-auto p-2"/>
-              <Link href="./dashboard" className="text-decoration-none text-reset">
+              <Link href="./dashboard/manageProjects" className="text-decoration-none text-reset">
                 Manage Projects
               </Link>
             </Button>
 
             <Button className="p-3" variant="secondary">
               <CloudUploadFill size={48} className="mx-auto mb-auto p-2"/>
-              <Link href="./dashboard" className="text-decoration-none text-reset">
+              <Link href="./dashboard/syncProjects" className="text-decoration-none text-reset">
                 Sync Projects
               </Link>
             </Button>
