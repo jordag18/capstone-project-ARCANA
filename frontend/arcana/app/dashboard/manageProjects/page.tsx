@@ -67,7 +67,13 @@ const ManageProjectsPage = () => {
             </Container>
           </div>
 
-          
+          <div>
+            <ul>
+              <li>Project A</li>
+              <li>Project B</li>
+              <li>Project C</li>
+            </ul>
+          </div>
 
           <div>
             <Container className="d-flex justify-content-between">
