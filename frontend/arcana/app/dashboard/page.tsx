@@ -15,7 +15,7 @@ export function DashBoardPage() {
             <div className="flex min-h-screen flex-col items-center justify-between p-24">
               <div className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
                 <Container className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle rounded bg-light" style={{ height: "75%", width: "100%" }}>
-
+                
                 </Container>
               </div>
             </div>
