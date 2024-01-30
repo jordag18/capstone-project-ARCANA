@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
 import Link from "next/link";
@@ -16,7 +15,7 @@ export function SyncMenuItems() {
           <Button className="p-3" variant="secondary">
             <Globe2 size={48} className="mx-auto mb-auto p-2" />
             <Link
-              href="./dashboard/syncMenu/syncProjects"
+              href="./syncMenu/syncProjects"
               className="text-decoration-none text-reset">
               Create Sync Request
             </Link>
@@ -25,7 +24,7 @@ export function SyncMenuItems() {
           <Button className="p-3" variant="secondary">
             <FolderSymlink size={48} className="mx-auto mb-auto p-2" />
             <Link
-              href="./dashboard/syncMenu"
+              href="./syncMenu/viewSyncedProjects"
               className="text-decoration-none text-reset">
               View Sync Requests
             </Link>

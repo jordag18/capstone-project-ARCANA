@@ -22,11 +22,6 @@ const SyncProjectsMenu = () => {
               <SyncMenuItems />
             </Row>
           </div>
-
-
-
-
-
         </Container>
       </div>
       <Footer />

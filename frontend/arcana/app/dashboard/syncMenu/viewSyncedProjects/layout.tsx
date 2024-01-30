@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 
 export const metadata: Metadata = {
-    title: 'ARCANA-Sync-Projects',
+    title: 'ARCANA-View-Synced-Projects',
     description: '',
 }
 

@@ -5,7 +5,7 @@ import Footer from "../../../components/footer";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button'; // Import the Button component
 
-const SyncProjectsPage = () => {
+const SyncProjects = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleConnectClick = () => {
@@ -43,4 +43,4 @@ const SyncProjectsPage = () => {
     );
 }
 
-export default SyncProjectsPage;
+export default SyncProjects;

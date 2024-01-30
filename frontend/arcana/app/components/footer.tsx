@@ -23,7 +23,7 @@ export const Footer = () => {
           {/* Center Column: Align content to the center and bottom */}
           <Col className="flex flex-col justify-end items-center">
             <p className="text-center text-white fw-light m-0 fs-6">
-              Team 1: Cui-Bono
+              Team 1: Cui Bono
             </p>
           </Col>
 
@@ -31,7 +31,7 @@ export const Footer = () => {
           <Col className="flex flex-col justify-end items-end">
             <p className="text-end text-white fw-light m-0 whitespace-nowrap lh-sm fs-6">
               Data Analysis Center&apos;s Cyber Experimentation & Analysis
-              Divison [DAC-CEAD]
+              Divison [DAC CEAD]
             </p>
           </Col>
         </Row>

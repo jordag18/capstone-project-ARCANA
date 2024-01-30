@@ -5,7 +5,6 @@ import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
 
 import { UiRadios } from "react-bootstrap-icons";
 import { ArrowRepeat } from "react-bootstrap-icons";
@@ -24,9 +23,9 @@ const ManageUserActivity = () => {
               <div className="d-flex align-items-center mx-auto ">
                 <UiRadios size={80} className="p-3 mx-auto" />
                 <h2 className="mx-auto">User Activity Logs </h2>
-                <Button className="mx-auto ">
+                <Button className="mx-auto p-2">
                   {" "}
-                  <ArrowRepeat /> Refresh{" "}
+                  <ArrowRepeat size={24}/> Refresh {" "}
                 </Button>
               </div>
             </Row>
