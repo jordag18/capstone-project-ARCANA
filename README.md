@@ -45,7 +45,7 @@ To build and run the react you need to change directory to `~/frontend/arcana`
 ***Development Build:***
 
     npm install -save-dev
-    mpm run dev
+    npm run dev
 
 
 ***Production Build:***
