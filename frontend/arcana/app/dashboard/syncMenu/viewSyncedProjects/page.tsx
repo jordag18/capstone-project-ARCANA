@@ -10,9 +10,11 @@ import Link from "next/link";
 
 import SyncRequestAcknowledgedAlert from "@/app/ui/syncRequestAcknowledgedAlert";
 import SyncRequestErrorAlert from "@/app/ui/syncRequestErrorAlert";
+import SyncRequestSuccessAlert from "@/app/ui/syncRequestSuccessAlert";
 
 import { FolderSymlink } from "react-bootstrap-icons";
 import { SyncRequestTable } from "@/app/components/syncRequestTable";
+import SyncRequestRejectedAlert from "@/app/ui/syncRequestRejectedAlert";
 
 function ViewSyncedProjects() {
   return (
@@ -46,6 +48,8 @@ function ViewSyncedProjects() {
 
             <div>
                 <SyncRequestAcknowledgedAlert />
+                <SyncRequestSuccessAlert />
+                <SyncRequestRejectedAlert />
                 <SyncRequestErrorAlert />
             </div>
         </Container>
