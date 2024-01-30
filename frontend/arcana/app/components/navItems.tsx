@@ -42,7 +42,7 @@ export function NavBarItems() {
           <IconLink
             icon={<CloudArrowUp />}
             linkName="Sync Projects"
-            link="/dashboard/manageProjects"
+            link="/dashboard/syncProjects"
           />
           <IconLink
             icon={<UiRadios />}
