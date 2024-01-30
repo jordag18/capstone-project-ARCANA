@@ -16,7 +16,7 @@ const ManageProjectsPage = () => {
   const [dateEnd, setDateEnd] = useState('');
   const [initials, setInitials] = useState('');
 
-  const [showDialog, setShowDialog] = useState(false);
+  const [showCreateProjectDialog, setShowDialog] = useState(false);
 
   const handleOpenDialog = () => {
     setShowDialog(true);
@@ -38,7 +38,7 @@ const ManageProjectsPage = () => {
           <Button variant="primary" onClick={handleOpenDialog}>+ Create Project</Button>
 
           {/* Create Project Dialog */}
-          <Modal show={showDialog} onHide={handleCloseDialog}>
+          <Modal show={showCreateProjectDialog} onHide={handleCloseDialog}>
             <Modal.Header closeButton>
               <Modal.Title>Create Project</Modal.Title>
             </Modal.Header>
