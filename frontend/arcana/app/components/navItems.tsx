@@ -37,22 +37,22 @@ export function NavBarItems() {
           <IconLink
             icon={<Folder2 />}
             linkName="Manage Projects"
-            link="/dashboard/manageProjects"
+            link="/dashboard/projectsMenu"
           />
           <IconLink
             icon={<CloudArrowUp />}
             linkName="Sync Projects"
-            link="/dashboard/syncProjects"
+            link="/dashboard/syncMenu"
           />
           <IconLink
             icon={<UiRadios />}
             linkName="Manage Events"
-            link="/dashboard/manageEvents"
+            link="/dashboard/eventMenu"
           />
           <IconLink
             icon={<Diagram3 />}
             linkName="Manage Event Graphs"
-            link="/dashboard/manageEventGraphs"
+            link="/dashboard/eventGraphMenu"
           />
         </Nav>
       </Navbar.Collapse>

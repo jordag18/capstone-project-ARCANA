@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'ARCANA-Manage-Projects',
+    title: 'ARCANA-Projects-Menu',
     description: '',
 }
 
