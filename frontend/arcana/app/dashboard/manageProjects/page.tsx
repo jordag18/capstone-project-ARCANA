@@ -57,7 +57,7 @@ const ManageProjectsPage = () => {
                   type="text"
                   className="form-control"
                   placeholder="Project Location"
-                  value={projectName}
+                  value={projectLocation}
                   onChange={(e) => setProjectLocation(e.target.value)}
                 />
               </div>
@@ -66,14 +66,14 @@ const ManageProjectsPage = () => {
                   type="text"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
-                  value={projectName}
+                  value={dateStart}
                   onChange={(e) => setDateStart(e.target.value)}
                 />
                 <input
                   type="text"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
-                  value={projectName}
+                  value={dateEnd}
                   onChange={(e) => setDateEnd(e.target.value)}
                 />
               </div>
@@ -82,7 +82,7 @@ const ManageProjectsPage = () => {
                   type="text"
                   className="form-control"
                   placeholder="Initials"
-                  value={projectName}
+                  value={initials}
                   onChange={(e) => setInitials(e.target.value)}
                 />
               </div>
