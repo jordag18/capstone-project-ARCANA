@@ -66,10 +66,15 @@ const ManageProjectsPage = () => {
               <Button variant="primary" onClick={() => handleOpenDialog('createProject')}>+ Create Project</Button>
             </Container>
           </div>
-          <div className="mt-2">
-            <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
-            <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
-            <Button variant="primary">Open Project</Button>
+
+          
+
+          <div>
+            <Container className="d-flex justify-content-between">
+              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
+              <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
+              <Button variant="primary">Open Project</Button>
+            </Container>
           </div>
         
 
