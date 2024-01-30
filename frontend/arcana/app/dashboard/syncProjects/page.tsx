@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
 import Footer from "../../components/footer";
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button'; // Import the Button component
+import Button from 'react-bootstrap/Button';
 
 const SyncProjectsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleConnectClick = () => {
-        // Add your logic for handling the connect button click
         console.log("Connect button clicked!");
     };
 
