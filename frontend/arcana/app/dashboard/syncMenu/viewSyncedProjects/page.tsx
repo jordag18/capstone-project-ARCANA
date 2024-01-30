@@ -5,8 +5,14 @@ import NavBar from "../../../components/navbar";
 import Footer from "../../../components/footer";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Link from "next/link";
+
+import SyncRequestAcknowledgedAlert from "@/app/ui/syncRequestAcknowledgedAlert";
+import SyncRequestErrorAlert from "@/app/ui/syncRequestErrorAlert";
 
 import { FolderSymlink } from "react-bootstrap-icons";
+import { SyncRequestTable } from "@/app/components/syncRequestTable";
 
 function ViewSyncedProjects() {
   return (
@@ -28,8 +34,20 @@ function ViewSyncedProjects() {
           </div>
 
           <Container className="flex mx-auto p-3">
-
+            <SyncRequestTable />
+            <Button className="btn btn-secondary p-2 mx-auto">
+            <Link
+              href="../syncMenu"
+              className="text-decoration-none text-reset">
+              Return to Sync Menu
+            </Link>
+            </Button>
           </Container>
+
+            <div>
+                <SyncRequestAcknowledgedAlert />
+                <SyncRequestErrorAlert />
+            </div>
         </Container>
       </div>
       <Footer />
