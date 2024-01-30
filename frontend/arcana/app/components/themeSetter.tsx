@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import SaveSuccessMessage from "../ui/saveSuccessMessage";
+import AltSaveSuccessMessage from "../ui/altSaveSuccessMessage";
 
 interface ColorModeSwitcherProps {
   toggleColorMode: () => void;
@@ -65,6 +67,8 @@ const ThemeSwitcher: React.FC<ColorModeSwitcherProps> = () => {
           </FloatingLabel>
         </Col>
       </Form>
+      <SaveSuccessMessage />
+      <AltSaveSuccessMessage />
     </>
   );
 };

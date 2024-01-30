@@ -3,6 +3,8 @@ import React from "react";
 import NavBar from '../components/navbar';
 import Footer from '../components/footer';
 import Container from 'react-bootstrap/Container';
+import SaveSuccessMessage from '../ui/saveSuccessMessage';
+import AltSaveSuccessMessage from "../ui/altSaveSuccessMessage";
 //import ThemeHandler from "@/app/util/themeHandler";
 
 export function DashBoardPage() {

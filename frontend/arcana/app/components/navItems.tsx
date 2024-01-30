@@ -29,11 +29,11 @@ export function NavBarItems() {
             linkName="Home"
             link="/"
           />
-          <IconLink
+{/*           <IconLink
             icon={<PcDisplayHorizontal />}
-            linkName="Manage System"
+            linkName="View Opened Projects"
             link="/dashboard/manageSystem"
-          />
+          /> */}
           <IconLink
             icon={<Folder2 />}
             linkName="Manage Projects"
@@ -41,8 +41,8 @@ export function NavBarItems() {
           />
           <IconLink
             icon={<CloudArrowUp />}
-            linkName="Manage System"
-            link="/dashboard/manageSystem"
+            linkName="Sync Projects"
+            link="/dashboard/manageProjects"
           />
           <IconLink
             icon={<UiRadios />}
