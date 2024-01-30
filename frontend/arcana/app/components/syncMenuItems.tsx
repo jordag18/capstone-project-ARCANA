@@ -8,10 +8,8 @@ import { Globe2, FolderSymlink } from "react-bootstrap-icons";
 
 export function SyncMenuItems() {
   return (
-    <div>
-      <Container
-        className="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle rounded bg-light"
-        style={{ height: "75%", width: "100%" }}>
+
+      <>
         <Stack
           gap={3}
           className="p-4 mx-8 d-flex align-self-center justify-content-sm-center">
@@ -33,16 +31,13 @@ export function SyncMenuItems() {
             </Link>
           </Button>
 
-          {/* Centered Button */}
           <Button
-            className="mx-auto p-2 justify-content-center position-relative bottom-0 start-50"
-            variant="secondary"
-            style={{ transform: "translateX(-45%)" }}>
+            className="mx-auto p-2 justify-content-center position-relative align-self-center"
+            variant="secondary">
             Change Connection
           </Button>
         </Stack>
-      </Container>
-    </div>
+    </>
   );
 }
 export default SyncMenuItems;
