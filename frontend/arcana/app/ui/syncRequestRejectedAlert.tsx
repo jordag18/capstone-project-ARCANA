@@ -10,7 +10,7 @@ function SyncRequestRejectedAlert() {
         return (
             <Alert variant="warning" onClose={() => setShow(false)} dismissible>
                 <strong>Success: </strong>
-                Selected projects were synced.
+                The sync request was rejected.
             </Alert>
         );
     }
