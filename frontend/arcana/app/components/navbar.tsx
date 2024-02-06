@@ -10,10 +10,13 @@ import ArcanaTextLogo from "../ui/arcanaTextLogo";
 import NavBarItems from "./navItems";
 import ActiveAnalyst from "../ui/activeAnalyst";
 
+import "./styles/navbar.css"
+
+
 export function NavBar() {
   return (
     <>
-      <Navbar collapseOnSelect className="bg-body-tertiary align-middle">
+      <Navbar collapseOnSelect className="bg-body-tertiary align-middle custom-navbar" style={{ marginBottom: "20px" }}>
         <DacLogo />
         <ArcanaTextLogo />
         <NavBarItems />
