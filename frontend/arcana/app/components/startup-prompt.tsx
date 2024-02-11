@@ -13,8 +13,8 @@ import { CloudUploadFill, Folder, ListColumnsReverse, GearWideConnected } from "
 export function StartUpPrompt() {
   return (
     <div className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-      <Container className="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle rounded bg-light" style={{ height: "75%", width: "100%" }}>
-        <Stack gap={3} className="p-4 mx-8 d-flex align-self-center justify-content-sm-center">
+      <Container className="d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle rounded bg-light" style={{ height: "70%", width: "100%" }}>
+        <Stack gap={2} className="p-4 mx-8 d-flex align-self-center justify-content-sm-center">
           <h2> Main Menu </h2>
           <hr></hr>
             <Button className="p-3" variant="secondary">
