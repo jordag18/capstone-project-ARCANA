@@ -5,6 +5,7 @@
 import React from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import ArcanaTextLogo from "../ui/arcanaTextLogo";
 
 import { PcDisplayHorizontal } from "react-bootstrap-icons";
 import { Diagram3 } from "react-bootstrap-icons";
@@ -44,6 +45,8 @@ export function NavBarItems() {
             linkName="Sync Projects"
             link="/dashboard/syncMenu"
           />
+          <ArcanaTextLogo />
+
           <IconLink
             icon={<UiRadios />}
             linkName="Manage Events"
