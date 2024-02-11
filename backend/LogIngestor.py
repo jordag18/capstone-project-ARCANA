@@ -1,47 +1,47 @@
-import os
-import glob
-import csv
+import FileHandler as FileHandler
+import EventRepresenter as EventRepresenter
 
 class LogIngestor:
-    def __init__(self, directory):
-        self.directory = directory
-        self.errors = []
-        self.newFilesIngested = []
-    
+    def __init__(self, eventsManager):
+        # Initialize the LogIngestor with an EventsManager
+        self.eventsManager = eventsManager
 
-    def ingestLogs(self):
-        # The LogIngestor shall ingest logs from the analyst provided directory (Table 3.2.2–7 (# 1)), ignoring those files already ingested 
-        # Check if file has already been ingested or not
-        # Parse each CSV file in the directory that has not already been ingested into EventRepresenter
-        # Parse each Log file in the directory that has not already been ingested into EventRepresenter
-        # Parse each TXT file in the directory that has not already been ingested into EventRepresenter
-        # Store each parsed file into newFilesIngest (Table 3.2.27 (#3)). 
+    def ingestLogs(self, fileName):
+        fileHandler = FileHandler()
+        fileType = fileHandler.getFileType(fileName)
+        if fileType == "csv":
+            self.parseCSVFile(fileName)
+        # elif fileType == "txt":
+        #     self.parseTxtFile(fileName)
+        # elif fileType == "log":
+        #     self.parseLogFile(fileName)
+        # else:
+        #     print("Unsupported file type:", fileType)
 
     def parseCSVFile(self, fileName):
-        # The LogIngestor shall parse a CSV file into EventRepresenters by the following steps: 
-        # For each entry in the file, create an EventRepresenter. 
-        # For each entry in the file, store the attributes (Table 3.2.2-8 (#1 - #8)) that can be found 
-        # in the corresponding EventRepresenter. 
-        # If an entry cannot be parsed, has invalid field values, or is missing values in Table 3.2.2-8 
-        # (#1 - #8), mark the EventRepresenter as malformed (Table 3.2.2-8 (#9)). 
-        # For each EventRepresenter, assign the data source (Table 3.2.2-8 (#10)) to the path of the CSV file. 
-        # For each EventRepresenter, assign it the default action title and icon for its team (Table 3.2.2-8) that is stored in the TOAManager. 
-        # Use the UserActivityLogger to log the file ingestion. 
+        fileHandler = FileHandler()
+        csv_reader = fileHandler.readCSV()
+        for row in csv_reader:
+            try:
+                #create eventrepresenter 
+                event = EventRepresenter()
 
-        
-    def parseLogFile(self, fileName):
-        #similar as csv file
-    
-    def parseTXTFile(self, fileName):
-        #similar as csv file
-    
-    def parseScreenshot(self, fileName):
-        #from class diagram
-    
-    def displayErrors(self):
-        # The LogIngestor shall allow the analyst to view the errors (Table 3.2.2–7 (#2) errors) 
-        #that occurred when ingesting logs. 
+                event.initials = row['initials']
+                event.team = row['team']
+                event.vectorID = row['vectorId']
+                event.description = row['description']
+                event.dataSource = fileName
+                event.icon = None
+                event.actionTitle = None 
+                event.sourceHost = row['sourceHost'] if row['sourceHost'] else None
+                event.targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
+                event.location = row['location'] if row['location'] else None
+                event.posture =  None
+                event.timestamp = None
 
-    def getNewFilesIngeted(self):
-        # The LogIngestor shall allow the new files that were ingested (Table 3.2.2–7 (#3) newFilesIngested)
-        # to be retrieved.
+            except csv_reader.Error as e:
+                # If it failed to parse
+                event.isMalformed = True
+
+            # Add event to EventList with EventManager
+            self.eventsManager.addEvent(event)
