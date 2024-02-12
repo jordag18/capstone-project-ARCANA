@@ -1,13 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
-import data.mongo_setup as mongo_setup
 
 
 app = FastAPI()
 client = MongoClient("mongodb://localhost:27017/")
 db = client["ARCANA"]
-mongo_setup.global_int()
 collection = db.list_collection_names()
 print(collection)
 

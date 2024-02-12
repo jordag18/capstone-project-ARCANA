@@ -1,10 +1,7 @@
-import mongoengine
-from backend.EventRepresenter import EventRepresenter
-
-class EventList(mongoengine.Document):
+class EventList:
     def __init__(self):
         # Initialize an empty list of EventRepresenters
-        self.events = mongoengine.EmbeddedDocumentListField(EventRepresenter)
+        self.events = []
 
     def addEvent(self, event):
         # Add the given EventRepresenter to the list
