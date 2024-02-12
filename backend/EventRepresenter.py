@@ -1,21 +1,24 @@
-class EventRepresenter:
+import mongoengine
+
+
+class EventRepresenter(mongoengine.EmbeddedDocument):
     def __init__(self, initials, team, vectorID, description, dataSource, icon, actionTitle, sourceHost=None, targetHostList=None, location=None, posture=None, timestamp=None, isMalformed=None):
         # Required attributes
-        self.initials = initials
-        self.team = team
-        self.vectorID = vectorID
-        self.description = description
-        self.dataSource = dataSource
+        self.initials = mongoengine.StringField(required=True)
+        self.team = mongoengine.StringField(required=True)
+        self.vectorID = mongoengine.StringField(required=True)
+        self.description = mongoengine.StringField(required=True)
+        self.dataSource = mongoengine.StringField(required=True)
         self.icon = icon
-        self.actionTitle = actionTitle
+        self.actionTitle = mongoengine.StringField(required=True)
 
         # Optional attributes
-        self.sourceHost = sourceHost
-        self.targetHostList = targetHostList if targetHostList else []
-        self.location = location
-        self.posture = posture
-        self.timestamp = timestamp
-        self.isMalformed = isMalformed
+        self.sourceHost = mongoengine.StringField()
+        self.targetHostList = mongoengine.ListField(mongoengine.StringField())
+        self.location = mongoengine.StringField()
+        self.posture = mongoengine.StringField()
+        self.timestamp = mongoengine.DateTimeFieldField()
+        self.isMalformed = mongoengine.BooleanField()
     
     @property
     def initials(self):
