@@ -8,6 +8,8 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
 import Stack from "react-bootstrap/esm/Stack";
+import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
+
 
 //import ThemeHandler from "@/app/util/themeHandler";
 //import FontSizeHandler from "@/app/lib/fontSizeHandler";
@@ -55,6 +57,16 @@ const ManageProjectsPage = () => {
         break;
     }
   };
+
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // Get the first file (directory) selected by the user
+      const selectedDir = files[0].path || files[0].webkitRelativePath;
+      setProjectLocation(selectedDir);
+    }
+  };
+  
 
   return (
     <div>
@@ -163,33 +175,12 @@ const ManageProjectsPage = () => {
 
 
           {/* Ingest Log Dialog */}
-          <Modal show={showIngestLogDialog} onHide={() => handleCloseDialog('ingestLog')}>
-            <Modal.Header closeButton>
-              <Modal.Title>Ingest Logs</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div>
-                <p>Select a directory to ingest logs from.</p>
-              </div>
-              <div>
-                <p>Log Directory</p>
-              </div>
-              <div className="mb-3 d-flex">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="ex. /Location/folder"
-                  value={projectLocation}
-                  onChange={(e) => setProjectLocation(e.target.value)}
-                />
-                <Button variant="primary">Browse</Button>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('ingestLog')}>Cancel</Button>
-              <Button variant="primary" onClick={() => handleCloseDialog('ingestLog')}>Ingest Logs</Button>
-            </Modal.Footer>
-          </Modal>
+          <IngestLogDialog
+            show={showIngestLogDialog}
+            handleCloseDialog={handleCloseDialog}
+            setProjectLocation={setProjectLocation}
+            handleFileInputChange={handleFileInputChange}
+          />
 
 
           {/* Delete Project Dialog */}
