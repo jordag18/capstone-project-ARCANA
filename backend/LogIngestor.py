@@ -7,7 +7,7 @@ class LogIngestor:
         self.eventsManager = eventsManager
 
     def ingestLogs(self, fileName):
-        fileHandler = FileHandler()
+        fileHandler = FileHandler.FileHandler()
         fileType = fileHandler.getFileType(fileName)
         if fileType == "csv":
             self.parseCSVFile(fileName)

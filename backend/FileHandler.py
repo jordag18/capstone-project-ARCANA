@@ -1,8 +1,10 @@
 import csv
+import os
 
 class FileHandler:
-    def __init__(self):
-        pass
+    def __init__(self, directory):
+        self.logDirPath = os.path.join("..","pdrr")
+        self.logDir = open(self.logDirPath,'r+')
 
     def readCSV(self, file_name):
         try:

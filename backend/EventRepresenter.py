@@ -1,21 +1,23 @@
 class EventRepresenter:
-    def __init__(self, initials, team, vectorID, description, dataSource, icon, actionTitle, sourceHost=None, targetHostList=None, location=None, posture=None, timestamp=None, isMalformed=None):
+    def __init__(self, initials, team, vectorID, description, dataSource, icon, actionTitle, 
+                 sourceHost= None, targetHostList = None, location = None, 
+                 posture= None, timestamp=None, isMalformed = False):
         # Required attributes
-        self.initials = initials
-        self.team = team
-        self.vectorID = vectorID
-        self.description = description
-        self.dataSource = dataSource
-        self.icon = icon
-        self.actionTitle = actionTitle
+        self._initials = initials 
+        self._team = team 
+        self._vectorID = vectorID 
+        self._description = description
+        self._dataSource = dataSource #Uneditable, 
+        self._icon = icon
+        self._actionTitle = actionTitle
 
         # Optional attributes
-        self.sourceHost = sourceHost
-        self.targetHostList = targetHostList if targetHostList else []
-        self.location = location
-        self.posture = posture
-        self.timestamp = timestamp
-        self.isMalformed = isMalformed
+        self._sourceHost = sourceHost
+        self._targetHostList = targetHostList if targetHostList else []
+        self._location = location
+        self._posture = posture
+        self._timestamp = timestamp
+        self._isMalformed = isMalformed
     
     @property
     def initials(self):
@@ -55,10 +57,6 @@ class EventRepresenter:
     def dataSource(self):
         return self._dataSource
         
-    @dataSource.setter
-    def dataSource(self, value):
-        self._dataSource = value
-
     @property
     def icon(self):
         return self._icon
