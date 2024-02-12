@@ -1,0 +1,11 @@
+dateCreated,description,sourceHost,targetHost,team,location,initials,vectorId,lastModified
+1/16/2024 22:15,AM began recon scan of network,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/20/2024 22:15
+1/16/2024 22:20,AM began a directed scan on a potential host,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/16/2024 22:20
+1/16/2024 23:30,AM began a brute force directory discovery utlizing a list of 110000 commonly used words,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/16/2024 23:30
+1/16/2024 23:45,"AM attempted to access the machine and noticed lack of connectivty. After flushing routing settings, they were still unable to access the machine",10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/16/2024 23:45
+1/16/2024 23:50,once again ran ffuf to discover directories.,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/16/2024 23:50
+1/17/2024 0:30,AM discovered encryption keys to modify dns records on the router and exfiltrated them via a web based directory traversal vulnerability,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/17/2024 0:30
+1/17/2024 0:41,AM leveraged those keys to modify the DNS records to point mail.snoopy.htb to their own machine,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/17/2024 0:41
+1/17/2024 1:00,attempted to force a password reset on the admin password in order to reset the credentials by routing the link to their machine,10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/17/2024 1:00
+1/17/2024 1:20,"AM remained unsuccessful, noting issues with the IP->Domain name sticking on the router",10.10.14.6,10.129.229.5,Red,UTEP,OM,UTEP-STRYKER,1/17/2024 1:20
+ ,,,,,,,,
