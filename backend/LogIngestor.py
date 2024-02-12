@@ -1,5 +1,7 @@
-import FileHandler as FileHandler
-import EventRepresenter as EventRepresenter
+import datetime
+from FileHandler import FileHandler
+from data_services import create_event_representer
+
 
 class LogIngestor:
     def __init__(self, eventsManager):
@@ -20,24 +22,24 @@ class LogIngestor:
 
     def parseCSVFile(self, fileName):
         fileHandler = FileHandler()
-        csv_reader = fileHandler.readCSV()
+        csv_reader = fileHandler.readCSV(fileName)
         for row in csv_reader:
             try:
-                #create eventrepresenter 
-                event = EventRepresenter()
-
-                event.initials = row['initials']
-                event.team = row['team']
-                event.vectorID = row['vectorId']
-                event.description = row['description']
-                event.dataSource = fileName
-                event.icon = None
-                event.actionTitle = None 
-                event.sourceHost = row['sourceHost'] if row['sourceHost'] else None
-                event.targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
-                event.location = row['location'] if row['location'] else None
-                event.posture =  None
-                event.timestamp = None
+                # create eventrepresenter
+                event = create_event_representer(
+                    initials=row['initials'],
+                    team=row['team'],
+                    vector_id=row['vectorId'],
+                    description=row['description'],
+                    data_source=fileName,
+                    icon=None,
+                    action_title="Attack",
+                    source_host=row['sourceHost'],
+                    target_host_list=row["targetHost"].split(','),
+                    location=row['location'],
+                    posture=None,
+                    timestamp=datetime.datetime.now()
+                )
 
             except csv_reader.Error as e:
                 # If it failed to parse
