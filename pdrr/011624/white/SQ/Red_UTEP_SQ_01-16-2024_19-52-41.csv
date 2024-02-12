@@ -1,0 +1,5 @@
+dateCreated,description,sourceHost,targetHost,team,location,initials,vectorId,lastModified
+01/16/2024 21:04:18,Bob performed a netscan and discovered one active host that was determined to be in scope ,10.10.14.4,10.129.229.28,Red,UTEP,SQ,UTEP-GMLRS,01/16/2024 21:04:18
+01/16/2024 21:06:47,"Bob detected a open interpreter at approximately 1406, began attempting to leverage it to insert a reverse shell",10.10.14.4,10.129.229.28,Red,UTEP,SQ,UTEP-GMLRS,01/16/2024 21:06:47
+01/16/2024 21:28:48,red team was able to modify their existing remote code injection to successfully obtain an user shell,10.10.14.4,10.129.229.28,Red,UTEP,SQ,UTEP-GMLRS,01/16/2024 21:28:48
+01/16/2024 21:29:01,red team obtained the passcode to launch the missile on the GMLRS platform and completed this killchain,10.10.14.4,10.129.229.28,Red,UTEP,SQ,UTEP-GMLRS,01/16/2024 21:29:01

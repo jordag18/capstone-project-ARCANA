@@ -1,0 +1,7 @@
+dateCreated,description,sourceHost,targetHost,team,location,initials,vectorId,lastModified
+01/16/2024 22:18:23,SC began a nmap scan of the network and discovered one active host. Subsequently began doing a directed nmap scan on the device,10.10.14.4,10.129.229.28,Red,UTEP,TM,UTEP-LIGHTNING,01/16/2024 22:18:23
+01/16/2024 22:21:47,SC began a netdiscover scan and determined 1 router on the network,10.10.14.4,10.129.229.28,Red,UTEP,TM,UTEP-LIGHTNING,01/16/2024 22:21:47
+01/16/2024 22:25:29,SC accessed the webpage but was unable to determine what vulnerabilities were present,10.10.14.4,10.129.229.28,Red,UTEP,TM,UTEP-LIGHTNING,01/16/2024 22:25:29
+01/16/2024 22:30:00,assessment experienced a standown due to inclement weather at 1530, , ,Red,UTEP,TM,UTEP-LIGHTNING,01/16/2024 22:30:00
+01/17/2024 0:00:00,Assessment began after weather improved, ,,Red,UTEP,TM,UTEP-LIGHTNING,01/17/2024 0:00:00
+01/17/2024 0:15:00,Red Team had issues with the DNS server maintainign the system. After triage: it appears this was a beneficial issue with the tech and not a defensive measure in place with the system,,,Red,UTEP,TM,UTEP-LIGHTNING,01/17/2024 0:15:00
