@@ -8,6 +8,8 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
 import Stack from "react-bootstrap/esm/Stack";
+import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
+
 
 //import ThemeHandler from "@/app/util/themeHandler";
 //import FontSizeHandler from "@/app/lib/fontSizeHandler";
@@ -56,6 +58,16 @@ const ManageProjectsPage = () => {
     }
   };
 
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // Get the first file (directory) selected by the user
+      const selectedDir = files[0].path || files[0].webkitRelativePath;
+      setProjectLocation(selectedDir);
+    }
+  };
+  
+
   return (
     <div>
       {/* //<ThemeHandler /> */}
@@ -98,7 +110,6 @@ const ManageProjectsPage = () => {
 
           <div>
             <Container className="d-flex justify-content-between">
-              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
               <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
               <Button variant="primary">Open Project</Button>
             </Container>
@@ -157,39 +168,19 @@ const ManageProjectsPage = () => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
+              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
               <Button variant="primary" onClick={() => handleCloseDialog('createProject')}>Create Project</Button>
             </Modal.Footer>
           </Modal>
 
 
           {/* Ingest Log Dialog */}
-          <Modal show={showIngestLogDialog} onHide={() => handleCloseDialog('ingestLog')}>
-            <Modal.Header closeButton>
-              <Modal.Title>Ingest Logs</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div>
-                <p>Select a directory to ingest logs from.</p>
-              </div>
-              <div>
-                <p>Log Directory</p>
-              </div>
-              <div className="mb-3 d-flex">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="ex. /Location/folder"
-                  value={projectLocation}
-                  onChange={(e) => setProjectLocation(e.target.value)}
-                />
-                <Button variant="primary">Browse</Button>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('ingestLog')}>Cancel</Button>
-              <Button variant="primary" onClick={() => handleCloseDialog('ingestLog')}>Ingest Logs</Button>
-            </Modal.Footer>
-          </Modal>
+          <IngestLogDialog
+            show={showIngestLogDialog}
+            handleCloseDialog={handleCloseDialog}
+            setProjectLocation={setProjectLocation}
+            handleFileInputChange={handleFileInputChange}
+          />
 
 
           {/* Delete Project Dialog */}

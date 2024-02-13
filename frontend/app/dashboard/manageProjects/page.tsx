@@ -135,8 +135,9 @@ const ManageProjectsPage = () => {
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
               <Button variant="primary" onClick={() => handleCloseDialog('createProject')}>Create Project</Button>
+              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
+
             </Modal.Footer>
           </Modal>
 
