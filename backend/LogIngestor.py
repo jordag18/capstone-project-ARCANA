@@ -3,6 +3,8 @@ import EventRepresenter as EventRepresenter
 import EventsManager as EventsManager
 from datetime import datetime
 import csv
+from backend.DatabaseManager import create_event_representer
+
 
 class LogIngestor:
     def __init__(self):
@@ -27,23 +29,23 @@ class LogIngestor:
             reader = csv.DictReader(file)
             try:
                 for row in reader:
-                    dateCreated = datetime.strptime(row['dateCreated'], "%m/%d/%Y %H:%M:%S")
-                    description = row['description']
-                    sourceHost = row['sourceHost'] if row['sourceHost'] else None
-                    targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
-                    team = row['team']
-                    location = row['location']
-                    initials = row['initials']
-                    vectorID = row['vectorId']
-                    dataSource = fileName
-                    lastModified = datetime.strptime(row['lastModified'], "%m/%d/%Y %H:%M:%S")
-                    actionTitle =  None
-                    icon = None
-                    posture = None
-                    isMalformed = False
-                    event = EventRepresenter.EventRepresenter(initials, team, vectorID, description, dataSource, 
-                                                            icon, lastModified, actionTitle, sourceHost, targetHostList, location, posture, dateCreated,
-                                                            isMalformed)
+                    event = create_event_representer(
+                        initials=row['initials'],
+                        team=row['team'],
+                        vector_id=row['vectorId'],
+                        description=row['description'],
+                        data_source=fileName,
+                        icon=None,
+                        action_title=None,
+                        last_modified=datetime.strptime(row['lastModified'], "%m/%d/%Y %H:%M:%S"),
+                        source_host=row['sourceHost'],
+                        target_host_list=row["targetHost"].split(','),
+                        location=row['location'],
+                        posture=None,
+                        timestamp=datetime.strptime(row['dateCreated'], "%m/%d/%Y %H:%M:%S"),
+                        is_malformed=False
+                    )
+
             except Exception as e:
                     # If it failed to parse
                     event.isMalformed = True
