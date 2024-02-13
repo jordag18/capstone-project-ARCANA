@@ -1,12 +1,14 @@
 import FileHandler as FileHandler
 import EventRepresenter as EventRepresenter
+import EventsManager as EventsManager
 from datetime import datetime
 import csv
 
 class LogIngestor:
-    def __init__(self, eventsManager):
+    def __init__(self):
         # Initialize the LogIngestor with an EventsManager
-        self.eventsManager = eventsManager
+        #self.eventsManager = eventsManager
+        self.eventsManager = EventsManager.EventsManager()
 
     def ingestLogs(self, fileName):
         fileHandler = FileHandler.FileHandler()
