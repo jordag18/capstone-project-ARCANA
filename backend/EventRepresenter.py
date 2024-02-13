@@ -1,5 +1,5 @@
 class EventRepresenter:
-    def __init__(self, initials, team, vectorID, description, dataSource, icon, actionTitle, 
+    def __init__(self, initials, team, vectorID, description, dataSource, icon, lastModified, actionTitle, 
                  sourceHost= None, targetHostList = None, location = None, 
                  posture= None, timestamp=None, isMalformed = False):
         # Required attributes
@@ -10,6 +10,8 @@ class EventRepresenter:
         self._dataSource = dataSource #Uneditable, 
         self._icon = icon
         self._actionTitle = actionTitle
+        self._lastModified = lastModified
+    
 
         # Optional attributes
         self._sourceHost = sourceHost
@@ -64,6 +66,14 @@ class EventRepresenter:
     @icon.setter
     def icon(self, value):
         self._icon = value
+
+    @property
+    def lastModified(self):
+        return self._lastModified
+        
+    @lastModified.setter
+    def lastModified(self, value):
+        self._lastModified = value
 
     @property
     def actionTitle(self):

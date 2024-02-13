@@ -2,7 +2,7 @@ import csv
 import os
 
 class FileHandler:
-    def __init__(self, directory):
+    def __init__(self):
         self.logDirPath = os.path.join("..","pdrr")
         self.logDir = open(self.logDirPath,'r+')
 
@@ -28,13 +28,6 @@ class FileHandler:
 
         return log_files
 
-    def readCSV(self, file_name):
-        try:
-            with open(file_name, 'r', newline='') as csv_file:
-                csv_reader = csv.DictReader(csv_file, delimiter=';')
-                return csv_reader
-        except FileNotFoundError:
-            print(f"File {file_name} not found.")
     
     def getFileType(self, file_name):
         file_type = file_name.split(".")[-1]

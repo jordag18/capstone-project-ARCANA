@@ -1,7 +1,7 @@
-import datetime
-from FileHandler import FileHandler
-from data_services import create_event_representer
-
+import FileHandler as FileHandler
+import EventRepresenter as EventRepresenter
+from datetime import datetime
+import csv
 
 class LogIngestor:
     def __init__(self, eventsManager):
@@ -21,29 +21,29 @@ class LogIngestor:
         #     print("Unsupported file type:", fileType)
 
     def parseCSVFile(self, fileName):
-        fileHandler = FileHandler()
-        csv_reader = fileHandler.readCSV(fileName)
-        for row in csv_reader:
+        with open(fileName, 'r') as file:
+            reader = csv.DictReader(file)
             try:
-                # create eventrepresenter
-                event = create_event_representer(
-                    initials=row['initials'],
-                    team=row['team'],
-                    vector_id=row['vectorId'],
-                    description=row['description'],
-                    data_source=fileName,
-                    icon=None,
-                    action_title="Attack",
-                    source_host=row['sourceHost'],
-                    target_host_list=row["targetHost"].split(','),
-                    location=row['location'],
-                    posture=None,
-                    timestamp=datetime.datetime.now()
-                )
-
-            except csv_reader.Error as e:
-                # If it failed to parse
-                event.isMalformed = True
-
-            # Add event to EventList with EventManager
+                for row in reader:
+                    dateCreated = datetime.strptime(row['dateCreated'], "%m/%d/%Y %H:%M:%S")
+                    description = row['description']
+                    sourceHost = row['sourceHost'] if row['sourceHost'] else None
+                    targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
+                    team = row['team']
+                    location = row['location']
+                    initials = row['initials']
+                    vectorID = row['vectorId']
+                    dataSource = fileName
+                    lastModified = datetime.strptime(row['lastModified'], "%m/%d/%Y %H:%M:%S")
+                    actionTitle =  None
+                    icon = None
+                    posture = None
+                    isMalformed = False
+                    event = EventRepresenter.EventRepresenter(initials, team, vectorID, description, dataSource, 
+                                                            icon, lastModified, actionTitle, sourceHost, targetHostList, location, posture, dateCreated,
+                                                            isMalformed)
+            except Exception as e:
+                    # If it failed to parse
+                    event.isMalformed = True
+                    print("wrong")
             self.eventsManager.addEvent(event)
