@@ -30,11 +30,6 @@ export function NavBarItems() {
             linkName="Home"
             link="/"
           />
-{/*           <IconLink
-            icon={<PcDisplayHorizontal />}
-            linkName="View Opened Projects"
-            link="/dashboard/manageSystem"
-          /> */}
           <IconLink
             icon={<Folder2 />}
             linkName="Manage Projects"
