@@ -7,7 +7,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import ActiveAnalyst from "../ui/activeAnalyst";
 
-
 export function NavBar() {
   return (
     <>
