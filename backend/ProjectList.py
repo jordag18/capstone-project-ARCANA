@@ -1,8 +1,8 @@
-class EventList:
+class ProjectList:
     def __init__(self):
         # Initialize an empty list of EventRepresenters
-        self.events = []
+        self.projects = []
 
-    def addEvent(self, event):
+    def addProject(self, project):
         # Add the given EventRepresenter to the list
-        self.events.append(event)
+        self.projects.append(project)
