@@ -1,6 +1,7 @@
 from FileHandler import FileHandler
 from EventRepresenter import EventRepresenter
 from datetime import datetime
+from PIL import Image
 import csv
 
 class LogIngestor:
@@ -64,13 +65,13 @@ class LogIngestor:
                         
                         match(team):
                             case "Blue":
-                                icon = "Icons/BlueTeam_Activity.png"
+                                icon = Image.open("Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = 'Icons/RedTeam_Activity.png'
+                                icon = Image.open('Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
                             case "White",_:
-                                icon = "Icons/WhitCard.png"
+                                icon = Image.open("Icons/WhitCard.png")
                                 actionTitle = "White Card"
                                 
                         fields = [dateCreated,description,dataSource,targetHostList,team,
