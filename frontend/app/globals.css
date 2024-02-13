@@ -2,7 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-navbar {
-    border-bottom: 3px solid black; /* Add a black line at the bottom */
-    margin-bottom: 50px;
+.img {
+    height: 100px;
+    width: 100px;
+    padding: 1px;
+}
+
+.nav {
+    text-align: justify;
+    color: black;
 }

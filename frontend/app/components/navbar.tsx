@@ -31,19 +31,19 @@ export function NavBar() {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto mb-auto">
               <Nav.Link href="/">
-                <HouseDoorFill className="mb-auto" /> Home
+                <HouseDoorFill className="mb-auto" /> <strong>Home</strong>
               </Nav.Link>
               <Nav.Link href="/dashboard/projectsMenu">
-                <Folder2 className="mb-auto" /> Manage Projects
+                <Folder2 className="mb-auto" /> <strong>Manage Projects</strong>
               </Nav.Link>
               <Nav.Link href="/dashboard/syncMenu">
-                <CloudArrowUp className="mb-auto"/> Sync Projects
+                <CloudArrowUp className="mb-auto"/> <strong>Sync Projects</strong>
               </Nav.Link>
               <Nav.Link href="/dashboard/eventMenu">
-                <UiRadios className="mb-auto"/> Manage Events
+                <UiRadios className="mb-auto"/> <strong>Manage Events</strong>
               </Nav.Link>
               <Nav.Link href="/dashboard/eventGraphMenu">
-                <Diagram3 className="mb-auto"/> Manage Event Graphs
+                <Diagram3 className="mb-auto"/> <strong>Manage Event Graphs</strong>
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
