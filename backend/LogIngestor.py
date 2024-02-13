@@ -2,8 +2,8 @@ from FileHandler import FileHandler
 from EventRepresenter import EventRepresenter
 from EventsManager import EventsManager
 from datetime import datetime
+from PIL import Image
 import csv
-from backend.DatabaseManager import create_event_representer
 
 
 class LogIngestor:
