@@ -91,29 +91,29 @@ async def delete_project(project_name):
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")
 def insert_analyst_initials(initials: str):
-    analyst_collection.insert_one({"initials": initials})
+    #analyst_collection.insert_one({"initials": initials})
     return {"message": "Analyst initials added successfully"}
 
 
 @app.delete("/delete_analyst_initials")
 def delete_analyst_initials(initials: str):
-    analyst_collection.delete_one({"initials": initials})
+    #analyst_collection.delete_one({"initials": initials})
     return {"message": "Analyst initials deleted successfully"}
 
 
 @app.put("/update_analyst_initials")
 def update_analyst_initials(initials: str, new_initials: str):
-    analyst_collection.update_one(
-        {"initials": initials}, {"$set": {"initials": new_initials}}
-    )
+    #analyst_collection.update_one(
+        #{"initials": initials}, {"$set": {"initials": new_initials}}
+    #)
     return {"message": "Analyst initials updated successfully"}
 
 
 @app.get("/get_all_analyst_initials/")
 def get_analyst_initials():
     initials_list = []
-    for initials in analyst_collection.find():
-        initials_list.append(initials["initials"])
+    #for initials in analyst_collection.find():
+        #initials_list.append(initials["initials"])
     return {"analyst_initials": initials_list}
 
 
