@@ -3,7 +3,6 @@ from EventRepresenter import EventRepresenter
 from EventsManager import EventsManager
 from datetime import datetime
 import csv
-from backend.DatabaseManager import create_event_representer
 from PIL import Image
 
 
