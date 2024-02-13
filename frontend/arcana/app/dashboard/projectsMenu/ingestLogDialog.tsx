@@ -4,9 +4,13 @@ import { Modal, Button } from 'react-bootstrap';
 
 const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectLocation }) => {
 
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+
     const handleFileInputChange = (e) => {
         const files = e.target.files;
         if (files.length > 0) {
+            setSelectedFiles(Array.from(files));
           // Get the first file (directory) selected by the user
           const selectedDir = files[0].path || files[0].webkitRelativePath;
           setProjectLocation(selectedDir);
@@ -43,6 +47,7 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
               type="file"
               style={{ display: 'none' }}
               onChange={handleFileInputChange}
+              multiple
             />
           </label>
         </div>
