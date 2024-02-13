@@ -8,8 +8,6 @@ import DacLogo from "../ui/dacLogo";
 import NavBarItems from "./navItems";
 import ActiveAnalyst from "../ui/activeAnalyst";
 
-import "./styles/navbar.css"
-
 
 export function NavBar() {
   return (

@@ -25,6 +25,7 @@ export function NavBarItems() {
       />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto mb-auto">
+          <ArcanaTextLogo />
           <IconLink
             icon={<HouseDoorFill />}
             linkName="Home"
@@ -40,8 +41,6 @@ export function NavBarItems() {
             linkName="Sync Projects"
             link="/dashboard/syncMenu"
           />
-          <ArcanaTextLogo />
-
           <IconLink
             icon={<UiRadios />}
             linkName="Manage Events"
