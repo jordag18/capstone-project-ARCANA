@@ -6,25 +6,27 @@ class FileHandler:
         self.logDirPath = os.path.join("..","pdrr")
         self.logDir = open(self.logDirPath,'r+')
 
-    def get_log_files(root_dir):
+    def get_log_paths(root_dir):
         log_files = []
     
         for subdir, dirs, files in os.walk(root_dir):
-            print(subdir,dirs,files)
             for file in files:
-                if file.endswith(".csv"):
-                    log_files.append(os.path.join(subdir, file))
+                file_path = os.path.join(subdir, file)
+                if file_path.endswith(".csv") and file_path not in log_files:
+                    log_files.append(file_path)
             if "red" in dirs:
                 red_dir = os.path.join(subdir, "red")
                 for red_subdir, red_dirs, red_files in os.walk(red_dir):
                     for red_file in red_files:
-                        if red_file.endswith(".csv"):
-                            log_files.append(os.path.join(red_subdir, red_file))
+                        file_path = os.path.join(red_subdir, red_file)
+                        if file_path.endswith(".csv") and file_path not in log_files:
+                            log_files.append(file_path)
             if "white" in dirs:
                 white_dir = os.path.join(subdir, "white")
                 for white_file in os.listdir(white_dir):
-                    if white_file.endswith(".csv"):
-                        log_files.append(os.path.join(white_dir, white_file))
+                    file_path = os.path.join(white_dir, white_file)
+                    if file_path.endswith(".csv") and file_path not in log_files:
+                        log_files.append(file_path)
 
         return log_files
 
