@@ -1,3 +1,5 @@
+from PIL import Image #for icons
+
 class EventRepresenter:
     def __init__(self, initials, team, vectorID, description, dataSource, icon, lastModified, actionTitle, 
                  sourceHost= None, targetHostList = None, location = None, 

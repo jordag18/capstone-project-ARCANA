@@ -1,7 +1,7 @@
 from FileHandler import FileHandler
 from EventRepresenter import EventRepresenter
 from datetime import datetime
-from PIL import Image
+from PIL import Image #for icons
 import csv
 
 class LogIngestor:
@@ -10,9 +10,9 @@ class LogIngestor:
         self.errors = []
         self.newFilesIngested = []
 
-    def ingestLogs(self, log_folder):
+    def ingestLogs(self):
         fileHandler = FileHandler()
-        self.newFilesIngested = fileHandler.get_log_paths(log_folder)
+        self.newFilesIngested = fileHandler.get_log_paths(self.directory)
         for filepath in self.newFilesIngested:
             if filepath.endswith(".csv"):
                 if 'red' in filepath:
