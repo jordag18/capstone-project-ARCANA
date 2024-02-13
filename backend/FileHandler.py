@@ -2,14 +2,13 @@ import csv
 import os
 
 class FileHandler:
-    def __init__(self):
-        self.logDirPath = os.path.join("..","pdrr")
-        self.logDir = open(self.logDirPath,'r+')
+    def __init__(self,directory):
+        self.logDirPath = os.path.join(directory)
 
-    def get_log_paths(root_dir):
+    def get_log_paths(self):
         log_files = []
     
-        for subdir, dirs, files in os.walk(root_dir):
+        for subdir, dirs, files in os.walk(self.logDirPath):
             for file in files:
                 file_path = os.path.join(subdir, file)
                 if file_path.endswith(".csv") and file_path not in log_files:

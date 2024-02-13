@@ -1,5 +1,6 @@
 from FileHandler import FileHandler
 from EventRepresenter import EventRepresenter
+from EventsManager import EventsManager
 from datetime import datetime
 from PIL import Image #for icons
 import csv
@@ -9,10 +10,11 @@ class LogIngestor:
         self.directory = directory
         self.errors = []
         self.newFilesIngested = []
+        self.eventManager = EventsManager()
 
     def ingestLogs(self):
-        fileHandler = FileHandler()
-        self.newFilesIngested = fileHandler.get_log_paths(self.directory)
+        fileHandler = FileHandler(self.directory)
+        self.newFilesIngested = fileHandler.get_log_paths()
         for filepath in self.newFilesIngested:
             if filepath.endswith(".csv"):
                 if 'red' in filepath:
@@ -85,7 +87,7 @@ class LogIngestor:
                         event = EventRepresenter(initials, team, vectorID, description, dataSource, 
                                                                 icon, lastModified, actionTitle, sourceHost, targetHostList, location, posture, dateCreated,
                                                                 isMalformed) 
-                        self.eventsManager.addEvent(event)
+                        self.eventManager.addEvent(event)
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
                         self.errors.append(e)
