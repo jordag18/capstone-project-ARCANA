@@ -1,6 +1,5 @@
-
 import EventRepresenter as EventRepresenter
-import EventList as EventList
+from EventList import EventList
 
 class EventsManager:
     def __init__(self):
@@ -10,4 +9,3 @@ class EventsManager:
     def addEvent(self, event):
         # Add the EventRepresenter to the EventList
         self.eventList.addEvent(event)
-
