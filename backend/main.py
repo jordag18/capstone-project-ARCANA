@@ -1,16 +1,29 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import (
+    CORSMiddleware,
+)  # CORS = Cross Origin Resource Sharing
 from pymongo import MongoClient
+from model import Project
 
-
+# app object
 app = FastAPI()
 client = MongoClient("mongodb://localhost:27017/")
 db = client["ARCANA"]
-collection = db.list_collection_names()
-print(collection)
 
-analyst_collection = db["analyst_initials"]
-print(analyst_collection)
+
+from database import (
+    fetch_one_project,
+    fetch_all_projects,
+    create_project,
+    update_project,
+    remove_project,
+)
+
+collection = db.list_collection_names()
+print(f"{collection}")
+
+# analyst_collection = db["analyst_initials"]
+# print(analyst_collection)
 
 
 app.add_middleware(
@@ -27,31 +40,80 @@ def read_root():
     return {"message": "Welcome to ARCANA API"}
 
 
+@app.get("/api/project")
+async def get_project():
+    # Code to retrieve all projects from the database
+    response = await fetch_all_projects()
+    return response
+
+
+@app.get("/api/project{project_name}", response_model=Project)
+async def get_project_by_name(project_name):
+    response = await fetch_one_project(project_name)
+    if response:
+        return response
+    raise HTTPException(400, "Bad request")
+
+
+# CRUD for Projects
+@app.post("/api/project", response_model=Project)
+async def post_project(project:Project):
+    # Code to add a new project to the database
+    response = await create_project(project.dict())
+    if response:
+        return response
+    raise HTTPException(400, "Bad request")
+
+
+@app.put("/api/project{project_name}/", response_model=Project)
+async def put_project(
+    project_name: str,
+    project_location: str,
+    start_date: str,
+    end_date: str,
+    initials: str,
+):
+    response = await update_project(
+        project_name, project_location, start_date, end_date, initials)
+    if response:
+        return response
+    raise HTTPException(404, f"No project found with the name {project_name}")
+
+
+@app.delete("/api/deleteProject{project_name}")
+async def delete_project(project_name):
+    response = await remove_project(project_name)
+    if response:
+        return f"Successfully deleted {project_name}"
+    raise HTTPException(404, f"No project found with the name {project_name}")
+
+
+# ------------------------------------------------------------
 @app.post("/insert_analyst_initials")
 def insert_analyst_initials(initials: str):
-    analyst_collection.insert_one({"initials": initials})
+    #analyst_collection.insert_one({"initials": initials})
     return {"message": "Analyst initials added successfully"}
 
 
 @app.delete("/delete_analyst_initials")
 def delete_analyst_initials(initials: str):
-    analyst_collection.delete_one({"initials": initials})
+    #analyst_collection.delete_one({"initials": initials})
     return {"message": "Analyst initials deleted successfully"}
 
 
 @app.put("/update_analyst_initials")
 def update_analyst_initials(initials: str, new_initials: str):
-    analyst_collection.update_one(
-        {"initials": initials}, {"$set": {"initials": new_initials}}
-    )
+    #analyst_collection.update_one(
+        #{"initials": initials}, {"$set": {"initials": new_initials}}
+    #)
     return {"message": "Analyst initials updated successfully"}
 
 
 @app.get("/get_all_analyst_initials/")
 def get_analyst_initials():
     initials_list = []
-    for initials in analyst_collection.find():
-        initials_list.append(initials["initials"])
+    #for initials in analyst_collection.find():
+        #initials_list.append(initials["initials"])
     return {"analyst_initials": initials_list}
 
 
@@ -83,9 +145,15 @@ The PATCH method is used to apply partial modifications to a resource.
 # @app.trace()
 """
 The TRACE method performs a message loop-back test along the path to the target resource.
-    """
+"""
 
-# RUN COMMAND
+# RUN COMMANDS FOR MAC
+# brew services restart mongodb-community
+# cd ~backend/ python main.py
+# uvicorn main:app --reload
+
+
+# RUNNABLE COMMANDS
 # uvicorn main:app --reload
 
 # brew services start mongodb-community
