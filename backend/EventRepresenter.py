@@ -1,25 +1,23 @@
-class EventRepresenter:
-    def __init__(self, initials, team, vectorID, description, dataSource, icon, lastModified, actionTitle, 
-                 sourceHost= None, targetHostList = None, location = None, 
-                 posture= None, timestamp=None, isMalformed = False):
-        # Required attributes
-        self._initials = initials 
-        self._team = team 
-        self._vectorID = vectorID 
-        self._description = description
-        self._dataSource = dataSource #Uneditable, 
-        self._icon = icon
-        self._actionTitle = actionTitle
-        self._lastModified = lastModified
-    
+import datetime
+from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField
 
-        # Optional attributes
-        self._sourceHost = sourceHost
-        self._targetHostList = targetHostList if targetHostList else []
-        self._location = location
-        self._posture = posture
-        self._timestamp = timestamp
-        self._isMalformed = isMalformed
+
+class EventRepresenter(Document):
+    initials = StringField(required=True, min_length=2, max_length=2)
+    team = StringField(required=True)
+    vector_id = StringField(required=True)
+    description = StringField(required=True)
+    data_source = StringField(required=True)
+    icon = StringField(default="TO BE IMPLEMENTED")
+    action_title = StringField(required=True)
+    last_modified = DateTimeField(default=datetime.datetime.now)
+
+    source_host = StringField(default="")
+    target_host_list = ListField(StringField(default=""), default="")
+    location = StringField(default="")
+    posture = StringField(default="")
+    timestamp = DateTimeField(default=datetime.datetime.now)
+    is_malformed = BooleanField(default="")
     
     @property
     def initials(self):
