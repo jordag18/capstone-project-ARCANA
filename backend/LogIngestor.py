@@ -35,15 +35,23 @@ class LogIngestor:
             with open(fileName,'r') as file:
                 reader = csv.DictReader(file)
                 for row in reader:
+
                     if row['source address'].startswith('*'): continue
-                    timestamp = row['timestamp']
+                    timestamp = row['Timestamp']
                     source_address = row['source address']
                     target_address = row['destination address'].split(',') if row['destination address'] else []
                     actions = row['actions']
                     description = row['comments']
         except Exception as e:
+            print("red csv files error here")
             self.errors.append(e)
-                
+
+    def parse_timestamp(self,timestamp_str):
+        try:
+            return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
+        except ValueError:
+            return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M")    
+              
     def parseWhiteCSVFile(self,fileName):
         try:
             with open(fileName, 'r') as file:
@@ -54,29 +62,30 @@ class LogIngestor:
                         isMalformed = False #9
                         #fields in csv file, present in table 3.2.2 - 8 #1-8
                         initials = row['initials']
-                        team = row['team']
-                        sourceHost = row['sourceHost']
-                        targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
+                        team = row['team']                        
+                        sourceHost = row['sourceHost']                        
+                        targetHostList = row['targetHost'].split(',') if row['targetHost'] else []                       
                         location = row['location']
                         posture = None #not in csv file
                         description = row['description']
                         vectorID = row['vectorId']
                         dataSource = fileName #9
-                        
-                        dateCreated = datetime.strptime(row['dateCreated'], "%m/%d/%Y %H:%M:%S")
-                        lastModified = datetime.strptime(row['lastModified'], "%m/%d/%Y %H:%M:%S")
-                        
+                        if row['dateCreated'].strip():
+                            dateCreated = self.parse_timestamp(row['dateCreated'])
+                        if row['lastModified'].strip():
+                            lastModified = self.parse_timestamp(row['lastModified'])
+
                         match(team):
                             case "Blue":
-                                icon = Image.open("Icons/BlueTeam_Activity.png")
+                                icon = Image.open("../Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = Image.open('Icons/RedTeam_Activity.png')
+                                icon = Image.open('../Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
-                            case "White",_:
-                                icon = Image.open("Icons/WhitCard.png")
+                            case "White":
+                                icon = Image.open("../Icons/WhitCard.png")
                                 actionTitle = "White Card"
-                                
+
                         fields = [dateCreated,description,dataSource,targetHostList,team,
                                     location,initials , vectorID,lastModified]
                         #check if the file has all the attributes
@@ -84,11 +93,27 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
-                      
-                        event = EventRepresenter(initials, team, vectorID, description, dataSource, 
-                                                                icon, lastModified, actionTitle, sourceHost, targetHostList, location, posture, dateCreated,
-                                                                isMalformed) 
-                        self.eventManager.addEvent(event)
+                        event = EventRepresenter(
+                            initials=initials,
+                            team=team,
+                            vector_id=vectorID,
+                            description=description,
+                            data_source=dataSource,
+                            icon="",  # placeholder for the icon field, needs to match the string field type
+                            action_title=actionTitle,
+                            last_modified=lastModified,
+                            source_host=sourceHost,
+                            target_host_list=targetHostList,
+                            location=location,
+                            posture=posture,
+                            timestamp=dateCreated,
+                            is_malformed=isMalformed
+                            
+                        )
+                        #print(event.get_initials()) #testing
+                    self.eventManager.addEvent(event)
+                    #print(self.eventManager.eventList.events) #testing
+
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
                         self.errors.append(e)

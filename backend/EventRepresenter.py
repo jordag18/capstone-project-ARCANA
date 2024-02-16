@@ -2,6 +2,7 @@ import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField
 
 
+
 class EventRepresenter(Document):
     initials = StringField(required=True, min_length=2, max_length=2)
     team = StringField(required=True)
@@ -11,120 +12,94 @@ class EventRepresenter(Document):
     icon = StringField(default="TO BE IMPLEMENTED")
     action_title = StringField(required=True)
     last_modified = DateTimeField(default=datetime.datetime.now)
-
     source_host = StringField(default="")
     target_host_list = ListField(StringField(default=""), default="")
     location = StringField(default="")
     posture = StringField(default="")
     timestamp = DateTimeField(default=datetime.datetime.now)
     is_malformed = BooleanField(default="")
+
+    def get_initials(self):
+        return self.initials
+
+    def set_initials(self, value):
+        self.initials = value
+
+    def get_team(self):
+        return self.team
+
+    def set_team(self, value):
+        self.team = value
+
+    def get_vector_id(self):
+        return self.vector_id
+
+    def set_vector_id(self, value):
+        self.vector_id = value
+
+    def get_description(self):
+        return self.description
+
+    def set_description(self, value):
+        self.description = value
+
+    def get_data_source(self):
+        return self.data_source
+
+    def set_data_source(self, value):
+        self.data_source = value
+
+    def get_icon(self):
+        return self.icon
+
+    def set_icon(self, value):
+        self.icon = value
+
+    def get_action_title(self):
+        return self.action_title
+
+    def set_action_title(self, value):
+        self.action_title = value
+
+    def get_last_modified(self):
+        return self.last_modified
+
+    def set_last_modified(self, value):
+        self.last_modified = value
+
+    def get_source_host(self):
+        return self.source_host
+
+    def set_source_host(self, value):
+        self.source_host = value
+
+    def get_target_host_list(self):
+        return self.target_host_list
+
+    def set_target_host_list(self, value):
+        self.target_host_list = value
+
+    def get_location(self):
+        return self.location
+
+    def set_location(self, value):
+        self.location = value
+
+    def get_posture(self):
+        return self.posture
+
+    def set_posture(self, value):
+        self.posture = value
+
+    def get_timestamp(self):
+        return self.timestamp
+
+    def set_timestamp(self, value):
+        self.timestamp = value
+
+    def get_is_malformed(self):
+        return self.is_malformed
+
+    def set_is_malformed(self, value):
+        self.is_malformed = value
     
-    @property
-    def initials(self):
-        return self._initials
-    
-    @initials.setter
-    def initials(self, value):
-        assert len(value) in [2, 3], "Initials must be 2 or 3 characters long"
-        self._initials = value
-    
-    @property
-    def team(self):
-        return self._team
-    
-    @team.setter
-    def team(self, value):
-        assert value in ["Red", "White", "Blue", "Unknown"], "Team must be 'Red', 'White', 'Blue', or 'Unknown'"
-        self._team = value
-
-    @property
-    def vectorID(self):
-        return self._vectorID
-        
-    @vectorID.setter
-    def vectorID(self, value):
-        self._vectorID = value
-    
-    @property
-    def description(self):
-        return self._description
-        
-    @description.setter
-    def description(self, value):
-        self._description = value
-
-    @property
-    def dataSource(self):
-        return self._dataSource
-        
-    @property
-    def icon(self):
-        return self._icon
-        
-    @icon.setter
-    def icon(self, value):
-        self._icon = value
-
-    @property
-    def lastModified(self):
-        return self._lastModified
-        
-    @lastModified.setter
-    def lastModified(self, value):
-        self._lastModified = value
-
-    @property
-    def actionTitle(self):
-        return self._actionTitle
-        
-    @actionTitle.setter
-    def actionTitle(self, value):
-        self._actionTitle = value
-    
-    @property
-    def sourceHost(self):
-        return self._sourceHost
-        
-    @sourceHost.setter
-    def sourceHost(self, value):
-        self._sourceHost = value
-
-    @property
-    def targetHostList(self):
-        return self._targetHostList
-        
-    @targetHostList.setter
-    def targetHostList(self, value):
-        self._targetHostList = value
-    
-    @property
-    def location(self):
-        return self._location
-        
-    @location.setter
-    def location(self, value):
-        self._location = value
-
-    @property
-    def posture(self):
-        return self._location
-        
-    @posture.setter
-    def posture(self, value):
-        self._posture = value
-
-    @property
-    def timestamp(self):
-        return self._timestamp
-        
-    @timestamp.setter
-    def timestamp(self, value):
-        self._timestamp = value
-
-    @property
-    def isMalformed(self):
-        return self._isMalformed
-        
-    @isMalformed.setter
-    def isMalformed(self, value):
-        self._isMalformed= value
