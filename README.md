@@ -71,6 +71,8 @@ To build and run the react you need to change directory to `~/frontend/arcana`
 
 ##### Getting Started
 
+https://fastapi.tiangolo.com/
+
 First, run the development server:
 
 ```bash
