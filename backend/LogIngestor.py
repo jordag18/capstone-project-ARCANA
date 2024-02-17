@@ -5,20 +5,6 @@ from datetime import datetime
 import csv
 from PIL import Image
 
-@app.post("/api/ingestLogs")
-async def ingest_logs(files: List[UploadFile]):
-    for file in files:
-        # Access file properties, e.g., file.filename, file.content_type, etc.
-        # Save or process the file as needed
-        # For example, you can use the file's content to perform ingestion
-        
-        # Example: Print file information
-        print(f"File Name: {file.filename}")
-
-    # Return a response indicating success if needed
-    return {"message": "Logs ingested successfully"}
-
-
 class LogIngestor:
     def __init__(self, directory):
         self.directory = directory
