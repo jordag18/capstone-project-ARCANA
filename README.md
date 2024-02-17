@@ -39,6 +39,7 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install mongoengine
 
     uvicorn main:app --reload
+    pipenv shell
 
 ###### Node.Js Packages and Modules Dependencies:
 
