@@ -38,6 +38,8 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install Pillow
     pip install mongoengine
 
+    uvicorn main:app --reload
+
 ###### Node.Js Packages and Modules Dependencies:
 
 To build and run the react you need to change directory to `~/frontend/arcana`
