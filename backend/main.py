@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import File, FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import (
     CORSMiddleware,
 )  # CORS = Cross Origin Resource Sharing
 from pymongo import MongoClient
 from model import Project
+#from log_ingestor import LogIngestor
+from typing import List
+
+
 
 # app object
 app = FastAPI()
@@ -34,6 +38,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.post("/api/ingestLogs")
+async def ingest_logs(files: List[UploadFile]):
+    for file in files:
+        # Access file properties, e.g., file.filename, file.content_type, etc.
+        # Save or process the file as needed
+        # For example, you can use the file's content to perform ingestion
+        
+        # Example: Print file information
+        print(f"File Name: {file.filename}")
+
+    # Return a response indicating success if needed
+    return {"message": "Logs ingested successfully"}
 
 @app.get("/")
 def read_root():

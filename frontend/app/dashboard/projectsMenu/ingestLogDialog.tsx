@@ -1,24 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import axios from 'axios';
+
 
 
 const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectLocation }) => {
 
-    const [selectedFiles, setSelectedFiles] = useState([]);
-
+    const [files, setFiles] = useState<File[] | null>([]);
 
     const handleFileInputChange = (e) => {
-        const files = e.target.files;
-        if (files.length > 0) {
-            setSelectedFiles(Array.from(files));
-          // Get the first file (directory) selected by the user
-          const selectedDir = files[0].path || files[0].webkitRelativePath;
-          setProjectLocation(selectedDir);
-          // Handle the selected files (e.g., store them in state)
-          console.log('Selected Files:', Array.from(files).map((file) => file.name));
+        const newFiles = e.target.files;
+        const newFilesArray= Array.from(newFiles)
+
+        if (newFiles.length > 0) {
+          setFiles(newFilesArray.concat(files));
         }
       };
 
+      const handleIngestLogs = () => {
+        // Create a FormData object to send files
+        const formData = new FormData();
+
+        // Append each file to the FormData object
+        files.forEach((file, index) => {
+            formData.append(`files[${index}]`, file);
+        });
+
+        // Make the API call using axios
+        axios.post("/api/ingestLogs", formData)
+            .then(response => {
+                console.log(response.data);
+                // Handle success, if needed
+            })
+            .catch(error => {
+                console.error(error);
+                // Handle error, if needed
+            });
+    };
+
+      useEffect(() => {
+        console.log(files); // Access the updated value here
+      }, [files]); // Specify "value" as the dependency
+      
 
   return (
     <Modal show={show} onHide={() => handleCloseDialog('ingestLog')}>
@@ -56,7 +79,7 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
         <Button variant="secondary" onClick={() => handleCloseDialog('ingestLog')}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={() => handleCloseDialog('ingestLog')}>
+        <Button variant="primary" onClick={() => { handleIngestLogs(); handleCloseDialog('ingestLog'); }}>
           Ingest Logs
         </Button>
       </Modal.Footer>
