@@ -16,7 +16,8 @@ export function NavBar () {
           className="p-1"
           src="/devcom.png"
           height={ 100 }
-          width={ 100 } alt={ "logo image of DAC CEAD organization." } />
+          width={ 100 } 
+          alt={ "logo image of DAC CEAD organization." } />
         <Navbar.Brand
           className="mx-auto mr-auto p-2"
           style={ { fontSize: "24px", textDecoration: "underline" } }
