@@ -38,19 +38,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/ingestLogs")
-async def ingest_logs(files: List[UploadFile]):
-    for file in files:
-        # Access file properties, e.g., file.filename, file.content_type, etc.
-        # Save or process the file as needed
-        # For example, you can use the file's content to perform ingestion
-        
-        # Example: Print file information
-        print(f"File Name: {file.filename}")
-
-    # Return a response indicating success if needed
-    return {"message": "Logs ingested successfully"}
-
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ARCANA API"}
