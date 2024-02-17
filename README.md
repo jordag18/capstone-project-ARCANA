@@ -32,7 +32,8 @@ The system intends to provide a means of conducting the analysis of events that 
 #### Packages and Dependencies
 
 ###### Python Library Dependencies:
-    pip install pymongo fastapi
+    pip install pymongo 
+    pip install fastapi
     pip install "uvicorn[standard]"
     pip install Pillow
     pip install mongoengine
