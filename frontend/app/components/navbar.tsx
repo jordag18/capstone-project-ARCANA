@@ -17,7 +17,7 @@ export function NavBar () {
           className="p-0 logo-margin"
           src="/devcom_arl.png"
           height={ 100 }
-          width={ 150 } 
+          width={ 200 } 
           alt={ "logo image of DAC CEAD organization." } />
         <Navbar.Brand
           href="/"

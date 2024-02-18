@@ -30,10 +30,14 @@
 }
 
 .navbar-brand {
-    margin-left: 4rem;
+    margin-left: 8rem;
     margin-right: 4rem;
-    font-size: 32px;
+    font-size: 38px;
     color: #ffffff;
+}
+
+.navbar-brand:hover {
+    color: #525252;
 }
 
 .navbar-toggle {
@@ -42,5 +46,5 @@
 }
 
 .logo-margin {
-    margin-left: 22rem;
+    margin-left: 12rem;
 }
