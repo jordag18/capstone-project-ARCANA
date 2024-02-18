@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Footer } from "./components/footer";
 import StartUpPrompt from "./components/startup-prompt";
 import NavBar from "./components/navbar";
+import './globals.css';
 //import ThemeHandler from "./util/themeHandler";
 
 export default function Home() {
