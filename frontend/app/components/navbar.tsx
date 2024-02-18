@@ -14,9 +14,9 @@ export function NavBar () {
     <>
       <Navbar>
         <Image
-          className="p-0"
+          className="p-0 logo-margin"
           src="/devcom_arl.png"
-          height={ 150 }
+          height={ 100 }
           width={ 150 } 
           alt={ "logo image of DAC CEAD organization." } />
         <Navbar.Brand
@@ -28,7 +28,7 @@ export function NavBar () {
           aria-controls="responsive-navbar-nav"
           className="justify-items-center"
         />
-        <Navbar.Collapse id="responsive-navbar-nav">
+        <Navbar.Collapse className="navbar-collapse" id="responsive-navbar-nav">
           <Nav>
             <Nav.Link href="/" className="mx-md-2">
               <HouseDoorFill className="mb-1" /> <strong>Home</strong>

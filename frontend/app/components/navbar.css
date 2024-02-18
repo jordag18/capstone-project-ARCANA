@@ -1,7 +1,7 @@
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     color: #292929;
     background-color: #000000;
 }
@@ -14,7 +14,7 @@
 .nav-link {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     font-size: 20px;
     margin: 0.5rem 1rem;
     color: #ffffff;
@@ -30,11 +30,17 @@
 }
 
 .navbar-brand {
-    font-size: 24px;
-    color: #000;
+    margin-left: 4rem;
+    margin-right: 4rem;
+    font-size: 32px;
+    color: #ffffff;
 }
 
 .navbar-toggle {
   border: none;
   background: transparent;
+}
+
+.logo-margin {
+    margin-left: 22rem;
 }
