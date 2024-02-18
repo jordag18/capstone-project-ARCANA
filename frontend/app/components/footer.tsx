@@ -9,7 +9,7 @@ export const Footer = () => {
   return (
     <footer
       className="p-2 mx-auto fixed-bottom"
-      style={{ backgroundColor: "#71767a" }}>
+      style={{ backgroundColor: "black" }}>
       <div className="container-fluid mx-auto">
         <Row className="h-full align-items-center">
           {/* Left Column: Align content to the start and bottom */}
