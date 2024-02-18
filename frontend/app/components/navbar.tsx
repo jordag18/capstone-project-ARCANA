@@ -7,6 +7,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import ActiveAnalyst from "../ui/activeAnalyst";
 import Image from "next/image";
+import './navbar.css';
 
 export function NavBar () {
   return (
