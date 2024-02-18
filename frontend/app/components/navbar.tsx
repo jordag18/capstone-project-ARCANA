@@ -2,7 +2,7 @@
  * Renders the navigation bar component.
  * @returns The rendered navigation bar component.
  */
-import { Diagram3, UiRadios, Folder2, CloudArrowUp, HouseDoorFill, GearWideConnected } from "react-bootstrap-icons";
+import { Diagram3, UiRadios, Folder2, CloudArrowUp, GearWideConnected } from "react-bootstrap-icons";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import ActiveAnalyst from "../ui/activeAnalyst";
@@ -30,27 +30,25 @@ export function NavBar () {
         />
         <Navbar.Collapse className="navbar-collapse" id="responsive-navbar-nav">
           <Nav>
-            <Nav.Link href="/" className="mx-md-2">
-              <HouseDoorFill className="mb-1" /> <strong>Home</strong>
-            </Nav.Link>
             <Nav.Link href="/dashboard/projectsMenu" className="mx-md-2">
-              <Folder2 className="mb-0" /> <strong>Manage Projects</strong>
+              <Folder2 className="mb-1 icon-large" /> <strong>Manage Projects</strong>
             </Nav.Link>
             <Nav.Link href="/dashboard/syncMenu" className="mx-md-2">
-              <CloudArrowUp className="mb-0" /> <strong>Sync Projects</strong>
+              <CloudArrowUp className="mb-1 icon-large" /> <strong>Sync Projects</strong>
             </Nav.Link>
             <Nav.Link href="/dashboard/eventMenu" className="mx-md-2">
-              <UiRadios className="mb-1" /> <strong>Manage Events</strong>
+              <UiRadios className="mb-1 icon-large" /> <strong>Manage Events</strong>
             </Nav.Link>
             <Nav.Link href="/dashboard/eventGraphMenu" className="mx-md-2">
-              <Diagram3 className="mb-0" /> <strong>Manage Event Graphs</strong>
+              <Diagram3 className="mb-1 icon-large" /> <strong>Manage Graphs</strong>
             </Nav.Link>
             <Nav.Link href="/dashboard/systemMenu" className="mx-md-2">
-              <GearWideConnected className="mb-1" /> <strong>Manage System Settings</strong>
+              <GearWideConnected className="mb-1 icon-large" /> <strong>System Settings</strong>
             </Nav.Link>
+            <Navbar.Text className="navbar-text">Active Analyst: </Navbar.Text>
+            <ActiveAnalyst />
           </Nav>
         </Navbar.Collapse>
-        <ActiveAnalyst />
       </Navbar>
     </>
   );

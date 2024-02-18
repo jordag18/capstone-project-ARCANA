@@ -6,6 +6,15 @@
     background-color: #000000;
 }
 
+.navbar-text {
+    display: flex;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4rem;
+    color: white;
+}
+
 .nav {
     justify-content: center;
     align-items: center;
@@ -30,6 +39,7 @@
 }
 
 .navbar-brand {
+    text-decoration: underline;
     margin-left: 8rem;
     margin-right: 4rem;
     font-size: 38px;
@@ -47,4 +57,8 @@
 
 .logo-margin {
     margin-left: 12rem;
+}
+
+.icon-large {
+    font-size: 30px;
 }
