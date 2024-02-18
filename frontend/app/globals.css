@@ -7,6 +7,7 @@
     align-items: center;
     justify-content: center;
     color: #292929;
+    background-color: #818181;
 }
 
 .nav-link {
@@ -14,7 +15,7 @@
     align-items: center;
     justify-content: center;
     margin: 0.5rem 1rem;
-    color: #292929;
+    color: #ffffff;
     transition: color 0.15s ease-in-out
 }
 

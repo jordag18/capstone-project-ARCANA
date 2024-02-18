@@ -11,7 +11,7 @@ import Image from "next/image";
 export function NavBar () {
   return (
     <>
-      <Navbar collapseOnSelect className="bg-body-tertiary align-middle justify-items-center">
+      <Navbar collapseOnSelect className="align-middle justify-items-center">
         <Image
           className="p-1"
           src="/devcom.png"
