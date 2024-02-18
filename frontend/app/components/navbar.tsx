@@ -11,15 +11,14 @@ import Image from "next/image";
 export function NavBar () {
   return (
     <>
-      <Navbar collapseOnSelect className="align-middle justify-items-center">
+      <Navbar>
         <Image
-          className="p-1"
-          src="/devcom.png"
-          height={ 100 }
-          width={ 100 } 
+          className="p-0"
+          src="/devcom_arl.png"
+          height={ 150 }
+          width={ 150 } 
           alt={ "logo image of DAC CEAD organization." } />
         <Navbar.Brand
-          className="mx-auto mr-auto p-2"
           href="/"
         >
           <strong>ARCANA</strong>
@@ -29,7 +28,7 @@ export function NavBar () {
           className="justify-items-center"
         />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mx-auto me-auto mb-auto mr-auto justify-center flex-column flex-md-row" style={ { fontSize: "18px" } }>
+          <Nav>
             <Nav.Link href="/" className="mx-md-2">
               <HouseDoorFill className="mb-1" /> <strong>Home</strong>
             </Nav.Link>
@@ -50,7 +49,6 @@ export function NavBar () {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-
         <ActiveAnalyst />
       </Navbar>
     </>
