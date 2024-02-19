@@ -8,6 +8,8 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
 
     const [files, setFiles] = useState<File[] | null>([]);
 
+    const [filesDir, setFilesDir] = useState('');
+
     const handleFileInputChange = (e) => {
         const newFiles = e.target.files;
         const newFilesArray= Array.from(newFiles)
