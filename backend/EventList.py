@@ -1,7 +1,12 @@
+from EventRepresenter import EventRepresenter
+
 class EventList:
     def __init__(self):
-        # Initialize an empty list of EventRepresenters
-        self.events = []
+        self.events = list()
+
+    def refresh(self):
+        """Refresh the list of events from the database."""
+        self.events = list(EventRepresenter.objects.all())
 
     def addEvent(self, event):
         # Add the given EventRepresenter to the list
