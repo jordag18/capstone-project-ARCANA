@@ -1,6 +1,5 @@
 import datetime
-from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField
-
+from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField,ImageField
 
 
 class EventRepresenter(Document):
@@ -9,7 +8,7 @@ class EventRepresenter(Document):
     vector_id = StringField(required=True)
     description = StringField(required=True)
     data_source = StringField(required=True)
-    icon = StringField(default="TO BE IMPLEMENTED")
+    icon = ImageField()
     action_title = StringField(required=True)
     last_modified = DateTimeField(default=datetime.datetime.now)
     source_host = StringField(default="")

@@ -28,7 +28,14 @@ class FileHandler:
                         log_files.append(file_path)
 
         return log_files
-
+    
+     #uploads is the directory the files are ingested into from the frontend, temp name
+    def save_file(uploads,file):
+        # get files from upload folder
+        file_path = f"{uploads}/{file.filename}"
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())
+        return file_path
     
     def getFileType(self, file_name):
         file_type = file_name.split(".")[-1]
