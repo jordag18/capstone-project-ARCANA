@@ -1,17 +1,18 @@
 from FileHandler import FileHandler
 from EventRepresenter import EventRepresenter
 from EventsManager import EventsManager
+from DatabaseManager import create_event_representer
 from datetime import datetime
 import csv
 from PIL import Image
 
 
 class LogIngestor:
-    def __init__(self, directory):
+    def __init__(self, directory, event_manager):
         self.directory = directory
         self.errors = []
         self.newFilesIngested = []
-        self.eventManager = EventsManager()
+        self.event_manager = event_manager
 
     def ingestLogs(self):
         fileHandler = FileHandler(self.directory)
@@ -35,7 +36,6 @@ class LogIngestor:
             with open(fileName,'r') as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-
                     if row['source address'].startswith('*'): continue
                     timestamp = row['Timestamp']
                     source_address = row['source address']
@@ -57,7 +57,6 @@ class LogIngestor:
                 reader = csv.DictReader(file)
                 try:
                     for row in reader:
-                        event = EventRepresenter
                         isMalformed = False #9
                         #fields in csv file, present in table 3.2.2 - 8 #1-8
                         initials = row['initials']
@@ -68,12 +67,15 @@ class LogIngestor:
                         posture = None #not in csv file
                         description = row['description']
                         vectorID = row['vectorId']
+                        icon = ""
+                        actionTitle = ""
+
                         dataSource = fileName #9
 
                         dateCreated = self.parse_timestamp(row['dateCreated'])
                         lastModified = self.parse_timestamp(row['lastModified'])
-
-                        match(team):
+                        #
+                        match team:
                             case "Blue":
                                 icon = ("../Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
@@ -83,6 +85,8 @@ class LogIngestor:
                             case "White":
                                 icon = ("../Icons/WhitCard.png")
                                 actionTitle = "White Card"
+                            case _:
+                                actionTitle = "Unknown"
 
                         fields = [dateCreated,description,dataSource,targetHostList,team,
                                     location,initials , vectorID,lastModified]
@@ -91,13 +95,13 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
-
-                        event = EventRepresenter(
+                        event = create_event_representer(
                             initials=initials,
                             team=team,
                             vector_id=vectorID,
                             description=description,
                             data_source=dataSource,
+                            icon= icon,  # placeholder for the icon field, needs to match the string field type
                             action_title=actionTitle,
                             last_modified=lastModified,
                             source_host=sourceHost,
@@ -106,13 +110,12 @@ class LogIngestor:
                             posture=posture,
                             timestamp=dateCreated,
                             is_malformed=isMalformed
-                            
                         )
                         event.icon.replace(open(icon,'rb'),filname= icon)
                         event.save()
 
                         #print(event.get_initials()) #testing
-                    self.eventManager.addEvent(event)
+                        self.event_manager.event_representer_list.addEvent(event)
                     #print(self.eventManager.eventList.events) #testing
 
                 except Exception as e:
