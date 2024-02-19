@@ -108,7 +108,7 @@ class LogIngestor:
                             is_malformed=isMalformed
                             
                         )
-                        event.icon.replace(open(icon,'rb'),filname="icon")
+                        event.icon.replace(open(icon,'rb'),filname= icon)
                         event.save()
 
                         #print(event.get_initials()) #testing
