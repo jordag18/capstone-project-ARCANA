@@ -47,10 +47,9 @@ class LogIngestor:
             self.errors.append(e)
 
     def parse_timestamp(self,timestamp_str):
-        try:
-            return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
-        except ValueError:
-            return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M")    
+        if len(timestamp_str.split(':')) < 3: 
+            timestamp_str += ':00'
+        return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
               
     def parseWhiteCSVFile(self,fileName):
         try:
@@ -70,20 +69,19 @@ class LogIngestor:
                         description = row['description']
                         vectorID = row['vectorId']
                         dataSource = fileName #9
-                        if row['dateCreated'].strip():
-                            dateCreated = self.parse_timestamp(row['dateCreated'])
-                        if row['lastModified'].strip():
-                            lastModified = self.parse_timestamp(row['lastModified'])
+
+                        dateCreated = self.parse_timestamp(row['dateCreated'])
+                        lastModified = self.parse_timestamp(row['lastModified'])
 
                         match(team):
                             case "Blue":
-                                icon = Image.open("../Icons/BlueTeam_Activity.png")
+                                icon = ("../Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = Image.open('../Icons/RedTeam_Activity.png')
+                                icon = ('../Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
                             case "White":
-                                icon = Image.open("../Icons/WhitCard.png")
+                                icon = ("../Icons/WhitCard.png")
                                 actionTitle = "White Card"
 
                         fields = [dateCreated,description,dataSource,targetHostList,team,
@@ -93,13 +91,13 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
+
                         event = EventRepresenter(
                             initials=initials,
                             team=team,
                             vector_id=vectorID,
                             description=description,
                             data_source=dataSource,
-                            icon="",  # placeholder for the icon field, needs to match the string field type
                             action_title=actionTitle,
                             last_modified=lastModified,
                             source_host=sourceHost,
@@ -110,6 +108,9 @@ class LogIngestor:
                             is_malformed=isMalformed
                             
                         )
+                        event.icon.replace(open(icon,'rb'),filname="icon")
+                        event.save()
+
                         #print(event.get_initials()) #testing
                     self.eventManager.addEvent(event)
                     #print(self.eventManager.eventList.events) #testing
