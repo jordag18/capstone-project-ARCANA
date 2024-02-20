@@ -58,6 +58,15 @@ const ManageProjectsPage = () => {
     }
   };
 
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // Get the first file (directory) selected by the user
+      const selectedDir = files[0].path || files[0].webkitRelativePath;
+      setProjectLocation(selectedDir);
+    }
+  };
+  
 
   return (
     <div>
@@ -170,6 +179,7 @@ const ManageProjectsPage = () => {
             show={showIngestLogDialog}
             handleCloseDialog={handleCloseDialog}
             setProjectLocation={setProjectLocation}
+            handleFileInputChange={handleFileInputChange}
           />
 
 

@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from model import Project
 #from log_ingestor import LogIngestor
 from typing import List
+import uvicorn
 
 
 
@@ -38,6 +39,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to ARCANA API"}
+
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile]):
     for file in files:
@@ -50,10 +56,6 @@ async def ingest_logs(files: List[UploadFile]):
 
     # Return a response indicating success if needed
     return {"message": "Logs ingested successfully"}
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to ARCANA API"}
 
 
 @app.get("/api/project")
@@ -131,6 +133,9 @@ def get_analyst_initials():
     #for initials in analyst_collection.find():
         #initials_list.append(initials["initials"])
     return {"analyst_initials": initials_list}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #

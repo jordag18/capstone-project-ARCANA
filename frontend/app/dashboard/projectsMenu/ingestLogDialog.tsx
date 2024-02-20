@@ -1,5 +1,5 @@
 import React, { useState , useEffect} from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, CloseButton } from 'react-bootstrap';
 import axios from 'axios';
 
 
@@ -17,6 +17,10 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
         if (newFiles.length > 0) {
           setFiles(newFilesArray.concat(files));
         }
+      };
+
+      const handleRemoveFile = (indexToRemove) => {
+        setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
       };
 
       const handleIngestLogs = () => {
@@ -75,6 +79,21 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
               multiple
             />
           </label>
+        </div>
+        <div>
+          {files.length > 0 && (
+            <div>
+              <p>Selected Files:</p>
+              <ul>
+                {files.map((file, index) => (
+                  <li key={index}>
+                  {file.name}
+                  <CloseButton className='remove-btn' onClick={() => handleRemoveFile(index)}></CloseButton>
+                </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer>

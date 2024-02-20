@@ -5,12 +5,6 @@ import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/esm/Row";
-import { Folder2 } from "react-bootstrap-icons";
-import Stack from "react-bootstrap/esm/Stack";
-import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
-
-
 //import ThemeHandler from "@/app/util/themeHandler";
 //import FontSizeHandler from "@/app/lib/fontSizeHandler";
 
@@ -58,54 +52,37 @@ const ManageProjectsPage = () => {
     }
   };
 
-
   return (
     <div>
       {/* //<ThemeHandler /> */}
       <NavBar />
-      <div
-        className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto "
-        style={{ height: "75%", width: "100%" }}>
-        <Container className="flex justify-content-center align-items-center border mx-auto p-3 rounded">
-          <div className="justify-content-space-between">
-            <Row className="justify-content-center align-items-center p-2 mx-auto">
-              <div className="d-flex align-items-center p-2">
-                {" "}
-                {/* Changed class to 'd-flex' for inline display */}
-                <Folder2 size={80} />
-                <h2 className="mx-3 p-3 align-middle">Manage Projects</h2>
-              </div>
-            </Row>
-          </div>
-          <div className="justify-content-end">
-            <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
+      <div className="flex min-h-screen flex-col items-center justify-between p-24">
+        <Container
+          className="d-flex flex-column justify-content-between"
+          style={{ width: "800px", height: "500px" }}>
+          <div>
+            <Container className="d-flex justify-content-between align-items-center">
+              <h1>Manage Projects</h1>
+              <Button variant="primary" onClick={() => handleOpenDialog('createProject')}>+ Create Project</Button>
+            </Container>
           </div>
 
-          <Stack gap={3} className="p-4 mx-8 d-flex align-self-center justify-content-sm-start">
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project A
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project B
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project C
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project D
-            </Button>
-        </Stack>
+          <div>
+            <ul>
+              <li>Project A</li>
+              <li>Project B</li>
+              <li>Project C</li>
+            </ul>
+          </div>
 
           <div>
             <Container className="d-flex justify-content-between">
+              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
               <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
               <Button variant="primary">Open Project</Button>
             </Container>
           </div>
-
+        
 
           {/* Create Project Dialog */}
           <Modal show={showCreateProjectDialog} onHide={() => handleCloseDialog('createProject')}>
@@ -158,31 +135,51 @@ const ManageProjectsPage = () => {
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
-              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
               <Button variant="primary" onClick={() => handleCloseDialog('createProject')}>Create Project</Button>
+              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
+
             </Modal.Footer>
           </Modal>
 
-
           {/* Ingest Log Dialog */}
-          <IngestLogDialog
-            show={showIngestLogDialog}
-            handleCloseDialog={handleCloseDialog}
-            setProjectLocation={setProjectLocation}
-          />
-
+          <Modal show={showIngestLogDialog} onHide={() => handleCloseDialog('ingestLog')}>
+            <Modal.Header closeButton>
+              <Modal.Title>Ingest Logs</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>
+                <p>Select a directory to ingest logs from.</p>
+              </div>
+              <div>
+                <p>Log Directory</p>
+              </div>
+              <div className="mb-3 d-flex">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="ex. /Location/folder"
+                  value={projectLocation}
+                  onChange={(e) => setProjectLocation(e.target.value)}
+                />
+                <Button variant="primary">Browse</Button>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => handleCloseDialog('ingestLog')}>Cancel</Button>
+              <Button variant="primary" onClick={() => handleCloseDialog('ingestLog')}>Ingest Logs</Button>
+            </Modal.Footer>
+          </Modal>
 
           {/* Delete Project Dialog */}
           <Modal show={showDeleteProjectDialog} onHide={() => handleCloseDialog('deleteProject')}>
             <Modal.Header closeButton>
             </Modal.Header>
-            <Modal.Body style={{ textAlign: 'center' }}>
-              <h3> Are you sure you want to delete? </h3>
+            <Modal.Body>
+              <h1>Are you sure you want to delete ?</h1>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => handleCloseDialog('deleteProject')}>Cancel</Button>
-              <Button variant="danger" onClick={() => handleCloseDialog('deleteProject')}>Delete</Button>
+              <Button variant="primary" onClick={() => handleCloseDialog('deleteProject')}>Delete</Button>
             </Modal.Footer>
           </Modal>
 
