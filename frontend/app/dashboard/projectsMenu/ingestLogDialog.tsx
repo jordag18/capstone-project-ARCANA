@@ -23,27 +23,26 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
         setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
       };
 
-      const handleIngestLogs = () => {
-        // Create a FormData object to send files
-        const formData = new FormData();
-
-        // Append each file to the FormData object
-        files.forEach((file, index) => {
-            formData.append(`files[${index}]`, file);
-        });
-
-        // Make the API call using axios
-        axios.post("/api/ingestLogs", formData)
-            .then(response => {
-                console.log(response.data);
-                // Handle success, if needed
-            })
-            .catch(error => {
-                console.error(error);
-                // Handle error, if needed
+      const handleIngestLogs = async () => {
+        // Create an array of file names
+        const fileNames = files.map(file => file.name);
+    
+        try {
+            // Make the API call using axios
+            const response = await axios.post('http://127.0.0.1:8000/api/ingestLogs', { files: fileNames }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
+    
+            console.log(response.data);
+            // Handle success, if needed
+        } catch (error) {
+            console.error(error);
+            // Handle error, if needed
+        }
     };
-
+    
       useEffect(() => {
         console.log(files); // Access the updated value here
       }, [files]); // Specify "value" as the dependency
