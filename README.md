@@ -38,8 +38,13 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install Pillow
     pip install mongoengine
 
+###### Then run the following commands
+
+***Start the backend***
+
+    cd backend
+    python main.py
     uvicorn main:app --reload
-    pipenv shell
 
 ###### Node.Js Packages and Modules Dependencies:
 
@@ -66,6 +71,8 @@ To build and run the react you need to change directory to `~/frontend/arcana`
     npm install react-dom
 
 ##### Getting Started
+
+https://fastapi.tiangolo.com/
 
 First, run the development server:
 

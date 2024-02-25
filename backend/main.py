@@ -1,7 +1,11 @@
-from fastapi import File, FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException
+from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
 )  # CORS = Cross Origin Resource Sharing
+from pydantic import BaseModel
+from datetime import datetime
+from typing import List, Optional
 from pymongo import MongoClient
 from model import Project
 #from log_ingestor import LogIngestor
@@ -13,9 +17,34 @@ from pydantic import BaseModel
 
 # app object
 app = FastAPI()
-client = MongoClient("mongodb://localhost:27017/")
-db = client["ARCANA"]
+#client = MongoClient("mongodb://localhost:27017/")
+#b = client["ARCANA"]
+db_manager = DatabaseManager(db_name="ARCANA")
 
+class Event(BaseModel):
+    location: str
+    initials: str
+    team: str
+    vector_id: str
+    description: str
+    data_source: str
+    action_title: str
+    last_modified: datetime
+    # 
+    #icon: Optional[str] = None
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = None
+    timestamp: datetime
+    is_malformed: bool
+
+class Project(BaseModel):  # Define your project model for API validation
+    name: str
+    start_date: datetime
+    end_date: datetime
+    location: str 
+    initials: str 
+    events: List[Event] = []
 
 from database import (
     fetch_one_project,
@@ -25,8 +54,8 @@ from database import (
     remove_project,
 )
 
-collection = db.list_collection_names()
-print(f"{collection}")
+#collection = db.list_collection_names()
+#print(f"{collection}")
 
 # analyst_collection = db["analyst_initials"]
 # print(analyst_collection)
@@ -62,6 +91,13 @@ async def get_project():
     response = await fetch_all_projects()
     return response
 
+@app.get("/api/projects", response_model=List[Project])
+async def get_all_projects():
+    try:
+        projects = db_manager.get_all_projects()
+        return projects
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/project{project_name}", response_model=Project)
 async def get_project_by_name(project_name):

@@ -1,16 +1,15 @@
-from FileHandler import FileHandler
-from EventRepresenter import EventRepresenter
-from EventsManager import EventsManager
+from file_handler import FileHandler
+from data_services import create_event_representer
 from datetime import datetime
 import csv
-from PIL import Image
+#from PIL import Image
 
 class LogIngestor:
-    def __init__(self, directory):
+    def __init__(self, directory, event_manager):
         self.directory = directory
         self.errors = []
         self.newFilesIngested = []
-        self.eventManager = EventsManager()
+        self.event_manager = event_manager
 
     def ingestLogs(self):
         fileHandler = FileHandler(self.directory)
@@ -35,47 +34,59 @@ class LogIngestor:
                 reader = csv.DictReader(file)
                 for row in reader:
                     if row['source address'].startswith('*'): continue
-                    timestamp = row['timestamp']
+                    timestamp = row['Timestamp']
                     source_address = row['source address']
                     target_address = row['destination address'].split(',') if row['destination address'] else []
                     actions = row['actions']
                     description = row['comments']
         except Exception as e:
+            print("red csv files error here")
             self.errors.append(e)
-                
+
+    def parse_timestamp(self,timestamp_str):
+        if len(timestamp_str.split(':')) < 3: 
+            timestamp_str += ':00'
+        return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
+              
     def parseWhiteCSVFile(self,fileName):
         try:
             with open(fileName, 'r') as file:
                 reader = csv.DictReader(file)
                 try:
                     for row in reader:
-                        event = EventRepresenter
                         isMalformed = False #9
                         #fields in csv file, present in table 3.2.2 - 8 #1-8
                         initials = row['initials']
-                        team = row['team']
-                        sourceHost = row['sourceHost']
-                        targetHostList = row['targetHost'].split(',') if row['targetHost'] else []
+                        team = row['team']                        
+                        sourceHost = row['sourceHost']                        
+                        targetHostList = row['targetHost'].split(',') if row['targetHost'] else []                       
                         location = row['location']
                         posture = None #not in csv file
                         description = row['description']
                         vectorID = row['vectorId']
+                        icon = None
+                        actionTitle = ""
+
                         dataSource = fileName #9
-                        
-                        dateCreated = datetime.strptime(row['dateCreated'], "%m/%d/%Y %H:%M:%S")
-                        lastModified = datetime.strptime(row['lastModified'], "%m/%d/%Y %H:%M:%S")
-                        
-                        match(team):
+
+                        dateCreated = self.parse_timestamp(row['dateCreated'])
+                        lastModified = self.parse_timestamp(row['lastModified'])
+                
+                        #
+                        match team:
                             case "Blue":
-                                icon = Image.open("Icons/BlueTeam_Activity.png")
+                                #icon library not implemented 
+                                #icon = ("../Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = Image.open('Icons/RedTeam_Activity.png')
+                                #icon = ('../Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
-                            case "White",_:
-                                icon = Image.open("Icons/WhitCard.png")
+                            case "White":
+                                #icon = ("../Icons/WhitCard.png")
                                 actionTitle = "White Card"
-                                
+                            case _:
+                                actionTitle = "Unknown"
+
                         fields = [dateCreated,description,dataSource,targetHostList,team,
                                     location,initials , vectorID,lastModified]
                         #check if the file has all the attributes
@@ -83,13 +94,32 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
-                      
-                        event = EventRepresenter(initials, team, vectorID, description, dataSource, 
-                                                                icon, lastModified, actionTitle, sourceHost, targetHostList, location, posture, dateCreated,
-                                                                isMalformed) 
-                        self.eventManager.addEvent(event)
+                        
+                        event = create_event_representer(
+                            initials=initials,
+                            team=team,
+                            vector_id=vectorID,
+                            description=description,
+                            data_source=dataSource,
+                            icon= icon,  # placeholder for the icon field, needs to match the string field type
+                            action_title=actionTitle,
+                            last_modified=lastModified,
+                            source_host=sourceHost,
+                            target_host_list=targetHostList,
+                            location=location,
+                            posture=posture,
+                            timestamp=dateCreated,
+                            is_malformed=isMalformed
+                        )
+                        #event.icon.replace(open(icon,'rb'),filname= icon)
+
+                        #print(event.get_initials()) #testing
+                        self.event_manager.event_representer_list.addEvent(event)
+                    #print(self.eventManager.eventList.events) #testing
+
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
+                        print("Error:", e)
                         self.errors.append(e)
                         event.isMalformed = True
         except Exception as e:

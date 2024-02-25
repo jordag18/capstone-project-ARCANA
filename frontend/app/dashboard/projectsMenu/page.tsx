@@ -9,6 +9,7 @@ import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
 import Stack from "react-bootstrap/esm/Stack";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
+import ProjectsList from "@/app/components/ProjectList";
 
 
 //import ThemeHandler from "@/app/util/themeHandler";
@@ -78,6 +79,7 @@ const ManageProjectsPage = () => {
             </Row>
           </div>
           <div className="justify-content-end">
+          <ProjectsList />
             <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
           </div>
 
