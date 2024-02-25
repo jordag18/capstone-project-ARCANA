@@ -9,7 +9,6 @@ import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
 import Stack from "react-bootstrap/esm/Stack";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
-import ProjectsList from "@/app/components/ProjectList";
 
 
 //import ThemeHandler from "@/app/util/themeHandler";
@@ -59,6 +58,15 @@ const ManageProjectsPage = () => {
     }
   };
 
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // Get the first file (directory) selected by the user
+      const selectedDir = files[0].path || files[0].webkitRelativePath;
+      setProjectLocation(selectedDir);
+    }
+  };
+  
 
   return (
     <div>
@@ -79,7 +87,6 @@ const ManageProjectsPage = () => {
             </Row>
           </div>
           <div className="justify-content-end">
-          <ProjectsList />
             <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
           </div>
 
@@ -172,6 +179,7 @@ const ManageProjectsPage = () => {
             show={showIngestLogDialog}
             handleCloseDialog={handleCloseDialog}
             setProjectLocation={setProjectLocation}
+            handleFileInputChange={handleFileInputChange}
           />
 
 

@@ -8,6 +8,12 @@ from datetime import datetime
 from typing import List, Optional
 from pymongo import MongoClient
 from model import Project
+#from log_ingestor import LogIngestor
+from typing import List
+import uvicorn
+from pydantic import BaseModel
+
+
 
 # app object
 app = FastAPI()
@@ -66,8 +72,18 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to ARCANA API"}
+    return {"message": "Welcome to ARCANA APIII"}
 
+class IngestPayload(BaseModel):
+    files: List[str]
+
+@app.post("/api/ingestLogs", response_model=dict)
+async def ingest_logs(payload: IngestPayload):
+    for file_name in payload.files:
+        print(f"File Name: {file_name}")
+
+    # Return a response indicating success if needed
+    return {"message": "Logs ingested successfully"}
 
 @app.get("/api/project")
 async def get_project():
@@ -151,6 +167,9 @@ def get_analyst_initials():
     #for initials in analyst_collection.find():
         #initials_list.append(initials["initials"])
     return {"analyst_initials": initials_list}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=5001, log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #
