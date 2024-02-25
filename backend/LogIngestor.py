@@ -5,7 +5,6 @@ from datetime import datetime
 import csv
 from PIL import Image
 
-
 class LogIngestor:
     def __init__(self, directory):
         self.directory = directory
