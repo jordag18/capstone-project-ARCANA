@@ -1,6 +1,6 @@
-from LogIngestor import LogIngestor
-from EventRepresenter import EventRepresenter
-from EventsManager import EventsManager
+from log_ingestor import LogIngestor
+from event_representer import EventRepresenter
+from events_manager import EventsManager
 import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField
 
@@ -31,4 +31,29 @@ class ProjectRepresenter(Document):
             event.save()
             self.event_list.append(event)
         self.save()
+
+    def get_event_representers_info(self):
+        # Retrieve all information about each EventRepresenter within the project's event_list
+        event_representers_info = []
+        for event in self.event_list:
+            event_info = {
+                'location': event.location,
+                'initials': event.initials,
+                'team': event.team,
+                'vector_id': event.vector_id,
+                'description': event.description,
+                'data_source': event.data_source,
+                'action_title': event.action_title,
+                'last_modified': event.last_modified,
+                'icon': event.icon,
+                'source_host': event.source_host,
+                'target_host_list': event.target_host_list,
+                'posture': event.posture,
+                'timestamp': event.timestamp,
+                'is_malformed': event.is_malformed
+            }
+            event_representers_info.append(event_info)
+        return event_representers_info
+    
+
         

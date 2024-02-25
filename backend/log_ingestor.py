@@ -1,10 +1,8 @@
-from FileHandler import FileHandler
-from EventRepresenter import EventRepresenter
-from EventsManager import EventsManager
-from DatabaseManager import create_event_representer
+from file_handler import FileHandler
+from data_services import create_event_representer
 from datetime import datetime
 import csv
-from PIL import Image
+#from PIL import Image
 
 
 class LogIngestor:
@@ -67,23 +65,25 @@ class LogIngestor:
                         posture = None #not in csv file
                         description = row['description']
                         vectorID = row['vectorId']
-                        icon = ""
+                        icon = None
                         actionTitle = ""
 
                         dataSource = fileName #9
 
                         dateCreated = self.parse_timestamp(row['dateCreated'])
                         lastModified = self.parse_timestamp(row['lastModified'])
+                
                         #
                         match team:
                             case "Blue":
-                                icon = ("../Icons/BlueTeam_Activity.png")
+                                #icon library not implemented 
+                                #icon = ("../Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = ('../Icons/RedTeam_Activity.png')
+                                #icon = ('../Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
                             case "White":
-                                icon = ("../Icons/WhitCard.png")
+                                #icon = ("../Icons/WhitCard.png")
                                 actionTitle = "White Card"
                             case _:
                                 actionTitle = "Unknown"
@@ -95,6 +95,7 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
+                        
                         event = create_event_representer(
                             initials=initials,
                             team=team,
@@ -111,8 +112,7 @@ class LogIngestor:
                             timestamp=dateCreated,
                             is_malformed=isMalformed
                         )
-                        event.icon.replace(open(icon,'rb'),filname= icon)
-                        event.save()
+                        #event.icon.replace(open(icon,'rb'),filname= icon)
 
                         #print(event.get_initials()) #testing
                         self.event_manager.event_representer_list.addEvent(event)
@@ -120,6 +120,7 @@ class LogIngestor:
 
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
+                        print("Error:", e)
                         self.errors.append(e)
                         event.isMalformed = True
         except Exception as e:

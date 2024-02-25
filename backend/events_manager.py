@@ -1,5 +1,5 @@
-import EventRepresenter as EventRepresenter
-from EventList import EventList
+import event_representer as event_representer
+from event_list import EventList
 
 class EventsManager:
     '''def __init__(self):
@@ -11,4 +11,4 @@ class EventsManager:
 
     def load_events(self):
         # Assuming you want to pull all documents from the EventRepresenter collection
-        return list(EventRepresenter.objects.all())
+        return list(event_representer.objects.all())

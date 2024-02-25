@@ -1,5 +1,5 @@
-from ProjectList import ProjectList
-from ProjectRepresenter import ProjectRepresenter
+from project_list import ProjectList
+from project_representer import ProjectRepresenter
 from datetime import datetime
 
 class ProjectManager:
@@ -33,6 +33,8 @@ class ProjectManager:
             project.ingestLogsToProject(directory)
         else:
             print(f"Project with name {project_name} not found.")
+    
+
 
     
     
