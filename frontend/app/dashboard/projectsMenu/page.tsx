@@ -75,38 +75,25 @@ const ManageProjectsPage = () => {
                 {/* Changed class to 'd-flex' for inline display */}
                 <Folder2 size={80} />
                 <h2 className="mx-3 p-3 align-middle">Manage Projects</h2>
+                <Container className="d-flex justify-content-end">
+                  <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
+                </Container>
               </div>
             </Row>
           </div>
-          <div className="justify-content-end">
-          <ProjectsList />
+        {/* Original Open, Create, and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
+          <div>
             <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
           </div>
 
-          <Stack gap={3} className="p-4 mx-8 d-flex align-self-center justify-content-sm-start">
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project A
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project B
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project C
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project D
-            </Button>
-        </Stack>
-
+          {/* Original Open and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
           <div>
             <Container className="d-flex justify-content-between">
               <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
               <Button variant="primary">Open Project</Button>
             </Container>
           </div>
+        */}
 
 
           {/* Create Project Dialog */}
@@ -187,6 +174,9 @@ const ManageProjectsPage = () => {
               <Button variant="danger" onClick={() => handleCloseDialog('deleteProject')}>Delete</Button>
             </Modal.Footer>
           </Modal>
+          <div className="justify-content-end">
+          <ProjectsList />
+          </div>
 
         </Container>
       </div>

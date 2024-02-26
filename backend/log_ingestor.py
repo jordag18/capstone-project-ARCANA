@@ -72,17 +72,17 @@ class LogIngestor:
                         dateCreated = self.parse_timestamp(row['dateCreated'])
                         lastModified = self.parse_timestamp(row['lastModified'])
                 
-                        #
+                        
                         match team:
                             case "Blue":
                                 #icon library not implemented 
-                                #icon = ("../Icons/BlueTeam_Activity.png")
+                                icon = ("Icons/BlueTeam_Activity.png")
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                #icon = ('../Icons/RedTeam_Activity.png')
+                                icon = ('Icons/RedTeam_Activity.png')
                                 actionTitle = "Red Team Activity"
                             case "White":
-                                #icon = ("../Icons/WhitCard.png")
+                                icon = ("Icons/WhitCard.png")
                                 actionTitle = "White Card"
                             case _:
                                 actionTitle = "Unknown"
