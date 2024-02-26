@@ -44,10 +44,29 @@ const ProjectsList: React.FC = () => {
         setIsOpenDialogOpen(true);
     }
 
-    const handleConfirmDelete = () => {
-        setIsDialogOpen(false);
-        setSelectedProject(null);
-        // Here you would also call the API to delete the project and then refresh the list of projects
+    const handleConfirmDelete = async () => {
+        if (selectedProject) {
+            try {
+                const response = await fetch(`http://localhost:8000/api/deleteProject/${selectedProject.name}`, {
+                    method: 'DELETE'
+                });
+    
+                if (!response.ok) {
+                    // If the response status code is not okay, throw an error
+                    throw new Error('Failed to delete the project');
+                }
+    
+                // Assuming the DELETE was successful, remove the project from the state
+                setProjects(projects.filter(project => project.name !== selectedProject.name));
+                alert(`Successfully deleted ${selectedProject.name}`);
+    
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                alert('Error deleting project');
+            }
+        }
+        setIsDialogOpen(false);  // Close the dialog
+        setSelectedProject(null);  // Reset selected project
     };
 
     const handleConfirmOpen = () => {

@@ -85,11 +85,6 @@ async def ingest_logs(payload: IngestPayload):
     # Return a response indicating success if needed
     return {"message": "Logs ingested successfully"}
 
-@app.get("/api/project")
-async def get_project():
-    # Code to retrieve all projects from the database
-    response = await fetch_all_projects()
-    return response
 
 @app.get("/api/projects", response_model=List[Project])
 async def get_all_projects():
@@ -98,7 +93,8 @@ async def get_all_projects():
         return projects
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+    
+#FIXME not implemented fully
 @app.get("/api/project{project_name}", response_model=Project)
 async def get_project_by_name(project_name):
     response = await fetch_one_project(project_name)
@@ -108,6 +104,7 @@ async def get_project_by_name(project_name):
 
 
 # CRUD for Projects
+#FIXME not implemented fully
 @app.post("/api/project", response_model=Project)
 async def post_project(project:Project):
     # Code to add a new project to the database
@@ -116,7 +113,7 @@ async def post_project(project:Project):
         return response
     raise HTTPException(400, "Bad request")
 
-
+#FIXME not implemented fully
 @app.put("/api/project{project_name}/", response_model=Project)
 async def put_project(
     project_name: str,
@@ -132,9 +129,9 @@ async def put_project(
     raise HTTPException(404, f"No project found with the name {project_name}")
 
 
-@app.delete("/api/deleteProject{project_name}")
-async def delete_project(project_name):
-    response = await remove_project(project_name)
+@app.delete("/api/deleteProject/{project_name}")
+def delete_project(project_name: str):
+    response = db_manager.delete_project(project_name)
     if response:
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")

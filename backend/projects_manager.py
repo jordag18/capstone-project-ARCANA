@@ -18,7 +18,7 @@ class ProjectManager:
     def get_project_by_name(self, name):
         # Find a project by name
         for project in self.project_representer_list:
-            if project.name == name:
+            if project['name'] == name:
                 return project
         return None
 
