@@ -71,7 +71,6 @@ To build and run the react you need to change directory to `~/frontend/arcana`
     npm install react-dom
 
 ##### Getting Started
-
 https://fastapi.tiangolo.com/
 
 First, run the development server:
