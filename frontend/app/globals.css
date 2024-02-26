@@ -1,14 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.img {
-    height: 100px;
-    width: 100px;
-    padding: 1px;
-}
-
-.nav {
-    text-align: justify;
-    color: black;
-}
