@@ -41,7 +41,7 @@ class FileHandler:
     
     # saves files to the file handlers dir
     def save_file_in_directory(self,file:UploadFile):
-        with open(os.path.join(self.directory,file.filename),'a+') as new_file:
+        with open(os.path.join(self.directory,file.filename),'w+') as new_file:
             new_file.write(file.read(file.size))
 
     #grabs the files from the file handlers dir
