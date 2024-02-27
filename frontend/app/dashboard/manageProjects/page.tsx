@@ -5,8 +5,6 @@ import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-//import ThemeHandler from "@/app/util/themeHandler";
-//import FontSizeHandler from "@/app/lib/fontSizeHandler";
 import axios from 'axios'
 
 const ManageProjectsPage = () => {

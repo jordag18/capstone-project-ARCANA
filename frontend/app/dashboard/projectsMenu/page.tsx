@@ -60,6 +60,40 @@ const ManageProjectsPage = () => {
   };
 
 
+  const handleSubmit = async () => {
+    const projectData = {
+        name: projectName,
+        start_date: dateStart,
+        end_date: dateEnd,
+        location: projectLocation,
+        initials: initials
+    };
+
+    try {
+      console.log('Sending project data:', projectData);
+        const response = await fetch('http://localhost:8000/api/project/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(projectData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create the project');
+        }
+        const newProject = await response.json();
+        console.log('Successfully created project:', newProject);
+        // Close the modal and clear the form
+        handleCloseDialog('createProject');
+        // Optionally, refresh the list of projects or add the new project to the state
+    } catch (error) {
+        console.error('Error creating project:', error);
+        alert(`Error creating project: ${error.message}`);
+    }
+};
+
+
   return (
     <div>
       {/* //<ThemeHandler /> */}
@@ -122,14 +156,14 @@ const ManageProjectsPage = () => {
               </div>
               <div className="mb-3 d-flex">
                 <input
-                  type="text"
+                  type="date"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
                   value={dateStart}
                   onChange={(e) => setDateStart(e.target.value)}
                 />
                 <input
-                  type="text"
+                  type="date"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
                   value={dateEnd}
@@ -149,7 +183,7 @@ const ManageProjectsPage = () => {
             <Modal.Footer>
               <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
               <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
-              <Button variant="primary" onClick={() => handleCloseDialog('createProject')}>Create Project</Button>
+              <Button variant="primary" onClick={handleSubmit}>Create Project</Button>
             </Modal.Footer>
           </Modal>
 

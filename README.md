@@ -71,7 +71,6 @@ To build and run the react you need to change directory to `~/frontend/arcana`
     npm install react-dom
 
 ##### Getting Started
-
 https://fastapi.tiangolo.com/
 
 First, run the development server:
@@ -93,6 +92,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+
+###### Uvicorn Server:
+
+##### Getting Started
+
+First check the mongodb `localhost:27017` server is running by connecting through mongoCompass.
+
+Run the following command in a terminal within the path `~/backend` to begin 
+
+    python -m uvicorn main:app --reload
+
+Check that the uvicorn server is running on `http://127.0.0.1:8000`
+
+Uvicorn server should be running within the terminal and ready to recieve api calls from frontend application.
 
 ---
 

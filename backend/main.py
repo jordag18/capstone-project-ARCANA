@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
@@ -12,6 +12,7 @@ from model import Project
 from typing import List
 import uvicorn
 from pydantic import BaseModel
+from file_handler import FileHandler
 
 
 
@@ -46,6 +47,13 @@ class Project(BaseModel):  # Define your project model for API validation
     initials: str 
     events: List[Event] = []
 
+class ProjectCreate(BaseModel):
+    name: str
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    location: str = ""
+    initials: str = ""
+
 from database import (
     fetch_one_project,
     fetch_all_projects,
@@ -77,13 +85,19 @@ def read_root():
 class IngestPayload(BaseModel):
     files: List[str]
 
-@app.post("/api/ingestLogs", response_model=dict)
-async def ingest_logs(payload: IngestPayload):
-    for file_name in payload.files:
-        print(f"File Name: {file_name}")
-
-    # Return a response indicating success if needed
-    return {"message": "Logs ingested successfully"}
+@app.post("/api/ingestLogs")
+async def ingest_logs(files: List[UploadFile] = File(...)):
+    try:
+         #uploads is the directory the files are ingested into from the frontend, temp name
+        fh = FileHandler("uploads")
+        for file in files:
+            print(f"File Name: {file.filename}")
+            fh.save_file_in_directory(file)
+    except FileNotFoundError as e:
+        return {'error_message': f"Error Occured while ingesting logs: {e}"} 
+    else:
+        # Return a response indicating success if needed
+        return {"message": "Logs ingested successfully"}
 
 
 @app.get("/api/projects", response_model=List[Project])
@@ -104,17 +118,9 @@ async def get_project_by_name(project_name):
 
 
 # CRUD for Projects
-#FIXME not implemented fully
-@app.post("/api/project", response_model=Project)
-async def post_project(project:Project):
-    # Code to add a new project to the database
-    response = await create_project(project.dict())
-    if response:
-        return response
-    raise HTTPException(400, "Bad request")
 
 #FIXME not implemented fully
-@app.put("/api/project{project_name}/", response_model=Project)
+@app.put("/api/project/", response_model=Project)
 async def put_project(
     project_name: str,
     project_location: str,
@@ -127,6 +133,21 @@ async def put_project(
     if response:
         return response
     raise HTTPException(404, f"No project found with the name {project_name}")
+
+
+@app.post("/api/project/", response_model=ProjectCreate)
+async def create_project(project: ProjectCreate):
+    try:
+        created_project = db_manager.create_project(
+            name=project.name,
+            start_date=project.start_date,
+            end_date=project.end_date,
+            location=project.location,
+            initials=project.initials
+        )
+        return created_project
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.delete("/api/deleteProject/{project_name}")
@@ -166,7 +187,7 @@ def get_analyst_initials():
     return {"analyst_initials": initials_list}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5001, log_level="debug")
+    uvicorn.run("main:app", host="0.0.0.0", port=5005, log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #

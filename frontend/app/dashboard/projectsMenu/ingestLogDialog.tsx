@@ -24,17 +24,23 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
       };
 
       const handleIngestLogs = async () => {
-        // Create an array of file names
-        const fileNames = files.map(file => file.name);
+        // Create a FormData instance
+        const formData = new FormData();
+        
+        // Append each file to the FormData instance
+        files.forEach((file) => {
+            formData.append('files', file);
+        });
     
+        // Log FormData key/value pairs
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+        
         try {
             // Make the API call using axios
-            const response = await axios.post('http://127.0.0.1:8000/api/ingestLogs', { files: fileNames }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-    
+            const response = await axios.post('http://127.0.0.1:8000/api/ingestLogs', formData);
+        
             console.log(response.data);
             // Handle success, if needed
         } catch (error) {
@@ -42,6 +48,8 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
             // Handle error, if needed
         }
     };
+    
+    
     
       useEffect(() => {
         console.log(files); // Access the updated value here
