@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
@@ -84,10 +84,11 @@ def read_root():
 class IngestPayload(BaseModel):
     files: List[str]
 
-@app.post("/api/ingestLogs", response_model=dict)
-async def ingest_logs(payload: IngestPayload):
-    for file_name in payload.files:
-        print(f"File Name: {file_name}")
+@app.post("/api/ingestLogs")
+async def ingest_logs(files: List[UploadFile] = File(...)):
+    for file in files:
+        print(f"File Name: {file.filename}")
+        contents = await file.read()  # This is the file contents
 
     # Return a response indicating success if needed
     return {"message": "Logs ingested successfully"}
@@ -180,7 +181,7 @@ def get_analyst_initials():
     return {"analyst_initials": initials_list}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5001, log_level="debug")
+    uvicorn.run("main:app", host="0.0.0.0", port=5005, log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #
