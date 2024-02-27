@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
@@ -12,6 +12,7 @@ from model import Project
 from typing import List
 import uvicorn
 from pydantic import BaseModel
+from file_handler import FileHandler
 
 
 
@@ -84,13 +85,19 @@ def read_root():
 class IngestPayload(BaseModel):
     files: List[str]
 
-@app.post("/api/ingestLogs", response_model=dict)
-async def ingest_logs(payload: IngestPayload):
-    for file_name in payload.files:
-        print(f"File Name: {file_name}")
-
-    # Return a response indicating success if needed
-    return {"message": "Logs ingested successfully"}
+@app.post("/api/ingestLogs")
+async def ingest_logs(files: List[UploadFile] = File(...)):
+    try:
+         #uploads is the directory the files are ingested into from the frontend, temp name
+        fh = FileHandler("uploads")
+        for file in files:
+            print(f"File Name: {file.filename}")
+            fh.save_file_in_directory(file)
+    except FileNotFoundError as e:
+        return {'error_message': f"Error Occured while ingesting logs: {e}"} 
+    else:
+        # Return a response indicating success if needed
+        return {"message": "Logs ingested successfully"}
 
 
 @app.get("/api/projects", response_model=List[Project])
@@ -180,7 +187,7 @@ def get_analyst_initials():
     return {"analyst_initials": initials_list}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5001, log_level="debug")
+    uvicorn.run("main:app", host="0.0.0.0", port=5005, log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #
