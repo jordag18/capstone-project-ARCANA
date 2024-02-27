@@ -80,7 +80,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to ARCANA APIII"}
+    return {"message": "Welcome to ARCANA API"}
 
 class IngestPayload(BaseModel):
     files: List[str]

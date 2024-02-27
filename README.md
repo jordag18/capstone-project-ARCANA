@@ -37,6 +37,7 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install "uvicorn[standard]"
     pip install Pillow
     pip install mongoengine
+    pip install python-multipart
 
 ###### Then run the following commands
 
