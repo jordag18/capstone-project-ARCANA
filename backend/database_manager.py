@@ -22,6 +22,21 @@ class DatabaseManager:
             project.delete()  # This deletes the project from the database
             return True
         return False
+    
+    def open_project(self, project_name):
+        # open project by name
+        project = ProjectRepresenter.objects(name=project_name).first()
+        if project:
+            project_info = {
+                'name': project.name,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'location': project.location,
+                'initials': project.initials,
+                # Add any other project attributes you need
+            }
+            return project_info
+        return False
 
     def save_project(self, project):
         # Save changes to an existing project
