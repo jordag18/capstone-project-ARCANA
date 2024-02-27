@@ -46,6 +46,13 @@ class Project(BaseModel):  # Define your project model for API validation
     initials: str 
     events: List[Event] = []
 
+class ProjectCreate(BaseModel):
+    name: str
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    location: str = ""
+    initials: str = ""
+
 from database import (
     fetch_one_project,
     fetch_all_projects,
@@ -104,17 +111,9 @@ async def get_project_by_name(project_name):
 
 
 # CRUD for Projects
-#FIXME not implemented fully
-@app.post("/api/project", response_model=Project)
-async def post_project(project:Project):
-    # Code to add a new project to the database
-    response = await create_project(project.dict())
-    if response:
-        return response
-    raise HTTPException(400, "Bad request")
 
 #FIXME not implemented fully
-@app.put("/api/project{project_name}/", response_model=Project)
+@app.put("/api/project/", response_model=Project)
 async def put_project(
     project_name: str,
     project_location: str,
@@ -127,6 +126,21 @@ async def put_project(
     if response:
         return response
     raise HTTPException(404, f"No project found with the name {project_name}")
+
+
+@app.post("/api/project/", response_model=ProjectCreate)
+async def create_project(project: ProjectCreate):
+    try:
+        created_project = db_manager.create_project(
+            name=project.name,
+            start_date=project.start_date,
+            end_date=project.end_date,
+            location=project.location,
+            initials=project.initials
+        )
+        return created_project
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.delete("/api/deleteProject/{project_name}")
