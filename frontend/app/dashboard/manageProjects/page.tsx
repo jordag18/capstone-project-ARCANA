@@ -1,14 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
 import Footer from "../../components/footer";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-//import ThemeHandler from "@/app/util/themeHandler";
-//import FontSizeHandler from "@/app/lib/fontSizeHandler";
+import axios from 'axios'
 
 const ManageProjectsPage = () => {
+
+  const [projectList, setProjectList] = useState([{}])
+  const [project_name, setProjectTitle] = useState('')
+
+  // read all projects found within projectList in ARCANA database
+  useEffect(() => {
+    axios.get<Project[]>('http://127.0.0.1:8000/api/project')
+      .then(res => {
+        setProjectList(res.data);
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+      });
+  }, []);
+
+
 
   const [projectName, setProjectName] = useState('');
   const [projectLocation, setProjectLocation] = useState('');
@@ -16,9 +31,60 @@ const ManageProjectsPage = () => {
   const [dateEnd, setDateEnd] = useState('');
   const [initials, setInitials] = useState('');
 
+  const createProjectHandler = () => {
+    // Perform validation checks on the input values
+    if (projectName.trim() === '') {
+      console.error('Project name is required');
+      return;
+    }
+    if (projectLocation.trim() === '') {
+      console.error('Project location is required');
+      return;
+    }
+    if (dateStart.trim() === '') {
+      console.error('Start date is required');
+      return;
+    }
+    if (dateEnd.trim() === '') {
+      console.error('End date is required');
+      return;
+    }
+    if (initials.trim() === '') {
+      console.error('Initials are required');
+      return;
+    }
+
+    // Create the project object
+    const newProject = {
+      projectName,
+      projectLocation,
+      dateStart,
+      dateEnd,
+      initials
+    };
+
+    // Send a POST request to the API endpoint
+    axios.post('http://127.0.0.1:8000/api/project', newProject)
+      .then(res => {
+        console.log('Project created successfully:', res.data);
+        // Reset the input values
+        setProjectName('');
+        setProjectLocation('');
+        setDateStart('');
+        setDateEnd('');
+        setInitials('');
+        // Close the create project dialog
+        handleCloseDialog('createProject');
+      })
+      .catch(error => {
+        console.error('Error creating project:', error);
+      });
+  };
+
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [showIngestLogDialog, setShowIngestLogDialog] = useState(false);
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState(false);
+
 
   const handleOpenDialog = (dialogType: string) => {
     switch (dialogType) {
@@ -82,7 +148,7 @@ const ManageProjectsPage = () => {
               <Button variant="primary">Open Project</Button>
             </Container>
           </div>
-        
+
 
           {/* Create Project Dialog */}
           <Modal show={showCreateProjectDialog} onHide={() => handleCloseDialog('createProject')}>

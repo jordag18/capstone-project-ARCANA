@@ -37,6 +37,15 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install "uvicorn[standard]"
     pip install Pillow
     pip install mongoengine
+    pip install python-multipart
+
+###### Then run the following commands
+
+***Start the backend***
+
+    cd backend
+    python main.py
+    uvicorn main:app --reload
 
     uvicorn main:app --reload
     pipenv shell
@@ -66,6 +75,7 @@ To build and run the react you need to change directory to `~/frontend/arcana`
     npm install react-dom
 
 ##### Getting Started
+https://fastapi.tiangolo.com/
 
 First, run the development server:
 
@@ -97,10 +107,9 @@ Run the following command in a terminal within the path `~/backend` to begin
 
     python -m uvicorn main:app --reload
 
-Check that the uvicorn server is running on `http:127.0.0.1:8000`
+Check that the uvicorn server is running on `http://127.0.0.1:8000`
 
 Uvicorn server should be running within the terminal and ready to recieve api calls from frontend application.
-
 
 ---
 

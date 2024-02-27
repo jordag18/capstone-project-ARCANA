@@ -9,6 +9,7 @@ import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
 import Stack from "react-bootstrap/esm/Stack";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
+import ProjectsList from "@/app/components/ProjectList";
 
 
 //import ThemeHandler from "@/app/util/themeHandler";
@@ -58,15 +59,40 @@ const ManageProjectsPage = () => {
     }
   };
 
-  const handleFileInputChange = (e) => {
-    const files = e.target.files;
-    if (files.length > 0) {
-      // Get the first file (directory) selected by the user
-      const selectedDir = files[0].path || files[0].webkitRelativePath;
-      setProjectLocation(selectedDir);
+
+  const handleSubmit = async () => {
+    const projectData = {
+        name: projectName,
+        start_date: dateStart,
+        end_date: dateEnd,
+        location: projectLocation,
+        initials: initials
+    };
+
+    try {
+      console.log('Sending project data:', projectData);
+        const response = await fetch('http://localhost:8000/api/project/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(projectData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create the project');
+        }
+        const newProject = await response.json();
+        console.log('Successfully created project:', newProject);
+        // Close the modal and clear the form
+        handleCloseDialog('createProject');
+        // Optionally, refresh the list of projects or add the new project to the state
+    } catch (error) {
+        console.error('Error creating project:', error);
+        alert(`Error creating project: ${error.message}`);
     }
-  };
-  
+};
+
 
   return (
     <div>
@@ -83,37 +109,25 @@ const ManageProjectsPage = () => {
                 {/* Changed class to 'd-flex' for inline display */}
                 <Folder2 size={80} />
                 <h2 className="mx-3 p-3 align-middle">Manage Projects</h2>
+                <Container className="d-flex justify-content-end">
+                  <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
+                </Container>
               </div>
             </Row>
           </div>
-          <div className="justify-content-end">
+        {/* Original Open, Create, and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
+          <div>
             <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
           </div>
 
-          <Stack gap={3} className="p-4 mx-8 d-flex align-self-center justify-content-sm-start">
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project A
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project B
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project C
-            </Button>
-
-            <Button className="p-3 justify-content-start text-start outline-secondary" variant="outline-secondary" >
-              Project D
-            </Button>
-        </Stack>
-
+          {/* Original Open and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
           <div>
             <Container className="d-flex justify-content-between">
               <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
               <Button variant="primary">Open Project</Button>
             </Container>
           </div>
+        */}
 
 
           {/* Create Project Dialog */}
@@ -142,14 +156,14 @@ const ManageProjectsPage = () => {
               </div>
               <div className="mb-3 d-flex">
                 <input
-                  type="text"
+                  type="date"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
                   value={dateStart}
                   onChange={(e) => setDateStart(e.target.value)}
                 />
                 <input
-                  type="text"
+                  type="date"
                   className="form-control"
                   placeholder="mm/dd/yyyy"
                   value={dateEnd}
@@ -169,7 +183,7 @@ const ManageProjectsPage = () => {
             <Modal.Footer>
               <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
               <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
-              <Button variant="primary" onClick={() => handleCloseDialog('createProject')}>Create Project</Button>
+              <Button variant="primary" onClick={handleSubmit}>Create Project</Button>
             </Modal.Footer>
           </Modal>
 
@@ -179,7 +193,6 @@ const ManageProjectsPage = () => {
             show={showIngestLogDialog}
             handleCloseDialog={handleCloseDialog}
             setProjectLocation={setProjectLocation}
-            handleFileInputChange={handleFileInputChange}
           />
 
 
@@ -195,6 +208,9 @@ const ManageProjectsPage = () => {
               <Button variant="danger" onClick={() => handleCloseDialog('deleteProject')}>Delete</Button>
             </Modal.Footer>
           </Modal>
+          <div className="justify-content-end">
+          <ProjectsList />
+          </div>
 
         </Container>
       </div>

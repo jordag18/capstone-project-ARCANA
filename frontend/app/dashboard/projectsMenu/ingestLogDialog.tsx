@@ -1,24 +1,60 @@
-import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useState , useEffect} from 'react';
+import { Modal, Button, CloseButton } from 'react-bootstrap';
+import axios from 'axios';
+
 
 
 const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectLocation }) => {
 
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [files, setFiles] = useState<File[] | null>([]);
 
+    const [filesDir, setFilesDir] = useState('');
 
     const handleFileInputChange = (e) => {
-        const files = e.target.files;
-        if (files.length > 0) {
-            setSelectedFiles(Array.from(files));
-          // Get the first file (directory) selected by the user
-          const selectedDir = files[0].path || files[0].webkitRelativePath;
-          setProjectLocation(selectedDir);
-          // Handle the selected files (e.g., store them in state)
-          console.log('Selected Files:', Array.from(files).map((file) => file.name));
+        const newFiles = e.target.files;
+        const newFilesArray= Array.from(newFiles)
+
+        if (newFiles.length > 0) {
+          setFiles(newFilesArray.concat(files));
         }
       };
 
+      const handleRemoveFile = (indexToRemove) => {
+        setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
+      };
+
+      const handleIngestLogs = async () => {
+        // Create a FormData instance
+        const formData = new FormData();
+        
+        // Append each file to the FormData instance
+        files.forEach((file) => {
+            formData.append('files', file);
+        });
+    
+        // Log FormData key/value pairs
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+        
+        try {
+            // Make the API call using axios
+            const response = await axios.post('http://127.0.0.1:8000/api/ingestLogs', formData);
+        
+            console.log(response.data);
+            // Handle success, if needed
+        } catch (error) {
+            console.error(error);
+            // Handle error, if needed
+        }
+    };
+    
+    
+    
+      useEffect(() => {
+        console.log(files); // Access the updated value here
+      }, [files]); // Specify "value" as the dependency
+      
 
   return (
     <Modal show={show} onHide={() => handleCloseDialog('ingestLog')}>
@@ -51,12 +87,27 @@ const IngestLogDialog = ({ show, handleCloseDialog, setProjectLocation, projectL
             />
           </label>
         </div>
+        <div>
+          {files.length > 0 && (
+            <div>
+              <p>Selected Files:</p>
+              <ul>
+                {files.map((file, index) => (
+                  <li key={index}>
+                  {file.name}
+                  <CloseButton className='remove-btn' onClick={() => handleRemoveFile(index)}></CloseButton>
+                </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => handleCloseDialog('ingestLog')}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={() => handleCloseDialog('ingestLog')}>
+        <Button variant="primary" onClick={() => { handleIngestLogs(); handleCloseDialog('ingestLog'); }}>
           Ingest Logs
         </Button>
       </Modal.Footer>
