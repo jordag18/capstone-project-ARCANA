@@ -12,6 +12,7 @@ from model import Project
 from typing import List
 import uvicorn
 from pydantic import BaseModel
+from file_handler import FileHandler
 
 
 
@@ -86,12 +87,17 @@ class IngestPayload(BaseModel):
 
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
-    for file in files:
-        print(f"File Name: {file.filename}")
-        contents = await file.read()  # This is the file contents
-
-    # Return a response indicating success if needed
-    return {"message": "Logs ingested successfully"}
+    try:
+         #uploads is the directory the files are ingested into from the frontend, temp name
+        fh = FileHandler("uploads")
+        for file in files:
+            print(f"File Name: {file.filename}")
+            fh.save_file_in_directory(file)
+    except FileNotFoundError as e:
+        return {'error_message': f"Error Occured while ingesting logs: {e}"} 
+    else:
+        # Return a response indicating success if needed
+        return {"message": "Logs ingested successfully"}
 
 
 @app.get("/api/projects", response_model=List[Project])

@@ -1,9 +1,13 @@
 import csv
 import os
+from fastapi import UploadFile
 
 class FileHandler:
-    def __init__(self,directory):
-        self.logDirPath = os.path.join(directory)
+    def __init__(self,directory_name):
+        self.directory = directory_name
+        self.logDirPath = os.path.join(directory_name)
+        self.file_names = []
+        self.create_directory()
 
     def get_log_paths(self):
         log_files = []
@@ -29,14 +33,23 @@ class FileHandler:
 
         return log_files
     
-     #uploads is the directory the files are ingested into from the frontend, temp name
-    def save_file(uploads,file):
-        # get files from upload folder
-        file_path = f"{uploads}/{file.filename}"
-        with open(file_path, "wb") as f:
-            f.write(file.file.read())
-        return file_path
+    def create_directory(self):
+        # creates the directory if it doesn't exist
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
+
     
+    # saves files to the file handlers dir
+    def save_file_in_directory(self,file:UploadFile):
+        with open(os.path.join(self.directory,file.filename),'a+') as new_file:
+            new_file.write(file.read(file.size))
+
+    #grabs the files from the file handlers dir
+    def get_files_in_directory(self):
+        with open(os.path.join(self.directory),'r') as d:
+            pass
+
+
     def getFileType(self, file_name):
         file_type = file_name.split(".")[-1]
         return file_type

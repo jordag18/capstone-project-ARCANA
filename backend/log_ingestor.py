@@ -6,7 +6,8 @@ import csv
 
 class LogIngestor:
     def __init__(self, directory, event_manager):
-        self.directory = directory
+         #optiminally we want self.directory to be the Project's folder in the database/local, I will hard code it to be uploads for now
+        self.directory = "uploads"
         self.errors = []
         self.newFilesIngested = []
         self.event_manager = event_manager
