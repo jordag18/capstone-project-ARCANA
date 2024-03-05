@@ -39,10 +39,19 @@ class FileHandler:
             os.makedirs(self.directory)
 
     
-    # saves files to the file handlers dir
-    def save_file_in_directory(self,file:UploadFile):
-        with open(os.path.join(self.directory,file.filename),'w+') as new_file:
-            new_file.write(file.read(file.size))
+    def save_file_in_directory(self, file: UploadFile):
+        # Generate a safe filename to prevent directory traversal attacks
+        safe_filename = os.path.basename(file.filename)
+        target_file_path = os.path.join(self.directory, safe_filename)
+
+        # Ensure the directory exists
+        os.makedirs(self.directory, exist_ok=True)
+
+        with open(target_file_path, 'wb+') as new_file:
+            contents = file.file.read()  # Read the file's contents as binary
+            new_file.write(contents)
+            file.file.close()  # It's a good practice to close the file object explicitly
+
 
     #grabs the files from the file handlers dir
     def get_files_in_directory(self):
