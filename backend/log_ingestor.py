@@ -14,19 +14,25 @@ class LogIngestor:
 
     def ingestLogs(self):
         fileHandler = FileHandler(self.directory)
-        self.newFilesIngested = fileHandler.get_log_paths()
-        for filepath in self.newFilesIngested:
-            if filepath.endswith(".csv"):
+        files = fileHandler.get_log_paths()
+        for filepath in files:
+            filetype = fileHandler.get_file_type()
+            if filetype == ".csv":
                 if 'red' in filepath:
                     self.parseRedCSVFile(filepath)
                 elif 'white' in filepath:
                     self.parseWhiteCSVFile(filepath)
+                self.newFilesIngested.append(filepath)
             # elif fileType == "txt":
             #     self.parseTxtFile(fileName)
             # elif fileType == "log":
             #     self.parseLogFile(fileName)
-            # else:
-            #     print("Unsupported file type:", fileType)
+            else:
+                print("Unsupported file type:", filetype)
+            print("Deleting File:",filepath)
+            fileHandler.delete_file(filepath)
+        fileHandler.delete_directory()
+        
 
   
     def parseRedCSVFile(self,fileName):

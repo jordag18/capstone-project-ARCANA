@@ -10,6 +10,10 @@ class FileHandler:
         self.create_directory()
 
     def get_log_paths(self):
+        """
+        Traverses the entire directory to find files whose filetype is associated with logs.\n
+        It returns a list of all the filepaths.
+        """
         log_files = []
     
         for subdir, dirs, files in os.walk(self.logDirPath):
@@ -33,19 +37,32 @@ class FileHandler:
 
         return log_files
     
-    def create_directory(self):
-        # creates the directory if it doesn't exist
-        if not os.path.exists(self.directory):
+    def _create_directory(self):
+        """
+        Creates a directory to be associated with the FileHandler if it doesn't exist already.
+        """
+        if not self._directory_exist():
             os.makedirs(self.directory)
+    
+    def _directory_exist(self):
+        """
+        Checks if a directory exists.
+        """
+        return os.path.exists(self.directory)
 
     
     def save_file_in_directory(self, file: UploadFile):
+        """
+        Saves the given file into the FileHandlers directory.\n
+        Generating a safe filename to prevent directory traversal attacks.
+        """
         # Generate a safe filename to prevent directory traversal attacks
         safe_filename = os.path.basename(file.filename)
         target_file_path = os.path.join(self.directory, safe_filename)
 
         # Ensure the directory exists
-        os.makedirs(self.directory, exist_ok=True)
+        if not self._directory_exist():
+            self._create_directory()
 
         with open(target_file_path, 'wb+') as new_file:
             contents = file.file.read()  # Read the file's contents as binary
@@ -53,12 +70,66 @@ class FileHandler:
             file.file.close()  # It's a good practice to close the file object explicitly
 
 
-    #grabs the files from the file handlers dir
-    def get_files_in_directory(self):
-        with open(os.path.join(self.directory),'r') as d:
-            pass
-
-
-    def getFileType(self, file_name):
-        file_type = file_name.split(".")[-1]
+    def get_file_type(self, file):
+        """
+        Checks the given file's type and returns it as a string.
+        """
+        file_type = file.split(".")[-1]
         return file_type
+    
+    def is_empty(self):
+        """
+        Checks if the FileHandler's directory is empty.
+        """
+        if directory is None: 
+            directory = self.directory
+        return not os.listdir(directory)
+    
+    def delete_file(self,filepath):
+        """
+        Delete a single file matching the given filepath.
+        """
+        try:
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+                print(f"Deleted file: {filepath}")
+        except Exception as e:
+            print(f"Error deleting file: {filepath} - {e}")
+    
+    def delete_all_files(self):
+        """
+        Delete all files within the directory asociated with the FileHandler.\n
+        """
+        if directory is None:
+            directory = self.directory
+        for filename in os.listdir(directory):
+            file_path = os.path.join(directory, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                    print(f"Deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file: {file_path} - {e}")
+
+    def delete_directory(self):
+        """
+        Deletes all the files inside the FileHandler's associated directory and then deletes the directory itself.
+        """
+        if not self.is_empty(self.directory):
+            self.delete_all_files()
+        self.delete_empty_directory()
+    
+    
+    def _delete_empty_directory(self):
+        """
+        Delete a directory if it's empty.\n
+        The directory to be deleted is the directory associated with the FileHandler.
+        """
+        try:
+            if os.path.isdir(self.directory) and not os.listdir(self.directory):
+                os.rmdir(self.directory)
+                print(f"Deleted directory: {self.directory}")
+        except Exception as e:
+            print(f"Error deleting directory: {self.directory} - {e}")
+
+    
