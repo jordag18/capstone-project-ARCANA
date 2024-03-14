@@ -15,9 +15,11 @@ class LogIngestor:
     def ingestLogs(self):
         fileHandler = FileHandler(self.directory)
         files = fileHandler.get_log_paths()
+        print(files)
         for filepath in files:
-            filetype = fileHandler.get_file_type()
-            if filetype == ".csv":
+            print(filepath)
+            filetype = fileHandler.get_file_type(filepath)
+            if filetype == "csv":
                 if 'red' in filepath:
                     self.parseRedCSVFile(filepath)
                 elif 'white' in filepath:

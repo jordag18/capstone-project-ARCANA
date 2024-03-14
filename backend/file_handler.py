@@ -7,7 +7,7 @@ class FileHandler:
         self.directory = directory_name
         self.logDirPath = os.path.join(directory_name)
         self.file_names = []
-        self.create_directory()
+        self._create_directory()
 
     def get_log_paths(self):
         """
@@ -15,7 +15,7 @@ class FileHandler:
         It returns a list of all the filepaths.
         """
         log_files = []
-    
+        
         for subdir, dirs, files in os.walk(self.logDirPath):
             for file in files:
                 file_path = os.path.join(subdir, file)
@@ -34,9 +34,21 @@ class FileHandler:
                     file_path = os.path.join(white_dir, white_file)
                     if file_path.endswith(".csv") and file_path not in log_files:
                         log_files.append(file_path)
-
+        
         return log_files
     
+    def get_files_in_directory(self):
+        """
+        Returns a list of all the files inside the directory associated with FileHandler.
+        """
+        files = []
+        for item in os.listdir(self.directory):
+            item_path = os.path.join(self.directory, item)
+            if os.path.isfile(item_path):
+                files.append(item_path)
+        return files
+
+
     def _create_directory(self):
         """
         Creates a directory to be associated with the FileHandler if it doesn't exist already.
@@ -81,9 +93,7 @@ class FileHandler:
         """
         Checks if the FileHandler's directory is empty.
         """
-        if directory is None: 
-            directory = self.directory
-        return not os.listdir(directory)
+        return not os.listdir(self.directory)
     
     def delete_file(self,filepath):
         """
@@ -100,10 +110,8 @@ class FileHandler:
         """
         Delete all files within the directory asociated with the FileHandler.\n
         """
-        if directory is None:
-            directory = self.directory
-        for filename in os.listdir(directory):
-            file_path = os.path.join(directory, filename)
+        for filename in os.listdir(self.directory):
+            file_path = os.path.join(self.directory, filename)
             try:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
@@ -115,9 +123,9 @@ class FileHandler:
         """
         Deletes all the files inside the FileHandler's associated directory and then deletes the directory itself.
         """
-        if not self.is_empty(self.directory):
+        if not self.is_empty():
             self.delete_all_files()
-        self.delete_empty_directory()
+        self._delete_empty_directory()
     
     
     def _delete_empty_directory(self):
