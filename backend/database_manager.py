@@ -117,4 +117,24 @@ class DatabaseManager:
         # Retrieve all events
         return list(EventRepresenter.objects.all())
     
+    def create_event(self, event_data):
+        #create and save a new event
+        new_event = EventRepresenter(**event_data)
+        new_event.save()
+        return new_event
+    def delete_event(self, event_id):
+        #delete an event by ID
+        event = EventRepresenter.objects(id=event_id).first()
+        if event:
+            event.delete()
+            return True
+        return False
+    def update_event(self, event_id,updated_data):
+        event = EventRepresenter.objects(id=event_id).first()
+        for key, value in updated_data.items():
+            event.save()
+            return event
+        return None 
+
+    
 
