@@ -103,11 +103,10 @@ const ManageProjectsPage = () => {
         <Container className="flex justify-content-center align-items-center border mx-auto p-3 rounded">
           <div className="justify-content-space-between">
             <Row className="justify-content-center align-items-center p-2 mx-auto">
-              <div className="d-flex align-items-center p-2">
-                {" "}
+              <div className="d-flex justify-content-between align-items-center p-2">
                 {/* Changed class to 'd-flex' for inline display */}
                 <Folder2 size={80} />
-                <h2 className="mx-3 p-3 align-middle">Manage Projects</h2>
+                <h2 className="flex-grow-1 m-0" style={{whiteSpace: 'nowrap'}}>Manage Projects</h2>
                 <Container className="d-flex justify-content-end">
                   <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
                 </Container>

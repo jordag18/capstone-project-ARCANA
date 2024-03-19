@@ -85,22 +85,24 @@ const ProjectsList: React.FC = () => {
 
     return (
         <div>
-            <h2>Projects</h2>
+            <hr style={{ height: '2px', backgroundColor: 'black'}}/>
             <ul>
                 {projects.map((project, index) => (
                     <li key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <div style={{ flex: 1 }}>
-                        <h3>{project.name}</h3>
-                            <p>Start Date: {project.start_date || 'Not provided'}</p>
-                            <p>End Date: {project.end_date || 'Not provided'}</p>
-                            <p>Location: {project.location}</p>
-                            <p>Initials: {project.initials}</p>
+                        <div style={{ flex: 1}}>
+                            <h3>{project.name}</h3>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+                                <p style={{margin: '0 5rem 0 0'}}>Start Date: {project.start_date || 'Not provided'}</p>
+                                <p style={{margin: '0 5rem 0 0'}}>End Date: {project.end_date || 'Not provided'}</p>
+                                <p style={{margin: '0 5rem 0 0'}}>Location: {project.location}</p>
+                                <p style={{margin: '0 5rem 0 0'}}>Initials: {project.initials}</p>
+                            </div>
                         </div>
                         <Container className="d-flex justify-content-end">
-                            <Button variant="primary" onClick={() => handleOpenClick(project)} style={{ backgroundColor: 'blue', color: 'white' }}>
+                            <Button variant="primary" onClick={() => handleOpenClick(project)} style={{ border: 'blue', backgroundColor: 'blue', color: 'white' }} className="me-4">
                                 Open
                             </Button>
-                            <Button variant="primary" onClick={() => handleDeleteClick(project)} style={{ backgroundColor: 'red', color: 'white' }}>
+                            <Button variant="primary" onClick={() => handleDeleteClick(project)} style={{ border: 'red', backgroundColor: 'red', color: 'white' }}>
                                 Delete
                             </Button>
                         </Container>
