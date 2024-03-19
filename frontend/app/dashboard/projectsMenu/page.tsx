@@ -7,7 +7,6 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
-import Stack from "react-bootstrap/esm/Stack";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
 import ProjectsList from "@/app/components/ProjectList";
 
@@ -104,30 +103,16 @@ const ManageProjectsPage = () => {
         <Container className="flex justify-content-center align-items-center border mx-auto p-3 rounded">
           <div className="justify-content-space-between">
             <Row className="justify-content-center align-items-center p-2 mx-auto">
-              <div className="d-flex align-items-center p-2">
-                {" "}
+              <div className="d-flex justify-content-between align-items-center p-2">
                 {/* Changed class to 'd-flex' for inline display */}
                 <Folder2 size={80} />
-                <h2 className="mx-3 p-3 align-middle">Manage Projects</h2>
+                <h2 className="flex-grow-1 m-0" style={{whiteSpace: 'nowrap'}}>Manage Projects</h2>
                 <Container className="d-flex justify-content-end">
                   <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
                 </Container>
               </div>
             </Row>
           </div>
-        {/* Original Open, Create, and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
-          <div>
-            <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
-          </div>
-
-          {/* Original Open and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
-          <div>
-            <Container className="d-flex justify-content-between">
-              <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
-              <Button variant="primary">Open Project</Button>
-            </Container>
-          </div>
-        */}
 
 
           {/* Create Project Dialog */}
