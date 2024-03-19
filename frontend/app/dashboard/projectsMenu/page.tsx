@@ -7,7 +7,6 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
-import Stack from "react-bootstrap/esm/Stack";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
 import ProjectsList from "@/app/components/ProjectList";
 
@@ -115,19 +114,6 @@ const ManageProjectsPage = () => {
               </div>
             </Row>
           </div>
-        {/* Original Open, Create, and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
-          <div>
-            <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
-          </div>
-
-          {/* Original Open and Delete buttons, commented out for now. Currently using open and delete buttons provided by ProjectList.tsx
-          <div>
-            <Container className="d-flex justify-content-between">
-              <Button variant="primary" onClick={() => handleOpenDialog('deleteProject')}>Delete Project</Button>
-              <Button variant="primary">Open Project</Button>
-            </Container>
-          </div>
-        */}
 
 
           {/* Create Project Dialog */}
