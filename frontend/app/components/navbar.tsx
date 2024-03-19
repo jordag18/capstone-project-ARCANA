@@ -13,7 +13,7 @@ import './navbar.css';
 export function NavBar () {
   return (
     <>
-      <Navbar expand="lg" className="bg-body-primary">
+      <Navbar expand="lg">
         <Container>
           <Image
             className="p-0"
