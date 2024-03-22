@@ -1,6 +1,8 @@
+#Diana Castaneda CRUD
 from project_list import ProjectList
 from project_representer import ProjectRepresenter
 from datetime import datetime
+import json
 
 class ProjectManager:
     def __init__(self):
@@ -34,6 +36,23 @@ class ProjectManager:
         else:
             print(f"Project with name {project_name} not found.")
     
+    def save_projects(self, filename):
+        #save projects to json file
+        data = [project.to_json() for project in self.project_representer_list]
+        with open(filename,  'w') as file:
+            json.dump(data, file, indent=4)
+
+    def update_project(self, name, updated_data):
+        #update project information
+        project = self.get_project_by_name(name)
+        if project:
+            for key, value in updated_data.items():
+                if key in project._fields:
+                    project[key] = value
+            project.save()
+            return project
+        return None
+
 
 
     
