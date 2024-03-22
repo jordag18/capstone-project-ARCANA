@@ -3,7 +3,7 @@ from data_services import create_event_representer
 from datetime import datetime
 import csv
 #from PIL import Image
-
+ 
 class LogIngestor:
     def __init__(self, directory, event_manager):
          #optiminally we want self.directory to be the Project's folder in the database/local, I will hard code it to be uploads for now
@@ -11,24 +11,34 @@ class LogIngestor:
         self.errors = []
         self.newFilesIngested = []
         self.event_manager = event_manager
-
+ 
     def ingestLogs(self):
         fileHandler = FileHandler(self.directory)
-        self.newFilesIngested = fileHandler.get_log_paths()
-        for filepath in self.newFilesIngested:
-            if filepath.endswith(".csv"):
-                if 'red' in filepath:
-                    self.parseRedCSVFile(filepath)
-                elif 'white' in filepath:
-                    self.parseWhiteCSVFile(filepath)
+        files = fileHandler.get_log_paths()
+        print(files)
+        for filepath in files:
+            filetype = fileHandler.get_file_type(filepath)
+            if filetype == "csv":
+                self.readCSVFile(filepath)
+                self.newFilesIngested.append(filepath)
             # elif fileType == "txt":
             #     self.parseTxtFile(fileName)
             # elif fileType == "log":
             #     self.parseLogFile(fileName)
-            # else:
-            #     print("Unsupported file type:", fileType)
+            else:
+                print("Unsupported file type:", filetype)
+            print("Deleting File:",filepath)
+            fileHandler.delete_file(filepath)
+        fileHandler.delete_directory()
 
-  
+    def readCSVFile(self,fileName):
+        if fileName[8].isnumeric():
+            print(fileName)
+            self.parseRedCSVFile(fileName)
+        elif fileName[8].isalpha():
+            print(fileName)
+            self.parseWhiteCSVFile(fileName)
+            
     def parseRedCSVFile(self,fileName):
         try:
             with open(fileName,'r') as file:
@@ -43,12 +53,11 @@ class LogIngestor:
         except Exception as e:
             print("red csv files error here")
             self.errors.append(e)
-
+ 
     def parse_timestamp(self,timestamp_str):
         if len(timestamp_str.split(':')) < 3: 
             timestamp_str += ':00'
         return datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
-              
     def parseWhiteCSVFile(self,fileName):
         try:
             with open(fileName, 'r') as file:
@@ -67,27 +76,26 @@ class LogIngestor:
                         vectorID = row['vectorId']
                         icon = None
                         actionTitle = ""
-
+ 
                         dataSource = fileName #9
-
+ 
                         dateCreated = self.parse_timestamp(row['dateCreated'])
                         lastModified = self.parse_timestamp(row['lastModified'])
-                
-                        
+
                         match team:
                             case "Blue":
                                 #icon library not implemented 
-                                icon = ("Icons/BlueTeam_Activity.png")
+                                icon = "../Icons/BlueTeam_Activity.png"
                                 actionTitle = "Blue Team Activity"
                             case "Red":
-                                icon = ('Icons/RedTeam_Activity.png')
+                                icon = '../Icons/RedTeam_Activity.png'
                                 actionTitle = "Red Team Activity"
                             case "White":
-                                icon = ("Icons/WhitCard.png")
+                                icon = "../Icons/Whitecard.png"
                                 actionTitle = "White Card"
                             case _:
                                 actionTitle = "Unknown"
-
+ 
                         fields = [dateCreated,description,dataSource,targetHostList,team,
                                     location,initials , vectorID,lastModified]
                         #check if the file has all the attributes
@@ -95,7 +103,6 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
-                        
                         event = create_event_representer(
                             initials=initials,
                             team=team,
@@ -112,12 +119,14 @@ class LogIngestor:
                             timestamp=dateCreated,
                             is_malformed=isMalformed
                         )
-                        #event.icon.replace(open(icon,'rb'),filname= icon)
-
+                        print("made event")
+                        with open("event_test.txt",'a') as event_text:
+                            print(event)
+                            event_text.write(f'{str(event)}\n')
                         #print(event.get_initials()) #testing
                         self.event_manager.event_representer_list.addEvent(event)
                     #print(self.eventManager.eventList.events) #testing
-
+ 
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
                         print("Error:", e)

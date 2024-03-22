@@ -7,11 +7,15 @@ class FileHandler:
         self.directory = directory_name
         self.logDirPath = os.path.join(directory_name)
         self.file_names = []
-        self.create_directory()
+        self._create_directory()
 
     def get_log_paths(self):
+        """
+        Traverses the entire directory to find files whose filetype is associated with logs.\n
+        It returns a list of all the filepaths.
+        """
         log_files = []
-    
+        
         for subdir, dirs, files in os.walk(self.logDirPath):
             for file in files:
                 file_path = os.path.join(subdir, file)
@@ -30,26 +34,110 @@ class FileHandler:
                     file_path = os.path.join(white_dir, white_file)
                     if file_path.endswith(".csv") and file_path not in log_files:
                         log_files.append(file_path)
-
+        
         return log_files
     
-    def create_directory(self):
-        # creates the directory if it doesn't exist
-        if not os.path.exists(self.directory):
+    def get_files_in_directory(self):
+        """
+        Returns a list of all the files inside the directory associated with FileHandler.
+        """
+        files = []
+        for item in os.listdir(self.directory):
+            item_path = os.path.join(self.directory, item)
+            if os.path.isfile(item_path):
+                files.append(item_path)
+        return files
+
+
+    def _create_directory(self):
+        """
+        Creates a directory to be associated with the FileHandler if it doesn't exist already.
+        """
+        if not self._directory_exist():
             os.makedirs(self.directory)
+    
+    def _directory_exist(self):
+        """
+        Checks if a directory exists.
+        """
+        return os.path.exists(self.directory)
 
     
-    # saves files to the file handlers dir
-    def save_file_in_directory(self,file:UploadFile):
-        with open(os.path.join(self.directory,file.filename),'w+') as new_file:
-            new_file.write(file.read(file.size))
+    def save_file_in_directory(self, file: UploadFile):
+        """
+        Saves the given file into the FileHandlers directory.\n
+        Generating a safe filename to prevent directory traversal attacks.
+        """
+        # Generate a safe filename to prevent directory traversal attacks
+        safe_filename = os.path.basename(file.filename)
+        target_file_path = os.path.join(self.directory, safe_filename)
 
-    #grabs the files from the file handlers dir
-    def get_files_in_directory(self):
-        with open(os.path.join(self.directory),'r') as d:
-            pass
+        # Ensure the directory exists
+        if not self._directory_exist():
+            self._create_directory()
+
+        with open(target_file_path, 'wb+') as new_file:
+            contents = file.file.read()  # Read the file's contents as binary
+            new_file.write(contents)
+            file.file.close()  # It's a good practice to close the file object explicitly
 
 
-    def getFileType(self, file_name):
-        file_type = file_name.split(".")[-1]
+    def get_file_type(self, file):
+        """
+        Checks the given file's type and returns it as a string.
+        """
+        file_type = file.split(".")[-1]
         return file_type
+    
+    def is_empty(self):
+        """
+        Checks if the FileHandler's directory is empty.
+        """
+        return not os.listdir(self.directory)
+    
+    def delete_file(self,filepath):
+        """
+        Delete a single file matching the given filepath.
+        """
+        try:
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+                print(f"Deleted file: {filepath}")
+        except Exception as e:
+            print(f"Error deleting file: {filepath} - {e}")
+    
+    def delete_all_files(self):
+        """
+        Delete all files within the directory asociated with the FileHandler.\n
+        """
+        for filename in os.listdir(self.directory):
+            file_path = os.path.join(self.directory, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                    print(f"Deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file: {file_path} - {e}")
+
+    def delete_directory(self):
+        """
+        Deletes all the files inside the FileHandler's associated directory and then deletes the directory itself.
+        """
+        if not self.is_empty():
+            self.delete_all_files()
+        self._delete_empty_directory()
+    
+    
+    def _delete_empty_directory(self):
+        """
+        Delete a directory if it's empty.\n
+        The directory to be deleted is the directory associated with the FileHandler.
+        """
+        try:
+            if os.path.isdir(self.directory) and not os.listdir(self.directory):
+                os.rmdir(self.directory)
+                print(f"Deleted directory: {self.directory}")
+        except Exception as e:
+            print(f"Error deleting directory: {self.directory} - {e}")
+
+    
