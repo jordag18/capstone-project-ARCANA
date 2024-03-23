@@ -29,10 +29,6 @@ class LogIngestor:
             if filetype == "csv":
                 self.readCSVFile(filepath)
                 self.newFilesIngested.append(filepath)
-            # elif fileType == "txt":
-            #     self.parseTxtFile(fileName)
-            # elif fileType == "log":
-            #     self.parseLogFile(fileName)
             else:
                 print("Unsupported file type:", filetype)
             print("Deleting File:",filepath)
@@ -111,6 +107,7 @@ class LogIngestor:
                             if field == " ":
                                 isMalformed = True
                                 break
+                        #Create event instance
                         event = create_event_representer(
                             initials=initials,
                             team=team,
@@ -131,9 +128,7 @@ class LogIngestor:
                         with open("event_test.txt",'a') as event_text:
                             print(event)
                             event_text.write(f'{str(event)}\n')
-                        #print(event.get_initials()) #testing
                         self.event_manager.event_representer_list.addEvent(event)
-                    #print(self.eventManager.eventList.events) #testing
  
                 except Exception as e:
                         # if any erros occur  while parsing event mark as malformed
