@@ -1,6 +1,14 @@
 import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField,ImageField
 
+##########################################################################################
+#
+#
+#
+#
+#
+##########################################################################################
+
 
 class EventRepresenter(Document):
     def __init__(self,initials = StringField(required=True, min_length=2, max_length=2),team = StringField(required=True),vector_id = StringField(required=True),description = StringField(required=True),

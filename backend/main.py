@@ -14,7 +14,14 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 
-
+##########################################################################################
+# Here in the main I feel as though certain sections warrant there own context descriptions
+# because everythin stems from this file. For example everything from lines 26-85 would
+# warrant their own context description and so on with the chunks of code that have the http
+# methods. As I said in some of my other notes I think global variables warrant thier own
+# description and anything not working for us in terms of improvement should be outlined 
+# in its own section.
+##########################################################################################
 
 # app object
 app = FastAPI()

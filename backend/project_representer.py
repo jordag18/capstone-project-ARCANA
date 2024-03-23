@@ -4,6 +4,14 @@ from events_manager import EventsManager
 import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField
 
+##########################################################################################
+#
+#
+#
+#
+#
+##########################################################################################
+
 #TODO Create functions to make a project representer, save project representer to database, make project representer with ingested logs and save representer.
 
 class ProjectRepresenter(Document):

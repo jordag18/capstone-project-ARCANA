@@ -3,7 +3,15 @@ from data_services import create_event_representer
 from datetime import datetime
 import csv
 #from PIL import Image
- 
+
+##########################################################################################
+# I feel like this class may be individually important enough to warrant method 
+# descriptions for each one. Also outline what isn't working for us in the code, not
+# litterally but in terms of improvement and make it its own section.
+#
+#
+##########################################################################################
+
 class LogIngestor:
     def __init__(self, directory, event_manager):
          #optiminally we want self.directory to be the Project's folder in the database/local, I will hard code it to be uploads for now

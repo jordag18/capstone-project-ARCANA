@@ -1,10 +1,19 @@
 #Diana Castaneda CRUD
+#Daniel Lucio Project CRUD
 import datetime
 from mongoengine import connect
 from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from events_manager import EventsManager
+
+##########################################################################################
+#
+#
+#
+#
+#
+##########################################################################################
 
 class DatabaseManager:
     def __init__(self, db_name, host='localhost', port=27017):
