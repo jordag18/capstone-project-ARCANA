@@ -2,7 +2,8 @@ from log_ingestor import LogIngestor
 from event_representer import EventRepresenter
 from events_manager import EventsManager
 import datetime
-from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField
+from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField, EmbeddedDocumentField
+
 
 ##########################################################################################
 #
@@ -21,7 +22,7 @@ class ProjectRepresenter(Document):
     end_date = DateTimeField(default=datetime.datetime.now)
     location = StringField(default="")
     initials = StringField(default="")
-    event_list = ListField(ReferenceField(EventRepresenter), default = [])
+    event_list = ListField(EmbeddedDocumentField(EventRepresenter), default = [])
 
     meta = {
         'collection': 'Projects',  # Specifies the collection name in MongoDB
@@ -37,7 +38,7 @@ class ProjectRepresenter(Document):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingestLogs()
         for event in self.event_manager.event_representer_list.events:
-            event.save()
+            #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
         self.save()
 
