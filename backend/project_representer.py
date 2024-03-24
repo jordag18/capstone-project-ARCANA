@@ -36,7 +36,7 @@ class ProjectRepresenter(Document):
 
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
-        log_ingestor.ingestLogs()
+        log_ingestor.ingest_logs()
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
