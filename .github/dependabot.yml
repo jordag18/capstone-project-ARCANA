@@ -8,8 +8,12 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/backend" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+      day: "monday"
+    target-branch: "dev"
+    
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/frontend" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+      day: "monday"
