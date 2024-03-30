@@ -1,9 +1,5 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
-import Footer from "../../components/footer";
-import Container from 'react-bootstrap/Container';
-//import ThemeHandler from "@/app/util/themeHandler";
 
 interface Event {
   //Event info goes here
