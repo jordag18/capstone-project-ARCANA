@@ -48,16 +48,14 @@ const EventRow: React.FC<{ event: Event }> = ({ event }) => {
   );
 };
 
-const EventsList: React.FC = () => {
+const EventsList: React.FC<{ projectName: string}> = ({ projectName }) => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isOpenDialogOpen, setIsOpenDialogOpen] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string>('asa')
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/events');
+        const response = await fetch(`http://localhost:8000/api/events?project_name=${projectName}`);
         if (!response.ok) {
           throw new Error('Network response was not ok: ' + response.statusText);
         }
@@ -68,7 +66,7 @@ const EventsList: React.FC = () => {
       }
     };
     fetchEvents();
-  }, []);
+  }, [selectedProject]);
 
   // Here you can handle dialog opening and other logic related to events
 
