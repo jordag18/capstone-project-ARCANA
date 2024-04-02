@@ -1,6 +1,7 @@
 from log_ingestor import LogIngestor
 from event_representer import EventRepresenter
 from events_manager import EventsManager
+from user_activity_logger import UserActivityLogger
 import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
@@ -37,10 +38,19 @@ class ProjectRepresenter(Document):
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
+    
+        # Log activity when logs are ingested
+
+        timestamp = datetime.datetime.now()
+        print("timestamp", timestamp)
+        statement = f"HardcodedFileName ingested log in Project {self.name}"  # Adjust statement
+        UserActivityLogger.add_user_activity_log(self.initials, timestamp, statement, directory)
+        
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
         self.save()
+
 
     def get_event_representers_info(self):
         # Retrieve all information about each EventRepresenter within the project's event_list
