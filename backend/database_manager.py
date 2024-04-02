@@ -48,6 +48,13 @@ class DatabaseManager:
             return project_info
         return False
 
+
+    def get_events_by_project(self, project_name):
+        project = self.get_project(project_name)
+        if project:
+            return project.get('events')
+        return []
+    
     def save_project(self, project):
         # Save changes to an existing project
         project.save()
