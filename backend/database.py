@@ -1,4 +1,5 @@
 from model import Project
+from model import Event
 import motor.motor_asyncio
 
 ##########################################################################################
@@ -46,3 +47,9 @@ async def remove_project(project_name):
 		await collection.delete_one({"project_name":project_name})
 		return True
 
+async def fetch_events_list(project_name):
+	events = []
+	cursor = collection.find({project_name})
+	async for document in cursor:
+		events.append(Event(**document))
+	return events
