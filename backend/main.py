@@ -154,6 +154,15 @@ def delete_project(project_name: str):
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")
 
+@app.get("/api/events", response_model=List[Event])
+async def get_events(project_name: str):
+    try:
+        events = db_manager.get_events_by_project(project_name)
+        return events
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")

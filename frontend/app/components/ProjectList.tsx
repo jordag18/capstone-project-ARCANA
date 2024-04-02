@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
+import { Link } from 'react-bootstrap-icons';
+
 // Define a type for individual project data
 interface Project {
     name: string;
@@ -70,10 +72,11 @@ const ProjectsList: React.FC = () => {
     };
 
     const handleConfirmOpen = () => {
-        // Logic to delete the project
+        console.log("Openning Project");
+        
         setIsOpenDialogOpen(false);
-        setSelectedProject(null);
-        // Here you would also call the API to delete the project and then refresh the list of projects
+        return <Link to="/dashboard/eventMenu">  </Link>
+        //selectedProject
     };
 
     const handleCloseDialog = () => {
