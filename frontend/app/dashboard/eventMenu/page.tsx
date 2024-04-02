@@ -1,56 +1,30 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import NavBar from "../../components/navbar"; // Update the import statement to use lowercase 'navbar'
+import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
-import Container from "react-bootstrap/Container";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/esm/Row";
 import { Folder2 } from "react-bootstrap-icons";
-Date
+
 interface Event {
-    initials : string;
-    team: string;
-    vector_id: string;
-    location?: string;
-    icon: string;
-    action_title: string;
-    description: string;
-    source_host?: string;
-    target_host_list?: string[];
-    data_source: string;
-    posture?: string;
-    timestamp?: Date;
-    is_malformed?: boolean;
-    last_modified: Date;
+  initials: string;
+  team: string;
+  vector_id: string;
+  location?: string;
+  icon: string; // Assuming this might be a URL or a placeholder text for an icon
+  action_title: string;
+  description: string;
+  source_host?: string;
+  target_host_list?: string[];
+  data_source: string;
+  posture?: string;
+  timestamp?: Date;
+  is_malformed?: boolean;
+  last_modified: Date;
 }
 
-
-// Define a functional component to render a single event row
-const EventRow: React.FC<{ event: Event }> = ({ event }) => {
-  return (
-      <tr>
-          <td>{event.initials}</td>
-          <td>{event.team}</td>
-          <td>{event.vector_id}</td>
-          <td>{event.location}</td>
-          <td>{event.icon}</td>
-          <td>{event.action_title}</td>
-          <td>{event.description}</td>
-          <td>{event.source_host}</td>
-          <td>{event.target_host_list?.join(', ')}</td>
-          <td>{event.data_source}</td>
-          <td>{event.posture}</td>
-          <td>{event.timestamp?.toString()}</td>
-          <td>{event.is_malformed ? 'Yes' : 'No'}</td>
-          <td>{event.last_modified.toString()}</td>
-      </tr>
-  );
-};
-
-const EventsList: React.FC<{ projectName: string}> = ({ projectName }) => {
+const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [selectedProject, setSelectedProject] = useState<string>('asa')
+
+  projectName = "Project2"
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -66,17 +40,12 @@ const EventsList: React.FC<{ projectName: string}> = ({ projectName }) => {
       }
     };
     fetchEvents();
-  }, [selectedProject]);
-
-  // Here you can handle dialog opening and other logic related to events
+  }, [projectName]);
 
   return (
     <div>
       <NavBar />
-      <div
-        className="position-relative"
-        style={{ top: "calc(0px + 1rem)" }}>
-        {/* Adjust the top value according to your NavBar's height and padding */}
+      <div className="position-relative" style={{ top: "calc(0px + 1rem)" }}>
         <div className="container-fluid">
           <div className="row justify-content-center align-items-center">
             <div className="col-12">
@@ -84,8 +53,6 @@ const EventsList: React.FC<{ projectName: string}> = ({ projectName }) => {
                 <Folder2 size={80} />
                 <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap' }}>Project Events</h2>
               </div>
-            </div>
-            <div className="col-12">
               <table className="table table-striped table-bordered">
                 <thead>
                   <tr>
@@ -119,9 +86,9 @@ const EventsList: React.FC<{ projectName: string}> = ({ projectName }) => {
                       <td>{event.target_host_list?.join(', ')}</td>
                       <td>{event.data_source}</td>
                       <td>{event.posture}</td>
-                      <td>{event.timestamp?.toString()}</td>
+                      <td>{event.timestamp ? new Date(event.timestamp).toLocaleString() : 'N/A'}</td>
                       <td>{event.is_malformed ? 'Yes' : 'No'}</td>
-                      <td>{event.last_modified.toString()}</td>
+                      <td>{new Date(event.last_modified).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
