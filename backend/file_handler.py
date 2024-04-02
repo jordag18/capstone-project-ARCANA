@@ -1,9 +1,29 @@
-import csv
 import os
 from fastapi import UploadFile
 
+##########################################################################################
+# This Class is responsible for handling a pletera of operations that involve files
+# and directories. Many methods depend on a center directory, that directory is created 
+# when the object is initiated if the directory did not exist before hand. 
+#
+#
+##########################################################################################
+
 class FileHandler:
-    def __init__(self,directory_name):
+    """
+    This Class is responsible for handling a pletera of operations that involve files and directories.          
+    Many methods depend and refer to a center directory, which is created when the object is initiated, if the directory does not exist. 
+    Attributes:
+        directory: The centeral directory that will be used. If the directory does not exist it will be created when the FileHandler object is created.
+        logDirPath:
+        file_names: The list of all the files in the directory
+    """
+    def __init__(self,directory_name:str):
+        """
+        Constructor for FileHandler Class\n
+        Parameter:
+            directory_name (str): The name of the directory that will be used with FileHandler
+        """
         self.directory = directory_name
         self.logDirPath = os.path.join(directory_name)
         self.file_names = []
@@ -11,8 +31,9 @@ class FileHandler:
 
     def get_log_paths(self):
         """
-        Traverses the entire directory to find files whose filetype is associated with logs.\n
-        It returns a list of all the filepaths.
+        Traverses the entire FileHandler directory to find files whose filetype is associated with logs. Such as csv files.\n
+        Returns:
+            log_files: It returns a list of all the filepaths.
         """
         log_files = []
         
@@ -39,7 +60,9 @@ class FileHandler:
     
     def get_files_in_directory(self):
         """
-        Returns a list of all the files inside the directory associated with FileHandler.
+        Finds all the files inside the FileHandler's directory.\n
+        Returns:
+            files: a list of all the files inside the directory associated with FileHandler.
         """
         files = []
         for item in os.listdir(self.directory):
@@ -51,25 +74,30 @@ class FileHandler:
 
     def _create_directory(self):
         """
-        Creates a directory to be associated with the FileHandler if it doesn't exist already.
+        Creates a new directory, if it doesn't exist.
         """
         if not self._directory_exist():
             os.makedirs(self.directory)
     
-    def _directory_exist(self):
+    def _directory_exist(self) -> bool:
         """
-        Checks if a directory exists.
+        Checks if the FileHandler's directory exists.
+        Returns:
+            True -> If the directory exist.\n
+            False -> If it does not exist.
         """
         return os.path.exists(self.directory)
 
     
-    def save_file_in_directory(self, file: UploadFile):
+    def save_file_in_directory(self, uploaded_file: UploadFile):
         """
-        Saves the given file into the FileHandlers directory.\n
-        Generating a safe filename to prevent directory traversal attacks.
+        Saves the given file into the FileHandler's directory.\n
+        It Generates a safe filename to prevent directory traversal attacks.
+        Parameter:
+            uploaded_file (UploadFile): The file that will be saved into the directory. 
         """
         # Generate a safe filename to prevent directory traversal attacks
-        safe_filename = os.path.basename(file.filename)
+        safe_filename = os.path.basename(uploaded_file.filename)
         target_file_path = os.path.join(self.directory, safe_filename)
 
         # Ensure the directory exists
@@ -77,16 +105,19 @@ class FileHandler:
             self._create_directory()
 
         with open(target_file_path, 'wb+') as new_file:
-            contents = file.file.read()  # Read the file's contents as binary
+            contents = uploaded_file.file.read()  # Read the file's contents as binary
             new_file.write(contents)
-            file.file.close()  # It's a good practice to close the file object explicitly
+            uploaded_file.file.close()
 
-
-    def get_file_type(self, file):
+    def get_file_type(self, filepath:str) -> str:
         """
-        Checks the given file's type and returns it as a string.
+        Checks the given file's type and returns it as a string.\n
+        Parameter:
+            filepath (str): The file's path that will be checked.
+        Returns:
+            file_type (str): A string subset that only includes the file's type. (.csv, .txt, etc)
         """
-        file_type = file.split(".")[-1]
+        file_type = filepath.split(".")[-1]
         return file_type
     
     def is_empty(self):
@@ -95,9 +126,11 @@ class FileHandler:
         """
         return not os.listdir(self.directory)
     
-    def delete_file(self,filepath):
+    def delete_file(self,filepath:str):
         """
-        Delete a single file matching the given filepath.
+        Deletes a single file matching the given filepath.\n
+        Parameter:
+            filepath (str): The file's path that will be deleted.
         """
         try:
             if os.path.isfile(filepath):
@@ -108,7 +141,7 @@ class FileHandler:
     
     def delete_all_files(self):
         """
-        Delete all files within the directory asociated with the FileHandler.\n
+        Delete all files within the FileHandler's directory.\n
         """
         for filename in os.listdir(self.directory):
             file_path = os.path.join(self.directory, filename)
@@ -121,7 +154,7 @@ class FileHandler:
 
     def delete_directory(self):
         """
-        Deletes all the files inside the FileHandler's associated directory and then deletes the directory itself.
+        Deletes all the files inside the FileHandler's directory and then deletes the directory itself.
         """
         if not self.is_empty():
             self.delete_all_files()
@@ -130,8 +163,7 @@ class FileHandler:
     
     def _delete_empty_directory(self):
         """
-        Delete a directory if it's empty.\n
-        The directory to be deleted is the directory associated with the FileHandler.
+        Delete the FileHandler's directory if it's empty. Mainly used when the FileHandler's function is complete.
         """
         try:
             if os.path.isdir(self.directory) and not os.listdir(self.directory):

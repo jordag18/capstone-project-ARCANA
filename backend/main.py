@@ -14,7 +14,14 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 
-
+##########################################################################################
+# Here in the main I feel as though certain sections warrant there own context descriptions
+# because everythin stems from this file. For example everything from lines 26-85 would
+# warrant their own context description and so on with the chunks of code that have the http
+# methods. As I said in some of my other notes I think global variables warrant thier own
+# description and anything not working for us in terms of improvement should be outlined 
+# in its own section.
+##########################################################################################
 
 # app object
 app = FastAPI()
@@ -31,7 +38,6 @@ class Event(BaseModel):
     data_source: str
     action_title: str
     last_modified: datetime
-    # 
     #icon: Optional[str] = None
     source_host: Optional[str] = None
     target_host_list: List[str] = []
@@ -39,7 +45,7 @@ class Event(BaseModel):
     timestamp: datetime
     is_malformed: bool
 
-class Project(BaseModel):  # Define your project model for API validation
+class Project(BaseModel): 
     name: str
     start_date: datetime
     end_date: datetime
@@ -62,12 +68,6 @@ from database import (
     remove_project,
 )
 
-#collection = db.list_collection_names()
-#print(f"{collection}")
-
-# analyst_collection = db["analyst_initials"]
-# print(analyst_collection)
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -81,10 +81,7 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ARCANA API"}
-
-class IngestPayload(BaseModel):
-    files: List[str]
-
+#ingests logs used by File handler class
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
     try:
@@ -99,7 +96,7 @@ async def ingest_logs(files: List[UploadFile] = File(...)):
         # Return a response indicating success if needed
         return {"message": "Logs ingested successfully"}
 
-
+#Retrieves all projects in DB
 @app.get("/api/projects", response_model=List[Project])
 async def get_all_projects():
     try:
@@ -134,7 +131,7 @@ async def put_project(
         return response
     raise HTTPException(404, f"No project found with the name {project_name}")
 
-
+#Create Project in the database
 @app.post("/api/project/", response_model=ProjectCreate)
 async def create_project(project: ProjectCreate):
     try:
@@ -149,7 +146,7 @@ async def create_project(project: ProjectCreate):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
+#Deletes project from the database
 @app.delete("/api/deleteProject/{project_name}")
 def delete_project(project_name: str):
     response = db_manager.delete_project(project_name)

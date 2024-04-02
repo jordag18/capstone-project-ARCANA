@@ -2,6 +2,7 @@ import event_representer as event_representer
 from event_list import EventList
 import json
 
+
 class EventsManager:
 
     def __init__(self):

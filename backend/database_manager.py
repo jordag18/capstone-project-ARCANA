@@ -1,10 +1,19 @@
 #Diana Castaneda CRUD
+#Daniel Lucio Project CRUD
 import datetime
 from mongoengine import connect
 from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from events_manager import EventsManager
+
+##########################################################################################
+#
+#
+#
+#
+#
+##########################################################################################
 
 class DatabaseManager:
     def __init__(self, db_name, host='localhost', port=27017):
@@ -21,6 +30,7 @@ class DatabaseManager:
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             project.delete()  # This deletes the project from the database
+            self.project_manager.remove_project(project_name, project.initials)
             return True
         return False
     
