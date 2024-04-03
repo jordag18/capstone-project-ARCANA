@@ -7,6 +7,8 @@ const IngestLogDialog = ({
   handleCloseDialog,
   setProjectLocation,
   projectLocation,
+  setStartDate, // Add this prop
+  setEndDate, // Add this prop
 }) => {
   //files state variable to store selected files
   const [files, setFiles] = useState<File[] | null>([]);
@@ -46,10 +48,18 @@ const IngestLogDialog = ({
         formData
       );
       console.log(response.data);
+      // Assuming this is within the handleIngestLogs function after a successful API call
+      setStartDate(formatTimestampForInput(response.data.earliest_timestamp)); // Format and set start date
+      setEndDate(formatTimestampForInput(response.data.latest_timestamp)); // Format and set end date
     } catch (error) {
       //If issue with API call catch error
       console.error(error);
     }
+  };
+
+  const formatTimestampForInput = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toISOString().slice(0, 16); // Trims to 'YYYY-MM-DDThh:mm' format
   };
 
   // Function to clear all selected files

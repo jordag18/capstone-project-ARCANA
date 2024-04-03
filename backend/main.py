@@ -14,6 +14,8 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 
+
+
 ##########################################################################################
 # Here in the main I feel as though certain sections warrant there own context descriptions
 # because everythin stems from this file. For example everything from lines 26-85 would
@@ -81,21 +83,21 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ARCANA API"}
-#ingests logs used by File handler class
+#Ingest logs API
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
     try:
-         #uploads is the directory the files are ingested into from the frontend, temp name
         fh = FileHandler("uploads")
+        # Clear the contents of the uploads folder before saving new files
+        fh.delete_all_files()
         for file in files:
-            print(f"File Name: {file.filename}")
             fh.save_file_in_directory(file)
-    except FileNotFoundError as e:
-        return {'error_message': f"Error Occured while ingesting logs: {e}"} 
-    else:
-        # Return a response indicating success if needed
-        return {"message": "Logs ingested successfully"}
+        timestamps = fh.get_earliest_latest_timestamps()
 
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Logs ingested successfully", **timestamps}
 #Retrieves all projects in DB
 @app.get("/api/projects", response_model=List[Project])
 async def get_all_projects():

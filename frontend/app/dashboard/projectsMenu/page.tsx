@@ -10,17 +10,15 @@ import { Folder2 } from "react-bootstrap-icons";
 import IngestLogDialog from "./ingestLogDialog"; // Import the IngestLogDialog component
 import ProjectsList from "@/app/components/ProjectList";
 
-
 //import ThemeHandler from "@/app/util/themeHandler";
 //import FontSizeHandler from "@/app/lib/fontSizeHandler";
 
 const ManageProjectsPage = () => {
-
-  const [projectName, setProjectName] = useState('');
-  const [projectLocation, setProjectLocation] = useState('');
-  const [dateStart, setDateStart] = useState('');
-  const [dateEnd, setDateEnd] = useState('');
-  const [initials, setInitials] = useState('');
+  const [projectName, setProjectName] = useState("");
+  const [projectLocation, setProjectLocation] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
+  const [initials, setInitials] = useState("");
 
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [showIngestLogDialog, setShowIngestLogDialog] = useState(false);
@@ -28,13 +26,13 @@ const ManageProjectsPage = () => {
 
   const handleOpenDialog = (dialogType: string) => {
     switch (dialogType) {
-      case 'createProject':
+      case "createProject":
         setShowCreateProjectDialog(true);
         break;
-      case 'ingestLog':
+      case "ingestLog":
         setShowIngestLogDialog(true);
         break;
-      case 'deleteProject':
+      case "deleteProject":
         setShowDeleteProjectDialog(true);
         break;
       default:
@@ -44,13 +42,13 @@ const ManageProjectsPage = () => {
 
   const handleCloseDialog = (dialogType: string) => {
     switch (dialogType) {
-      case 'createProject':
+      case "createProject":
         setShowCreateProjectDialog(false);
         break;
-      case 'ingestLog':
+      case "ingestLog":
         setShowIngestLogDialog(false);
         break;
-      case 'deleteProject':
+      case "deleteProject":
         setShowDeleteProjectDialog(false);
         break;
       default:
@@ -58,40 +56,38 @@ const ManageProjectsPage = () => {
     }
   };
 
-
   const handleSubmit = async () => {
     const projectData = {
-        name: projectName,
-        start_date: dateStart,
-        end_date: dateEnd,
-        location: projectLocation,
-        initials: initials
+      name: projectName,
+      start_date: dateStart,
+      end_date: dateEnd,
+      location: projectLocation,
+      initials: initials,
     };
 
     try {
-      console.log('Sending project data:', projectData);
-        const response = await fetch('http://localhost:8000/api/project/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(projectData)
-        });
+      console.log("Sending project data:", projectData);
+      const response = await fetch("http://localhost:8000/api/project/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(projectData),
+      });
 
-        if (!response.ok) {
-            throw new Error('Failed to create the project');
-        }
-        const newProject = await response.json();
-        console.log('Successfully created project:', newProject);
-        // Close the modal and clear the form
-        handleCloseDialog('createProject');
-        // Optionally, refresh the list of projects or add the new project to the state
+      if (!response.ok) {
+        throw new Error("Failed to create the project");
+      }
+      const newProject = await response.json();
+      console.log("Successfully created project:", newProject);
+      // Close the modal and clear the form
+      handleCloseDialog("createProject");
+      // Optionally, refresh the list of projects or add the new project to the state
     } catch (error) {
-        console.error('Error creating project:', error);
-        alert(`Error creating project: ${error.message}`);
+      console.error("Error creating project:", error);
+      alert(`Error creating project: ${error.message}`);
     }
-};
-
+  };
 
   return (
     <div>
@@ -99,24 +95,38 @@ const ManageProjectsPage = () => {
       <NavBar />
       <div
         className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto "
-        style={{ height: "75%", width: "100%" }}>
+        style={{ height: "75%", width: "100%" }}
+      >
         <Container className="flex justify-content-center align-items-center border mx-auto p-3 rounded">
           <div className="justify-content-space-between">
             <Row className="justify-content-center align-items-center p-2 mx-auto">
               <div className="d-flex justify-content-between align-items-center p-2">
                 {/* Changed class to 'd-flex' for inline display */}
                 <Folder2 size={80} />
-                <h2 className="flex-grow-1 m-0" style={{whiteSpace: 'nowrap'}}>Manage Projects</h2>
+                <h2
+                  className="flex-grow-1 m-0"
+                  style={{ whiteSpace: "nowrap" }}
+                >
+                  Manage Projects
+                </h2>
                 <Container className="d-flex justify-content-end">
-                  <Button variant="primary" onClick={() => handleOpenDialog('createProject')}> + Create Project </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleOpenDialog("createProject")}
+                  >
+                    {" "}
+                    + Create Project{" "}
+                  </Button>
                 </Container>
               </div>
             </Row>
           </div>
 
-
           {/* Create Project Dialog */}
-          <Modal show={showCreateProjectDialog} onHide={() => handleCloseDialog('createProject')}>
+          <Modal
+            show={showCreateProjectDialog}
+            onHide={() => handleCloseDialog("createProject")}
+          >
             <Modal.Header closeButton>
               <Modal.Title>Create Project</Modal.Title>
             </Modal.Header>
@@ -141,20 +151,19 @@ const ManageProjectsPage = () => {
               </div>
               <div className="mb-3 d-flex">
                 <input
-                  type="date"
+                  type="datetime-local"
                   className="form-control"
-                  placeholder="mm/dd/yyyy"
                   value={dateStart}
                   onChange={(e) => setDateStart(e.target.value)}
                 />
                 <input
-                  type="date"
+                  type="datetime-local"
                   className="form-control"
-                  placeholder="mm/dd/yyyy"
                   value={dateEnd}
                   onChange={(e) => setDateEnd(e.target.value)}
                 />
               </div>
+
               <div className="mb-3 d-flex">
                 <input
                   type="text"
@@ -166,40 +175,60 @@ const ManageProjectsPage = () => {
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('createProject')}>Cancel</Button>
-              <Button variant="primary" onClick={() => handleOpenDialog('ingestLog')}>Ingest Log</Button>
-              <Button variant="primary" onClick={handleSubmit}>Create Project</Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleCloseDialog("createProject")}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => handleOpenDialog("ingestLog")}
+              >
+                Ingest Log
+              </Button>
+              <Button variant="primary" onClick={handleSubmit}>
+                Create Project
+              </Button>
             </Modal.Footer>
           </Modal>
-
 
           {/* Ingest Log Dialog */}
           <IngestLogDialog
             show={showIngestLogDialog}
             handleCloseDialog={handleCloseDialog}
             setProjectLocation={setProjectLocation}
+            setStartDate={setDateStart} // Pass setDateStart as prop
+            setEndDate={setDateEnd}
           />
 
-          
-          
-
-
           {/* Delete Project Dialog */}
-          <Modal show={showDeleteProjectDialog} onHide={() => handleCloseDialog('deleteProject')}>
-            <Modal.Header closeButton>
-            </Modal.Header>
-            <Modal.Body style={{ textAlign: 'center' }}>
+          <Modal
+            show={showDeleteProjectDialog}
+            onHide={() => handleCloseDialog("deleteProject")}
+          >
+            <Modal.Header closeButton></Modal.Header>
+            <Modal.Body style={{ textAlign: "center" }}>
               <h3> Are you sure you want to delete? </h3>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => handleCloseDialog('deleteProject')}>Cancel</Button>
-              <Button variant="danger" onClick={() => handleCloseDialog('deleteProject')}>Delete</Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleCloseDialog("deleteProject")}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleCloseDialog("deleteProject")}
+              >
+                Delete
+              </Button>
             </Modal.Footer>
           </Modal>
           <div className="justify-content-end">
-          <ProjectsList />
+            <ProjectsList />
           </div>
-
         </Container>
       </div>
       <Footer />
