@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+from dateutil import parser
 from fastapi import UploadFile
 
 ##########################################################################################
@@ -109,6 +111,8 @@ class FileHandler:
             new_file.write(contents)
             uploaded_file.file.close()
 
+        return self.directory
+
     def get_file_type(self, filepath:str) -> str:
         """
         Checks the given file's type and returns it as a string.\n
@@ -172,4 +176,48 @@ class FileHandler:
         except Exception as e:
             print(f"Error deleting directory: {self.directory} - {e}")
 
+    def get_earliest_latest_timestamps(self):
     
+        
+        timestamps = []
+
+        csv_files = self.get_log_paths()
+
+        if not csv_files:
+            return {"message": "No CSV files found in the directory."}
+
+        for file_path in csv_files:
+            try:
+                df = pd.read_csv(file_path)
+                timestamp_column = None
+                # Determine which timestamp column is present
+                if 'Timestamp' in df.columns:
+                    timestamp_column = 'Timestamp'
+                elif 'dateCreated' in df.columns:
+                    timestamp_column = 'dateCreated'
+                
+                if timestamp_column:
+                    # Attempt to parse each value in the chosen timestamp column as a datetime, handling errors gracefully
+                    parsed_timestamps = []
+                    for ts in df[timestamp_column].astype(str):
+                        try:
+                            parsed_timestamps.append(parser.parse(ts))
+                        except ValueError:
+                            # If parsing fails, skip this value
+                            continue
+                    if parsed_timestamps:  # Ensure the list is not empty
+                        timestamps.extend(parsed_timestamps)
+                else:
+                    print(f"Neither 'Timestamp' nor 'dateCreated' column found in {file_path}")
+            except Exception as e:
+                print(f"Error processing file {file_path}: {e}")
+
+        if timestamps:
+            earliest = min(timestamps)
+            latest = max(timestamps)
+            return {
+                "earliest_timestamp": earliest.strftime('%Y-%m-%d %H:%M:%S'), 
+                "latest_timestamp": latest.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        else:
+            return {"message": "No suitable timestamp data found across all files."}
