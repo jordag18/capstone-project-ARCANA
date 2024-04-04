@@ -170,13 +170,13 @@ class LogIngestor:
             match team:
                 case "Blue":
                     #icon library not implemented 
-                    icon_path = "../Icons/BlueTeam_Activity.png"
+                    icon_path = "BlueTeam_Activity.png"
                     action_title = "Blue Team Activity"
                 case "Red":
-                    icon_path = '../Icons/RedTeam_Activity.png'
+                    icon_path = 'RedTeam_Activity.png'
                     action_title = "Red Team Activity"
                 case "White":
-                    icon_path = "../Icons/Whitecard.png"
+                    icon_path = "Whitecard.png"
                     action_title = "White Card"
                 case _:
                     icon_path = "Unknown"
