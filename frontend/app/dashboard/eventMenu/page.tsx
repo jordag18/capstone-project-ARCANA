@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { Folder2 } from "react-bootstrap-icons";
+import Image from "react-bootstrap/Image"
 
 interface Event {
   initials: string;
   team: string;
   vector_id: string;
   location?: string;
-  icon: string; // Assuming this might be a URL or a placeholder text for an icon
+  icon: string; 
   action_title: string;
   description: string;
   source_host?: string;
@@ -68,7 +69,7 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                     <th>Data Source</th>
                     <th>Posture</th>
                     <th>Timestamp</th>
-                    <th>Is Malformed</th>
+                    <th>Malformed</th>
                     <th>Last Modified</th>
                   </tr>
                 </thead>
