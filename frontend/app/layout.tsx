@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-bootstrap-icons'
-
+import './/globals.css'
+import TopNav from './ui/navbar'
+import Footerbar from './ui/footerbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +18,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme="light">
+      <body className={inter.className + " bg-base-200"}>
+        <TopNav />
+        <div className="flex flex-col min-h-screen pb-20">
+          {/* Adjusted left and right padding on the main content container */}
+          <main className="flex-1 container mx-auto px-4 md:px-2 p-10">
+            <div className="bg-base-100 rounded-lg p-4 shadow">
+              {children}
+            </div>
+          </main>
+          <Footerbar />
+        </div>
+      </body>
     </html>
-  )
+  );
 }

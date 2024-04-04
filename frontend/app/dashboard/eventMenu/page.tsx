@@ -44,7 +44,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
 
   return (
     <div>
-      <NavBar />
       <div className="position-relative" style={{ top: "calc(0px + 1rem)" }}>
         <div className="container-fluid">
           <div className="row justify-content-center align-items-center">
@@ -97,7 +96,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

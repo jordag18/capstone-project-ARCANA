@@ -10,7 +10,6 @@ import FontSizeSetter from "@/app/components/fontSizeSetter";
 const ManageSystemPage = () => {
   return (
     <>
-      <NavBar />
       <div
         className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto"
         style={{ height: "75%", width: "100%" }}>
@@ -67,8 +66,6 @@ const ManageSystemPage = () => {
           </Accordion>
         </Container>
       </div>
-
-      <Footer />
     </>
   );
 };
