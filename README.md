@@ -39,6 +39,7 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install mongoengine
     pip install python-multipart
     pip install pandas
+    pip install motormongo
 
 ###### Then run the following commands
 
