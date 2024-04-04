@@ -112,8 +112,7 @@ const ManageProjectsPage = () => {
                 <Container className="d-flex justify-content-end">
                   <Button
                     variant="primary"
-                    onClick={() => handleOpenDialog("createProject")}
-                  >
+                    onClick={() => handleOpenDialog("createProject")}>
                     {" "}
                     + Create Project{" "}
                   </Button>

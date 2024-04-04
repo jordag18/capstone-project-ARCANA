@@ -72,8 +72,12 @@ const ProjectsList: React.FC = () => {
     };
 
     const handleConfirmOpen = () => {
-        console.log("Openning Project");
         
+        if (selectedProject) {
+            console.log("Openning Project", selectedProject.name);
+            window.location.href = '/${encodeURIComponent(selectedProject.name)}';
+        }
+
         setIsOpenDialogOpen(false);
         return <Link to="/dashboard/eventMenu">  </Link>
         //selectedProject
