@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={inter.className + " bg-base-200"}>
         <TopNav />
         <div className="flex flex-col min-h-screen pb-20">
-          {/* Adjusted left and right padding on the main content container */}
+          {/*main content container */}
           <main className="flex-1 container mx-auto px-4 md:px-2 p-10">
             <div className="bg-base-100 rounded-lg p-4 shadow">
               {children}

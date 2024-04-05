@@ -2,6 +2,7 @@
  * Renders the navigation bar component.
  * @returns The rendered navigation bar component.
  */
+//Currently not used in frontend-dev branch
 import { Diagram3, UiRadios, Folder2, CloudArrowUp, GearWideConnected } from "react-bootstrap-icons";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";

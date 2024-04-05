@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link';
-import MoveToNav from '../components/MoveToProjects';
+import MoveToNav from '../components/projectComponents/MoveToProjects';
 
 const TopNav = () => {
     return (
