@@ -110,6 +110,7 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                 <Book size={50} />
                 <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap', padding: 10 }}>Project Events</h2>
               </div>
+              <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
               <table className="table table-striped table-bordered">
               <thead>
                   <tr>
@@ -128,7 +129,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                     <th>Timestamp</th>
                     <th>Malformed</th>
                     <th>Last Modified</th>
-                    <th>Delete</th> {/* Added delete column */}
                   </tr>
                 </thead>
                 <tbody>
@@ -162,11 +162,12 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div style={{ paddingBottom: '50px' }}></div> 
+      <div style={{ paddingBottom: '75px' }}></div> 
       {isDialogOpen && (
         <div
           style={{
