@@ -6,6 +6,8 @@ from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from events_manager import EventsManager
+from bson import ObjectId
+import pymongo
 
 ##########################################################################################
 #
@@ -19,6 +21,13 @@ class DatabaseManager:
     def __init__(self, db_name, host='localhost', port=27017):
         # Establish a connection to the MongoDB database
         connect(db_name, host=host, port=port)
+        self.project_manager = ProjectManager()
+        # Establish a connection to the MongoDB database using pymongo
+        self.client = pymongo.MongoClient(f"mongodb://{host}:{port}/")
+        self.db = self.client[db_name]
+        self.projects_collection = self.db["Projects"]
+
+        # Initialize ProjectManager
         self.project_manager = ProjectManager()
 
     def create_project(self, name, start_date=None, end_date=None, location="", initials=""):
@@ -76,14 +85,17 @@ class DatabaseManager:
         return None
 
     def remove_event_from_project(self, project_name, event_id):
-        # Remove an event from a specific project
-        project = self.get_project(project_name)
-        if project:
-            # Filter out the event to be removed
-            project.event_list = [event for event in project.event_list if str(event.id) != event_id]
-            project.save()  # Save the updated project
+        try:
+            event_id_obj = ObjectId(event_id)
+            # Update the project in the database to remove the event
+            self.projects_collection.update_one({"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
+            project = self.get_project(project_name)
+            if project:
+                project['events'] = [event for event in project['events'] if event.get('id') != event_id]
             return True
-        return False
+        except Exception as e:
+            print("An error occurred:", e)
+            return False
 
     def get_all_projects(self):
         # Retrieve all projects
@@ -105,6 +117,7 @@ class DatabaseManager:
             event_representers_info = []
             for event in project.event_list:
                 event_info = {
+                    'id': event.id,
                     'location': event.location,
                     'initials': event.initials,
                     'team': event.team,
@@ -153,6 +166,3 @@ class DatabaseManager:
             event.save()
             return event
         return None 
-
-    
-

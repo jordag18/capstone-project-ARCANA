@@ -32,6 +32,7 @@ app = FastAPI()
 db_manager = DatabaseManager(db_name="ARCANA")
 
 class Event(BaseModel):
+    id: str
     location: str
     initials: str
     team: str
@@ -40,7 +41,7 @@ class Event(BaseModel):
     data_source: str
     action_title: str
     last_modified: datetime
-    #icon: Optional[str] = None
+    icon: str
     source_host: Optional[str] = None
     target_host_list: List[str] = []
     posture: Optional[str] = None
@@ -107,31 +108,31 @@ async def get_all_projects():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-#FIXME not implemented fully
-@app.get("/api/project{project_name}", response_model=Project)
-async def get_project_by_name(project_name):
-    response = await fetch_one_project(project_name)
-    if response:
-        return response
-    raise HTTPException(400, "Bad request")
+# #FIXME not implemented fully
+# @app.get("/api/project{project_name}", response_model=Project)
+# async def get_project_by_name(project_name):
+#     response = await fetch_one_project(project_name)
+#     if response:
+#         return response
+#     raise HTTPException(400, "Bad request")
 
 
-# CRUD for Projects
+# # CRUD for Projects
 
-#FIXME not implemented fully
-@app.put("/api/project/", response_model=Project)
-async def put_project(
-    project_name: str,
-    project_location: str,
-    start_date: str,
-    end_date: str,
-    initials: str,
-):
-    response = await update_project(
-        project_name, project_location, start_date, end_date, initials)
-    if response:
-        return response
-    raise HTTPException(404, f"No project found with the name {project_name}")
+# #FIXME not implemented fully
+# @app.put("/api/project/", response_model=Project)
+# async def put_project(
+#     project_name: str,
+#     project_location: str,
+#     start_date: str,
+#     end_date: str,
+#     initials: str,
+# ):
+#     response = await update_project(
+#         project_name, project_location, start_date, end_date, initials)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"No project found with the name {project_name}")
 
 #Create Project in the database
 @app.post("/api/project/", response_model=ProjectCreate)
@@ -161,6 +162,17 @@ async def get_events(project_name: str):
     try:
         events = db_manager.get_events_by_project(project_name)
         return events
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/deleteEvent/{project_name}/{event_id}")
+async def delete_event(project_name: str, event_id: str):
+    try:
+        response = db_manager.remove_event_from_project(project_name, event_id)
+        if response:
+            return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
+        else:
+            raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -266,3 +278,4 @@ The TRACE method performs a message loop-back test along the path to the target 
 # 504 Gateway Timeout
 # 505 HTTP Version Not Supported
 # 511 Network Authentication Required
+
