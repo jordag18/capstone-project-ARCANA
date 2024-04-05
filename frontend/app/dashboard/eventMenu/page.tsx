@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
-import { Folder2 } from "react-bootstrap-icons";
+import { Book, Pencil, XOctagon } from "react-bootstrap-icons";
+import {Image, Button} from "react-bootstrap"
 
 interface Event {
+  icon: string;
   initials: string;
   team: string;
   vector_id: string;
   location?: string;
-  icon: string; // Assuming this might be a URL or a placeholder text for an icon
   action_title: string;
   description: string;
   source_host?: string;
@@ -35,6 +36,9 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
         }
         const eventsData: Event[] = await response.json();
         setEvents(eventsData);
+        eventsData.forEach(event => {
+          console.log(event);
+        });
       } catch (error) {
         console.error('Error fetching Events: ', error);
       }
@@ -42,45 +46,61 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
     fetchEvents();
   }, [projectName]);
 
+  const handleEditClick = (index: number) => {
+    console.log("Edit button clicked for event index:", index);
+  
+  };
+
+  const handleDeleteClick = (index: number) => {
+    console.log("Delete button clicked for event index:", index);
+    
+  };
+
+
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <NavBar />
       <div className="position-relative" style={{ top: "calc(0px + 1rem)" }}>
         <div className="container-fluid">
           <div className="row justify-content-center align-items-center">
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center p-2">
-                <Folder2 size={80} />
-                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap' }}>Project Events</h2>
+                <Book size={50} />
+                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap', padding: 10 }}>Project Events</h2>
               </div>
               <table className="table table-striped table-bordered">
-                <thead>
+              <thead>
                   <tr>
+                    <th>Icon</th>
+                    <th>Action Title</th>
                     <th>Initials</th>
                     <th>Team</th>
                     <th>Vector ID</th>
                     <th>Location</th>
-                    <th>Icon</th>
-                    <th>Action Title</th>
                     <th>Description</th>
                     <th>Source Host</th>
                     <th>Target Host List</th>
                     <th>Data Source</th>
                     <th>Posture</th>
                     <th>Timestamp</th>
-                    <th>Is Malformed</th>
+                    <th>Malformed</th>
                     <th>Last Modified</th>
                   </tr>
                 </thead>
                 <tbody>
                   {events.map((event, index) => (
                     <tr key={index}>
+                      <td><Image className="p-0"
+                            src= {event.icon}
+                            width={"auto"}
+                            height={"auto"}
+                            alt={event.action_title}
+                              ></Image> </td>
+                      <td>{event.action_title}</td>
                       <td>{event.initials}</td>
                       <td>{event.team}</td>
                       <td>{event.vector_id}</td>
                       <td>{event.location}</td>
-                      <td>{event.icon}</td>
-                      <td>{event.action_title}</td>
                       <td>{event.description}</td>
                       <td>{event.source_host}</td>
                       <td>{event.target_host_list?.join(', ')}</td>
@@ -89,6 +109,10 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                       <td>{event.timestamp ? new Date(event.timestamp).toLocaleString() : 'N/A'}</td>
                       <td>{event.is_malformed ? 'Yes' : 'No'}</td>
                       <td>{new Date(event.last_modified).toLocaleString()}</td>
+                      <td>
+                        <Button variant="primary" onClick={() => handleEditClick(index)} className="mr-2"><Pencil /></Button>
+                        <Button variant="danger" onClick={() => handleDeleteClick(index)}><XOctagon /></Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -97,6 +121,7 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
           </div>
         </div>
       </div>
+      <div style={{ paddingBottom: '50px' }}></div> 
       <Footer />
     </div>
   );
