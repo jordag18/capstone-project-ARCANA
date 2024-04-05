@@ -1,15 +1,16 @@
-'use client';
+'use client'
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { Folder2 } from "react-bootstrap-icons";
 
 interface Event {
+  id: string;
   initials: string;
   team: string;
   vector_id: string;
   location?: string;
-  icon: string; // Assuming this might be a URL or a placeholder text for an icon
+  icon: string;
   action_title: string;
   description: string;
   source_host?: string;
@@ -23,39 +24,87 @@ interface Event {
 
 const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  projectName = "Project2"
+  projectName = "Project2";
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/events?project_name=${projectName}`);
+        const response = await fetch(
+          `http://localhost:8000/api/events?project_name=${projectName}`
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok: ' + response.statusText);
+          throw new Error(
+            "Network response was not ok: " + response.statusText
+          );
         }
         const eventsData: Event[] = await response.json();
+        console.log("Fetched events:", eventsData); // Log fetched events
         setEvents(eventsData);
       } catch (error) {
-        console.error('Error fetching Events: ', error);
+        console.error("Error fetching Events: ", error);
       }
-    };
+    };    
     fetchEvents();
   }, [projectName]);
+
+  const handleDeleteClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedEvent) {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/deleteEvent/${projectName}/${selectedEvent.id}`,
+          {
+            method: "DELETE"
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete the event");
+        }
+        
+        setEvents(events.filter((event) => event.id !== selectedEvent.id));
+        alert(`Successfully deleted event with ID: ${selectedEvent.id}`);
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        alert("Error deleting event");
+      }
+    }
+    setIsDialogOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedEvent(null);
+  };
 
   return (
     <div>
       <NavBar />
-      <div className="position-relative" style={{ top: "calc(0px + 1rem)" }}>
+      <div
+        className="position-relative"
+        style={{ top: "calc(0px + 1rem)" }}
+      >
         <div className="container-fluid">
           <div className="row justify-content-center align-items-center">
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center p-2">
                 <Folder2 size={80} />
-                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap' }}>Project Events</h2>
+                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: "nowrap" }}>
+                  Project Events
+                </h2>
               </div>
               <table className="table table-striped table-bordered">
                 <thead>
                   <tr>
+                    <th>ID</th> {/* Add ID column */}
                     <th>Initials</th>
                     <th>Team</th>
                     <th>Vector ID</th>
@@ -70,11 +119,13 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                     <th>Timestamp</th>
                     <th>Is Malformed</th>
                     <th>Last Modified</th>
+                    <th>Delete</th> {/* Added delete column */}
                   </tr>
                 </thead>
                 <tbody>
                   {events.map((event, index) => (
                     <tr key={index}>
+                      <td>{event.id}</td> {/* Display ID */}
                       <td>{event.initials}</td>
                       <td>{event.team}</td>
                       <td>{event.vector_id}</td>
@@ -83,12 +134,23 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                       <td>{event.action_title}</td>
                       <td>{event.description}</td>
                       <td>{event.source_host}</td>
-                      <td>{event.target_host_list?.join(', ')}</td>
+                      <td>{event.target_host_list?.join(", ")}</td>
                       <td>{event.data_source}</td>
                       <td>{event.posture}</td>
-                      <td>{event.timestamp ? new Date(event.timestamp).toLocaleString() : 'N/A'}</td>
-                      <td>{event.is_malformed ? 'Yes' : 'No'}</td>
-                      <td>{new Date(event.last_modified).toLocaleString()}</td>
+                      <td>
+                        {event.timestamp
+                          ? new Date(event.timestamp).toLocaleString()
+                          : "N/A"}
+                      </td>
+                      <td>{event.is_malformed ? "Yes" : "No"}</td>
+                      <td>
+                        {new Date(event.last_modified).toLocaleString()}
+                      </td>
+                      <td>
+                        <button onClick={() => handleDeleteClick(event)}>
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -97,6 +159,39 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
           </div>
         </div>
       </div>
+      {isDialogOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            padding: "20px",
+            zIndex: 1000
+          }}
+        >
+          <p>Are you sure you want to delete this event?</p>
+          <button onClick={handleConfirmDelete} style={{ marginRight: "10px", backgroundColor: "red", color: "white" }}>
+            Yes, Delete
+          </button>
+          <button onClick={handleCloseDialog}>Cancel</button>
+        </div>
+      )}
+      {isDialogOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 999
+          }}
+          onClick={handleCloseDialog}
+        ></div>
+      )}
       <Footer />
     </div>
   );

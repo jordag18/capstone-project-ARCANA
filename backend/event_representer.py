@@ -1,16 +1,9 @@
 import datetime
-from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField,ImageField, EmbeddedDocument
-
-##########################################################################################
-#
-#
-#
-#
-#
-##########################################################################################
-
+from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField, ImageField, EmbeddedDocument, ObjectIdField
+from bson import ObjectId
 
 class EventRepresenter(EmbeddedDocument):
+    id = ObjectIdField(primary_key=True, default=ObjectId)  # Set id as a part of the class
     initials = StringField(required=True, min_length=2, max_length=2)
     team = StringField(required=True)
     vector_id = StringField(required=True)
@@ -37,9 +30,10 @@ class EventRepresenter(EmbeddedDocument):
 
     def __init__(self, *args, **values):
         super(EventRepresenter, self).__init__(*args, **values)
+        self.id = str(self.id)
 
     def __str__(self):
-        return f"EventRepresenter(initials={self.initials}, team={self.team}, vector_id={self.vector_id}, " \
+        return f"EventRepresenter(id={self.id}, initials={self.initials}, team={self.team}, vector_id={self.vector_id}, " \
                f"description={self.description}, data_source={self.data_source}, action_title={self.action_title}, " \
                f"last_modified={self.last_modified}, source_host={self.source_host}, " \
                f"target_host_list={self.target_host_list}, location={self.location}, posture={self.posture}, " \
