@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Link } from 'react-bootstrap-icons';
@@ -72,11 +73,7 @@ const ProjectsList: React.FC = () => {
     };
 
     const handleConfirmOpen = () => {
-        console.log("Openning Project");
-        
         setIsOpenDialogOpen(false);
-        return <Link to="/dashboard/eventMenu">  </Link>
-        //selectedProject
     };
 
     const handleCloseDialog = () => {
@@ -102,7 +99,7 @@ const ProjectsList: React.FC = () => {
                             </div>
                         </div>
                         <Container className="d-flex justify-content-end">
-                            <Button variant="primary" onClick={() => handleOpenClick(project)} style={{ border: 'blue', backgroundColor: 'blue', color: 'white' }} className="me-4">
+                            <Button variant="primary" href={'/dashboard/eventMenu'} style={{ border: 'blue', backgroundColor: 'blue', color: 'white' }} className="me-4">
                                 Open
                             </Button>
                             <Button variant="primary" onClick={() => handleDeleteClick(project)} style={{ border: 'red', backgroundColor: 'red', color: 'white' }}>

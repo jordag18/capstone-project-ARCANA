@@ -14,6 +14,8 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 
+
+
 ##########################################################################################
 # Here in the main I feel as though certain sections warrant there own context descriptions
 # because everythin stems from this file. For example everything from lines 26-85 would
@@ -30,6 +32,7 @@ app = FastAPI()
 db_manager = DatabaseManager(db_name="ARCANA")
 
 class Event(BaseModel):
+    id: str
     location: str
     initials: str
     team: str
@@ -81,21 +84,21 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ARCANA API"}
-#ingests logs used by File handler class
+#Ingest logs API
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
     try:
-         #uploads is the directory the files are ingested into from the frontend, temp name
         fh = FileHandler("uploads")
+        # Clear the contents of the uploads folder before saving new files
+        fh.delete_all_files()
         for file in files:
-            print(f"File Name: {file.filename}")
             fh.save_file_in_directory(file)
-    except FileNotFoundError as e:
-        return {'error_message': f"Error Occured while ingesting logs: {e}"} 
-    else:
-        # Return a response indicating success if needed
-        return {"message": "Logs ingested successfully"}
+        timestamps = fh.get_earliest_latest_timestamps()
 
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Logs ingested successfully", **timestamps}
 #Retrieves all projects in DB
 @app.get("/api/projects", response_model=List[Project])
 async def get_all_projects():
@@ -105,31 +108,31 @@ async def get_all_projects():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-#FIXME not implemented fully
-@app.get("/api/project{project_name}", response_model=Project)
-async def get_project_by_name(project_name):
-    response = await fetch_one_project(project_name)
-    if response:
-        return response
-    raise HTTPException(400, "Bad request")
+# #FIXME not implemented fully
+# @app.get("/api/project{project_name}", response_model=Project)
+# async def get_project_by_name(project_name):
+#     response = await fetch_one_project(project_name)
+#     if response:
+#         return response
+#     raise HTTPException(400, "Bad request")
 
 
-# CRUD for Projects
+# # CRUD for Projects
 
-#FIXME not implemented fully
-@app.put("/api/project/", response_model=Project)
-async def put_project(
-    project_name: str,
-    project_location: str,
-    start_date: str,
-    end_date: str,
-    initials: str,
-):
-    response = await update_project(
-        project_name, project_location, start_date, end_date, initials)
-    if response:
-        return response
-    raise HTTPException(404, f"No project found with the name {project_name}")
+# #FIXME not implemented fully
+# @app.put("/api/project/", response_model=Project)
+# async def put_project(
+#     project_name: str,
+#     project_location: str,
+#     start_date: str,
+#     end_date: str,
+#     initials: str,
+# ):
+#     response = await update_project(
+#         project_name, project_location, start_date, end_date, initials)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"No project found with the name {project_name}")
 
 #Create Project in the database
 @app.post("/api/project/", response_model=ProjectCreate)
@@ -159,6 +162,17 @@ async def get_events(project_name: str):
     try:
         events = db_manager.get_events_by_project(project_name)
         return events
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/deleteEvent/{project_name}/{event_id}")
+async def delete_event(project_name: str, event_id: str):
+    try:
+        response = db_manager.remove_event_from_project(project_name, event_id)
+        if response:
+            return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
+        else:
+            raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -264,3 +278,4 @@ The TRACE method performs a message loop-back test along the path to the target 
 # 504 Gateway Timeout
 # 505 HTTP Version Not Supported
 # 511 Network Authentication Required
+
