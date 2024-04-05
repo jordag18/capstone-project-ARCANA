@@ -38,7 +38,7 @@ class Event(BaseModel):
     data_source: str
     action_title: str
     last_modified: datetime
-    #icon: Optional[str] = None
+    icon: str
     source_host: Optional[str] = None
     target_host_list: List[str] = []
     posture: Optional[str] = None
