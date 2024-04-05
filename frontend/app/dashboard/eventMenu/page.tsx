@@ -6,11 +6,11 @@ import { Folder2 } from "react-bootstrap-icons";
 import Image from "react-bootstrap/Image"
 
 interface Event {
+  icon: string;
   initials: string;
   team: string;
   vector_id: string;
   location?: string;
-  icon: string; 
   action_title: string;
   description: string;
   source_host?: string;
@@ -36,6 +36,9 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
         }
         const eventsData: Event[] = await response.json();
         setEvents(eventsData);
+        eventsData.forEach(event => {
+          console.log(event);
+        });
       } catch (error) {
         console.error('Error fetching Events: ', error);
       }
@@ -57,12 +60,12 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
               <table className="table table-striped table-bordered">
                 <thead>
                   <tr>
+                    <th>Icon</th>
+                    <th>Action Title</th>
                     <th>Initials</th>
                     <th>Team</th>
                     <th>Vector ID</th>
                     <th>Location</th>
-                    <th>Icon</th>
-                    <th>Action Title</th>
                     <th>Description</th>
                     <th>Source Host</th>
                     <th>Target Host List</th>
@@ -76,12 +79,18 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                 <tbody>
                   {events.map((event, index) => (
                     <tr key={index}>
+                      
+                      <td><Image className="p-0"
+                            src= {event.icon}
+                            width={"auto"}
+                            height={"auto"}
+                            alt={event.action_title}
+                              ></Image> </td>
+                      <td>{event.action_title}</td>
                       <td>{event.initials}</td>
                       <td>{event.team}</td>
                       <td>{event.vector_id}</td>
                       <td>{event.location}</td>
-                      <td>{event.icon}</td>
-                      <td>{event.action_title}</td>
                       <td>{event.description}</td>
                       <td>{event.source_host}</td>
                       <td>{event.target_host_list?.join(', ')}</td>
