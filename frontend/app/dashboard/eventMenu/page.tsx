@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
-import { Folder2 } from "react-bootstrap-icons";
-import Image from "react-bootstrap/Image"
+import { Book, Pencil, XOctagon } from "react-bootstrap-icons";
+import {Image, Button} from "react-bootstrap"
 
 interface Event {
   icon: string;
@@ -46,19 +46,30 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
     fetchEvents();
   }, [projectName]);
 
+  const handleEditClick = (index: number) => {
+    console.log("Edit button clicked for event index:", index);
+  
+  };
+
+  const handleDeleteClick = (index: number) => {
+    console.log("Delete button clicked for event index:", index);
+    
+  };
+
+
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <NavBar />
       <div className="position-relative" style={{ top: "calc(0px + 1rem)" }}>
         <div className="container-fluid">
           <div className="row justify-content-center align-items-center">
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center p-2">
-                <Folder2 size={80} />
-                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap' }}>Project Events</h2>
+                <Book size={50} />
+                <h2 className="flex-grow-1 m-0" style={{ whiteSpace: 'nowrap', padding: 10 }}>Project Events</h2>
               </div>
               <table className="table table-striped table-bordered">
-                <thead>
+              <thead>
                   <tr>
                     <th>Icon</th>
                     <th>Action Title</th>
@@ -79,7 +90,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                 <tbody>
                   {events.map((event, index) => (
                     <tr key={index}>
-                      
                       <td><Image className="p-0"
                             src= {event.icon}
                             width={"auto"}
@@ -99,6 +109,10 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
                       <td>{event.timestamp ? new Date(event.timestamp).toLocaleString() : 'N/A'}</td>
                       <td>{event.is_malformed ? 'Yes' : 'No'}</td>
                       <td>{new Date(event.last_modified).toLocaleString()}</td>
+                      <td>
+                        <Button variant="primary" onClick={() => handleEditClick(index)} className="mr-2"><Pencil /></Button>
+                        <Button variant="danger" onClick={() => handleDeleteClick(index)}><XOctagon /></Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -107,6 +121,7 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
           </div>
         </div>
       </div>
+      <div style={{ paddingBottom: '50px' }}></div> 
       <Footer />
     </div>
   );
