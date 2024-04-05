@@ -47,9 +47,6 @@ export function NavBar () {
               <Nav.Link href="/dashboard/systemMenu" className="mx-md-2">
                 <GearWideConnected className="mb-1" size={50} /> <strong>System Settings</strong>
               </Nav.Link>
-              <Nav.Link href="/dashboard/eventMenu" className="mx-md-2">
-                <strong>Event Menu Test</strong>
-              </Nav.Link>
               <Navbar.Text className="navbar-text">Active Analyst: </Navbar.Text>
               <ActiveAnalyst />
             </Nav>
