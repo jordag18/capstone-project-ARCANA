@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-
+// flex-col items-center justify-between
 export const metadata: Metadata = {
     title: 'ARCANA-Projects-Menu',
     description: '',
@@ -12,7 +12,7 @@ export default function ManageProjectsLayout({
   }) {
     return (
       <>
-          <main className="flex min-h-screen flex-col items-center justify-between p-24">
+          <main className="flex p-4">
               {children}
           </main>
       </>

@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import ProjectDetails from './modify-project-details';
+import ProjectDetails from './modify-project-button';
 import { Project } from './project-interface';
+import { useProject } from '@/app/contexts/ProjectContext';
 
 
 const ProjectMenu = () => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const { project, setProject } = useProject();
     
 
     useEffect(() => {
@@ -17,6 +19,13 @@ const ProjectMenu = () => {
                 }
                 const projectsData: Project[] = await response.json(); // Type assertion
                 console.log(projectsData);  //used for testing
+                
+                // Log the first project's name here, after you've fetched the data but before updating the state
+                if (projectsData.length > 0) {
+                    console.log("First Project:", projectsData[0]);
+                    setProject(projectsData[0]); // Assuming you want to set the first project as the selected project
+                }
+
                 setProjects(projectsData);
             } catch (error) {
                 console.error('Error fetching projects:', error);

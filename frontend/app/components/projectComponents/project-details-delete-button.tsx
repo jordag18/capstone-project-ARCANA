@@ -32,7 +32,7 @@ const DeleteButton: React.FC<ProjectDetailsProps> = ({selectedProject}) => {
     };
 
     return (
-        <button className="btn bg-red-500 text-white hover:bg-red-600" onClick={handleConfirmDelete}>
+        <button className="btn bg-red-500 text-white hover:bg-red-400" onClick={handleConfirmDelete}>
             Delete
         </button>
     )
