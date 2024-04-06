@@ -1,8 +1,11 @@
+"use client";
 import React from "react";
 import ProjectMenu from "@/app/components/projectComponents/ProjectMenu";
 import CreateProjectModal from "@/app/components/projectComponents/CreateProjectModal";
 
+
 const ManageProjectsPage = () => {  
+
   return (
     <div className="flex-1 container mx-0 md:px-1">
       <div className="flex-1 container mx-0 md:px-1 flex flex-col items-center pb-3">

@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import ProjectDetails from './modify-project-details';
 import { Project } from './project-interface';
 
+
 const ProjectMenu = () => {
     const [projects, setProjects] = useState<Project[]>([]);
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     
 
     useEffect(() => {

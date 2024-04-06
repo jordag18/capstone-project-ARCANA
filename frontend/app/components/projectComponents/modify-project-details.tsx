@@ -1,11 +1,20 @@
 import React from 'react'
 import DeleteButton from './project-details-delete-button'
 import { Project } from './project-interface';
+import { useProject } from '@/app/contexts/ProjectContext';
+import { useRouter } from 'next/navigation';
 
 interface ProjectDetailsProps {
     selectedProject: Project;
 }
 const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject}) => {
+    const { setProject } = useProject();
+    const router = useRouter();
+
+    const HandleOpenCLick = () => {
+        setProject(selectedProject);
+        router.push('/dashboard/eventMenu');
+    }
     
     
     return (
@@ -13,7 +22,7 @@ const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject}) => {
         <summary className="m-1 btn">Modify</summary>
         <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-24">
             <li>
-                <button className="btn bg-sky-500 text-white hover:bg-sky-600">
+                <button onClick={HandleOpenCLick} className="btn bg-sky-500 text-white hover:bg-sky-600">
                     Open
                 </button>
             </li>

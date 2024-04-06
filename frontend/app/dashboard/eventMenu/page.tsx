@@ -4,6 +4,7 @@ import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { Book, Pencil, XOctagon } from "react-bootstrap-icons";
 import {Image, Button} from "react-bootstrap"
+import { useProject } from "@/app/contexts/ProjectContext";
 
 interface Event {
   id: string;
@@ -24,11 +25,12 @@ interface Event {
 }
 
 const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
+  const {project} = useProject();
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  projectName = "Project2";
+  projectName = project.name;
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -98,7 +100,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
 
   return (
     <div style={{ overflowX: 'hidden' }}>
-      <NavBar />
       <div
         className="position-relative"
         style={{ top: "calc(0px + 1rem)" }}
@@ -201,7 +202,6 @@ const EventsList: React.FC<{ projectName: string }> = ({ projectName }) => {
           onClick={handleCloseDialog}
         ></div>
       )}
-      <Footer />
     </div>
   );
 };

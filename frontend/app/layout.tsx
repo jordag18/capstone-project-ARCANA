@@ -25,7 +25,7 @@ export default function RootLayout({
           {/*main content container */}
           <main className="flex-1 container mx-auto px-4 md:px-2 p-10">
             <div className="bg-base-100 rounded-lg p-4 shadow">
-              {children}
+                {children}
             </div>
           </main>
           <Footerbar />

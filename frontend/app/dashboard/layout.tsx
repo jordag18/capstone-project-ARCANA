@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import React from 'react'
-import TopNav from '@/app/ui/navbar'
+import { ProjectProvider } from '@/app/contexts/ProjectContext'
 
 export const metadata: Metadata = {
     title: 'ARCANA-Dashboard',
@@ -13,9 +13,9 @@ export default function DashboardLayout({
     children: React.ReactNode;
   }) {
     return (
-      <div>
+      <ProjectProvider>
         {children}
-      </div>
+      </ProjectProvider>
     );
   }
 
