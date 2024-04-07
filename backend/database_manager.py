@@ -96,6 +96,38 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred:", e)
             return False
+        
+    def modify_event_from_project(self, project_name, event_id, updated_data):
+        try:
+            event_id_obj = ObjectId(event_id)
+            # Prepare the update operation
+            update_operation = {
+                "$set": {
+                    # For each key-value pair in updated_data, create an update expression
+                    # This assumes event_list is an array of embedded documents (sub-documents) within the project document
+                    f"event_list.$[elem].{key}": value for key, value in updated_data.items()
+                }
+            }
+            # Specify the arrayFilters to identify the specific event to update within the event_list array
+            array_filters = [
+                {"elem._id": event_id_obj}  # Identifies the correct event in the event_list array by _id
+            ]
+            # Perform the update operation
+            result = self.projects_collection.update_one(
+                {"name": project_name},  # Filter to identify the correct project document
+                update_operation,
+                array_filters=array_filters  # Apply the arrayFilters
+            )
+            if result.matched_count == 0:
+                print("No matching project found")
+                return False
+            if result.modified_count == 0:
+                print("No modifications were made")
+                return False
+            return True
+        except Exception as e:
+            print("An error occurred when modifying the event:", e)
+            return False
 
     def get_all_projects(self):
         # Retrieve all projects
@@ -160,9 +192,4 @@ class DatabaseManager:
             event.delete()
             return True
         return False
-    def update_event(self, event_id,updated_data):
-        event = EventRepresenter.objects(id=event_id).first()
-        for key, value in updated_data.items():
-            event.save()
-            return event
-        return None 
+    

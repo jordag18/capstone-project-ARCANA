@@ -1,6 +1,6 @@
 import { Project } from "../components/projectComponents/project-interface";
 
 export interface ProjectContextInterface {
-  project: Project | null;
+  project: Project;
   setProject: (project: Project) => void;
 }

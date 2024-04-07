@@ -23,72 +23,7 @@ interface Event {
 
 const EventsList = () => {
   const { project } = useProject();
-  const [events, setEvents] = useState<Event[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/events?project_name=${project?.name}`
-        );
-        if (!response.ok) {
-          throw new Error(
-            "Network response was not ok: " + response.statusText
-          );
-        }
-        const eventsData: Event[] = await response.json();
-        console.log("Fetched events:", eventsData); // Log fetched events
-        setEvents(eventsData);
-        eventsData.forEach((event) => {
-          console.log(event);
-        });
-      } catch (error) {
-        console.error("Error fetching Events: ", error);
-      }
-    };
-    fetchEvents();
-  }, [project?.name]);
-
-  const handleDeleteClick = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (selectedEvent) {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/deleteEvent/${projectName}/${selectedEvent.id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to delete the event");
-        }
-
-        setEvents(events.filter((event) => event.id !== selectedEvent.id));
-        alert(`Successfully deleted event with ID: ${selectedEvent.id}`);
-      } catch (error) {
-        console.error("Error deleting event:", error);
-        alert("Error deleting event");
-      }
-    }
-    setIsDialogOpen(false);
-    setSelectedEvent(null);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setSelectedEvent(null);
-  };
-
-  const handleEditClick = (index: number) => {
-    console.log("Edit button clicked for event index:", index);
-  };
   return (
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
       <div className=" flex flex-row items-center justify-between w-full rounded-3xl pr-5">
@@ -128,7 +63,7 @@ const EventsList = () => {
           Create Event
         </div>
       </div>
-      <div className="border-indigo-500 px-5 py-1 rounded-3xl">
+      <div className="px-5 py-1 rounded-3xl">
         <EventMenu />
       </div>
     </div>

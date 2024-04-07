@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import Body, FastAPI, HTTPException, UploadFile, File
 from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
@@ -47,6 +47,17 @@ class Event(BaseModel):
     posture: Optional[str] = None
     timestamp: datetime
     is_malformed: bool
+
+class EventUpdate(BaseModel):
+    location: Optional[str] = None
+    initials: Optional[str] = None
+    team: Optional[str] = None
+    vector_id: Optional[str] = None
+    description: Optional[str] = None
+    data_source: Optional[str] = None
+    action_title: Optional[str] = None
+    timestamp: Optional[datetime] = None
+    is_malformed: Optional[bool] = None
 
 class Project(BaseModel): 
     name: str
@@ -157,6 +168,19 @@ def delete_project(project_name: str):
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")
 
+@app.patch("/api/editEvent/{project_name}/{event_id}")
+async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
+    updated_data = event_update.model_dump(exclude_unset=True)
+    try:
+        # Call modify_event_from_project from DatabaseManager
+        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        if success:
+            return success
+        else:
+            raise HTTPException(status_code=404, detail="Event not found or no changes made")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/events", response_model=List[Event])
 async def get_events(project_name: str):
     try:
@@ -167,6 +191,7 @@ async def get_events(project_name: str):
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
+    print(project_name, event_id)
     try:
         response = db_manager.remove_event_from_project(project_name, event_id)
         if response:

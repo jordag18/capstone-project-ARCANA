@@ -1,9 +1,23 @@
 "use client";
+import React, { useState } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
-import EventModifyButton from "./modify-event-button";
+import EditEventModal from "./event-modify-modal";
+import { Event } from "./event-interface";
 
 const EventMenu = () => {
-  const { project, setProject } = useProject();
+  const { project} = useProject();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  const handleOpenModal = (event: Event) => { //when an event's modify button is pressed and the modal is opened the event is set as the selected project
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
 
   return (
     <div className="flex overflow-auto rounded-lg">
@@ -11,7 +25,7 @@ const EventMenu = () => {
         {/* head */}
         <thead className="bg-base-200 border-b-2 border-slate-500">
           <tr>
-            <th>ID</th> {/* Add ID column */}
+            <th>ID</th>
             <th>Icon</th>
             <th>Action Title</th>
             <th>Initials</th>
@@ -48,7 +62,16 @@ const EventMenu = () => {
               <td>{event.timestamp}</td>
               <td>{event.is_malformed}</td>
               <td>{event.last_modified}</td>
-              <td> <EventModifyButton /></td>
+              <td>
+              <button className="btn bg-gray-300 shadow-md hover:bg-gray-200" onClick={() => handleOpenModal(event)}>Modify</button>
+      {selectedEvent && (
+        <EditEventModal
+          selectedEvent={selectedEvent}
+          isModalOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
+              </td>
             </tr>
           ))}
         </tbody>
