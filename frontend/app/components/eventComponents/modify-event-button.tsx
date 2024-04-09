@@ -21,7 +21,8 @@ const EventModifyButton = () => {
                 </button>
             </li>
             <li>
-                <DeleteButton selectedProject={project} />
+                Delete
+                {/* <DeleteButton selectedProject={project} /> */}
             </li>
         </ul>
     </details>

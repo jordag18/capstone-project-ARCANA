@@ -12,7 +12,7 @@ export default function ManageProjectsLayout({
   }) {
     return (
       <>
-          <main className="flex p-4">
+          <main className="flex p-4 ">
               {children}
           </main>
       </>
