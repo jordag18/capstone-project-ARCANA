@@ -59,6 +59,9 @@ class EventUpdate(BaseModel):
     timestamp: Optional[datetime] = None
     is_malformed: Optional[bool] = None
 
+class EventCreate(BaseModel):
+    pass
+
 class Project(BaseModel): 
     name: str
     start_date: datetime
@@ -188,6 +191,16 @@ async def get_events(project_name: str):
         return events
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/createEvent/{project_name}/", response_model=EventCreate)
+async def create_event(event: EventCreate):
+    try:
+        created_event = db_manager.add_event_to_project(
+
+        )
+        return created_event
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):

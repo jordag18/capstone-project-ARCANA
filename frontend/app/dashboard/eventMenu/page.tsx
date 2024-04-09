@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import EventMenu from "@/app/components/eventComponents/EventMenu";
+import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 
 interface Event {
   id: string;
@@ -23,6 +24,11 @@ interface Event {
 
 const EventsList = () => {
   const { project } = useProject();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCreateModal = () => { //when the create button is pressed and the modal is opened the event is set as the selected project
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
@@ -33,7 +39,7 @@ const EventsList = () => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="2.0"
+            stroke-width="2.0" 
             stroke="currentColor"
             className="w-9 h-9 mr-1"
           >
@@ -45,23 +51,7 @@ const EventsList = () => {
           </svg>
           <h1 className="text-3xl font-semibold px-2">Manage Events:</h1>
         </div>
-        <div className="btn bg-gray-300 shadow-md hover:bg-gray-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          Create Event
-        </div>
+        <CreateEventModal /> 
       </div>
       <div className="px-5 py-1 rounded-3xl">
         <EventMenu />
