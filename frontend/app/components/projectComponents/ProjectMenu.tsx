@@ -1,77 +1,77 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import ProjectDetails from './modify-project-button';
-import { Project } from './project-interface';
-import { useProject } from '@/app/contexts/ProjectContext';
-
+import React, { useEffect, useState } from "react";
+import ProjectDetails from "./modify-project-button";
+import { Project } from "./project-interface";
+import { useProject } from "@/app/contexts/ProjectContext";
 
 const ProjectMenu = () => {
-    const [projects, setProjects] = useState<Project[]>([]);
-    const { project, setProject } = useProject();
-    
+  const [projects, setProjects] = useState<Project[]>([]);
+  const { project, setProject } = useProject();
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await fetch('http://localhost:8000/api/projects', {cache: 'no-store'});
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                const projectsData: Project[] = await response.json(); // Type assertion
-                console.log(projectsData);  //used for testing
-                
-                // Log the first project's name here, after you've fetched the data but before updating the state
-                if (projectsData.length > 0) {
-                    console.log("First Project:", projectsData[0]);
-                    setProject(projectsData[0]); // Assuming you want to set the first project as the selected project
-                }
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/projects", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error(
+            "Network response was not ok: " + response.statusText
+          );
+        }
+        const projectsData: Project[] = await response.json(); // Type assertion
+        console.log(projectsData); //used for testing
 
-                setProjects(projectsData);
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-            }
-        };
+        // Log the first project's name here, after you've fetched the data but before updating the state
+        if (projectsData.length > 0) {
+          console.log("First Project:", projectsData[0]);
+          setProject(projectsData[0]); // Assuming you want to set the first project as the selected project
+        }
 
-        fetchProjects();
+        setProjects(projectsData);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
 
-    }, []);
+    fetchProjects();
+  }, []);
 
-    return (
+  return (
     <div className="bg-base-100 rounded-lg shadow">
-    <div className="overflow-x-auto rounded-md">
+      <div className="overflow-x-auto rounded-md">
         <table className="table">
-        {/* head */}
-        <thead className="bg-slate-300 border-b-2 border-slate-500">
+          {/* head */}
+          <thead className="bg-slate-300 border-b-2 border-slate-500">
             <tr>
-            <th className='border-r-2 border-slate-200'>Project</th>
-            <th className='border-r-2 border-slate-200'>Start Date</th>
-            <th className='border-r-2 border-slate-200'>End Date</th>
-            <th className='border-r-2 border-slate-200'>Location</th>
-            <th className='border-r-2 border-slate-200'>Analyst</th>
-            <th></th>
+              <th className="border-r-2 border-slate-200">Project</th>
+              <th className="border-r-2 border-slate-200">Start Date</th>
+              <th className="border-r-2 border-slate-200">End Date</th>
+              <th className="border-r-2 border-slate-200">Location</th>
+              <th className="border-r-2 border-slate-200">Analyst</th>
+              <th></th>
             </tr>
-        </thead>
-        <tbody className="bg-slate-50">
+          </thead>
+          <tbody className="bg-slate-50">
             {projects.map((project, index) => (
-                <tr key={index} className='hover:bg-slate-200 '>
-                    <td>{project.name}</td> {/* Each <td> is a cell for the project's attribute */}
-                    <td>{project.start_date}</td>
-                    <td>{project.end_date}</td>
-                    <td>{project.location}</td>
-                    <td>{project.initials}</td>
-                    <td> {/* New <td> for the details component */}
-                        <ProjectDetails
-                            selectedProject={project}
-
-                        />
-                    </td>
-                </tr>
+              <tr key={index} className="hover:bg-slate-200 ">
+                <td>{project.name}</td>
+                {/* Each <td> is a cell for the project's attribute */}
+                <td>{project.start_date}</td>
+                <td>{project.end_date}</td>
+                <td>{project.location}</td>
+                <td>{project.initials}</td>
+                <td>
+                  {/* New <td> for the details component */}
+                  <ProjectDetails selectedProject={project} />
+                </td>
+              </tr>
             ))}
-        </tbody>
+          </tbody>
         </table>
+      </div>
     </div>
-    </div>
-    )
-}
+  );
+};
 
-export default ProjectMenu
+export default ProjectMenu;
