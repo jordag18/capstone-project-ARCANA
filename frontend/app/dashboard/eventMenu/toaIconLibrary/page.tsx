@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, Button } from "react-bootstrap";
 import CSS from "csstype";
-import Sidebar from "@/app/components/sidebar";
+import Sidebar from "@/app/ui/sidebar";
 
 const lineStyles: CSS.Properties = {
   width: "100%",
