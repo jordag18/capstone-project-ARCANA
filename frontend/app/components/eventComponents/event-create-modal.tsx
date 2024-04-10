@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useProject } from '@/app/contexts/ProjectContext'
 
 const CreateEventModal = () => {
     const [action_title, setAction_Title] = useState('')
@@ -15,6 +16,8 @@ const CreateEventModal = () => {
     const [team, setTeam] = useState('')
     const [timestamp, setTimestamp] = useState('')
     const [vector_id, setVector_Id] = useState('')
+
+    const { project } = useProject()
 
     const handleSubmit = async () => {
         const eventData = {
@@ -36,7 +39,7 @@ const CreateEventModal = () => {
 
         try {
             console.log('Sending event data: ', eventData)
-            const response = await fetch('http://localhost:8000/api/createEvent/${project.name}/${formData.id}', {
+            const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}/${eventData}`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -48,6 +51,7 @@ const CreateEventModal = () => {
                 throw new Error('Failed to create event')
             }
 
+            close()
         } catch (error) {
             console.error("Error creating event: ", error)
             alert("Error creating event: ", error.message)
@@ -86,7 +90,7 @@ const CreateEventModal = () => {
                                 className="grow"
                                 placeholder="Initials"
                                 value={initials}
-                                onChange={(e) => setInitials(e.target.value.toUpperCase)}
+                                onChange={(e) => setInitials(e.target.value)}
                             />
                         </label>
                         <label className='flex items-center gap-2'>Team</label>
@@ -105,7 +109,7 @@ const CreateEventModal = () => {
                                 className="grow"
                                 placeholder="Vector ID"
                                 value={vector_id}
-                                onChange={(e) => setVector_Id(e.target.value.toUpperCase)}
+                                onChange={(e) => setVector_Id(e.target.value)}
                             />
                         </label>
                         <label className="input input-bordered flex items-center gap-2">
@@ -160,19 +164,19 @@ const CreateEventModal = () => {
                             />
                         </label>
                         <label className="input input-bordered flex items-center gap-2">
+                            Timestamp:
                             <input
-                                type="text"
-                                className="grow"
-                                placeholder="Timestamp"
+                                type="datetime-local"
+                                className="form-control"
                                 value={timestamp}
                                 onChange={(e) => setTimestamp(e.target.value)}
                             />
                         </label>
                         <label className="input input-bordered flex items-center gap-2">
+                            Last Modified:
                             <input
-                                type="text"
-                                className="grow"
-                                placeholder="Last Modified"
+                                type="datetime-local"
+                                className="form-control"
                                 value={last_modified}
                                 onChange={(e) => setLast_Modified(e.target.value)}
                             />

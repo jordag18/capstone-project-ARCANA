@@ -206,11 +206,10 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/api/createEvent/{project_name}/", response_model=EventCreate)
+@app.post("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
 async def create_event(event: EventCreate):
     try:
         created_event = db_manager.add_event_to_project(
-
         )
         return created_event
     except Exception as e:
