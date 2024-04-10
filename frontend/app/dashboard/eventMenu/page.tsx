@@ -4,6 +4,7 @@ import { useProject } from "@/app/contexts/ProjectContext";
 import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 import Sidebar from "@/app/ui/sidebar";
+import FilterEventsDialog from "@/app/components/eventComponents/FilterEventsDialog";
 
 interface Event {
   id: string;
@@ -27,38 +28,44 @@ const EventsList = () => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showIconLibrary, setShowIconLibrary] = useState(false);
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({});
 
   const handleCreateModal = () => {
     //when the create button is pressed and the modal is opened the event is set as the selected project
     setIsModalOpen(true);
   };
 
+  const handleOpenFilterDialog = () => {
+    setIsFilterDialogOpen(true);
+  };
+
+  // Pass this function to FilterEventsDialog to update filter criteria
+  const updateFilterCriteria = (criteria) => {
+    setFilterCriteria(criteria);
+  };
+
   return (
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
-      <div className=" flex flex-row items-center justify-between w-full rounded-3xl pr-5">
+      <div className="flex flex-row items-center justify-between w-full rounded-3xl pr-5">
         <h1 className="text-3xl font-semibold pl-5">{project.name}</h1>
-        <div className="flex mx-auto justify-end pl-24">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2.0"
-            stroke="currentColor"
-            className="w-9 h-9 mr-1"
+        <div className="flex items-center">
+          <CreateEventModal />
+          <div
+            className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" // Added some left margin for spacing
+            onClick={handleOpenFilterDialog}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
-            />
-          </svg>
-
-          <h1 className="text-3xl font-semibold px-2">Manage Events:</h1>
+            Filter Events
+          </div>
         </div>
-        <CreateEventModal />
+        <FilterEventsDialog
+          isOpen={isFilterDialogOpen}
+          onClose={() => setIsFilterDialogOpen(false)}
+          onUpdateCriteria={updateFilterCriteria} // Step 2
+        />
       </div>
       <div className="px-5 py-1 rounded-3xl">
-        <EventMenu />
+        <EventMenu filterCriteria={filterCriteria} />
       </div>
     </div>
   );

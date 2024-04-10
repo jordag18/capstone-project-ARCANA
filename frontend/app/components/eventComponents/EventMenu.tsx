@@ -4,7 +4,7 @@ import { useProject } from "@/app/contexts/ProjectContext";
 import EditEventModal from "./event-modify-modal";
 import { Event } from "./event-interface";
 
-const EventMenu = () => {
+const EventMenu = ({ filterCriteria }) => {
   const { project} = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -18,6 +18,12 @@ const EventMenu = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
   };
+
+  const filteredEvents = project?.events.filter(event => {
+    // Apply filtering logic based on criteria, for example:
+    return event.timestamp >= filterCriteria.startDate && event.timestamp <= filterCriteria.endDate;
+    // Add more conditions as needed
+  });
 
   return (
     <div className="flex overflow-auto rounded-lg">
