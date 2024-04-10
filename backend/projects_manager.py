@@ -1,9 +1,9 @@
-#Diana Castaneda CRUD
 from project_list import ProjectList
 from project_representer import ProjectRepresenter
 from user_activity_logger import UserActivityLogger
 from datetime import datetime
 import json
+from user_activity_logger import UserActivityLogger
 
 ##########################################################################################
 #
@@ -52,13 +52,16 @@ class ProjectManager:
         else:
             print(f"Project with name {project_name} not found.")
     
-    def save_projects(self, filename):
+    def save_project(self, filename, initials):
         #save projects to json file
         data = [project.to_json() for project in self.project_representer_list]
         with open(filename,  'w') as file:
             json.dump(data, file, indent=4)
+        
+        timestamp = datetime.now()
+        UserActivityLogger.add_user_activity_log(initials, timestamp, f"Project '{filename}' saved")
 
-    def update_project(self, name, updated_data):
+    def update_project(self, name, updated_data, initials, timestamp):
         #update project information
         project = self.get_project_by_name(name)
         if project:
@@ -66,10 +69,12 @@ class ProjectManager:
                 if key in project._fields:
                     project[key] = value
             project.save()
+
+            UserActivityLogger.add_user_activity_log(initials,timestamp, f"Project '{name}' updated")
             return project
         return None
 
-    def remove_project(self, project_name, initials=""):
+    def delete_project(self, project_name, initials=""):
         for project in self.project_representer_list:
             if project['name'] == project_name:
                 self.project_representer_list.remove(project)
