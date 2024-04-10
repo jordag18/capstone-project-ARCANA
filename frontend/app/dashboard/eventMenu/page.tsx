@@ -33,7 +33,6 @@ const EventsList = () => {
   };
 
   return (
-    <div className="flex flex-auto"><Sidebar/>
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
       <div className=" flex flex-row items-center justify-between w-full rounded-3xl pr-5">
         <h1 className="text-3xl font-semibold pl-5">{project.name}</h1>
@@ -61,7 +60,6 @@ const EventsList = () => {
       <div className="px-5 py-1 rounded-3xl">
         <EventMenu />
       </div>
-    </div>
     </div>
   );
 };

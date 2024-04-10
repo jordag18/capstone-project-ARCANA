@@ -36,7 +36,7 @@ const TopNav = () => {
 
             </li>
             <li  className='hover:bg-stone-600 rounded-md'>
-                <MoveToNav linkTo='/dashboard/eventGraphMenu' buttonText='Manage Graphs' />
+                <MoveToNav linkTo='/dashboard/eventMenu/eventGraphMenu' buttonText='Manage Graphs' />
 
             </li>
             <li  className='hover:bg-stone-600 rounded-md'>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Sidebar from "@/app/components/sidebar";
 
 export const metadata: Metadata = {
   title: "ARCANA-Manage-Events",
@@ -11,6 +12,11 @@ export default function ManageEventsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>{children}</div>
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1">
+        {children}
+      </div>
+    </div>
   );
-}
+};
