@@ -4,7 +4,6 @@ import { ProjectContextInterface } from './ProjectContextInterface';
 import { Project } from '../components/projectComponents/project-interface';
 import { Event } from "../components/eventComponents/event-interface";
 
-//default event to be used if project is not selected 
 const defaultEvent: Event = {
   id: "default-id",
   action_title: "Default Action",
@@ -13,7 +12,7 @@ const defaultEvent: Event = {
   icon: "default_icon.png",
   initials: "DE",
   is_malformed: false,
-  last_modified: "2024-01-01T00:00:00Z", 
+  last_modified: "2024-01-01T00:00:00Z",
   location: "Default Location",
   posture: "Unknown",
   source_host: "default_source_host",
@@ -23,7 +22,6 @@ const defaultEvent: Event = {
   vector_id: "default-vector-id",
 };
 
-//default project to be used if project is not selected
 const defaultProject: Project = {
   name: "No Project Selected",
   start_date: "N/A",
@@ -33,23 +31,27 @@ const defaultProject: Project = {
   events: [defaultEvent],
 };
 
-// Create the context with an initial undefined value but assert the type.
 const ProjectContext = createContext<ProjectContextInterface | undefined>(undefined);
 
-const localStorageKey = 'currentProject'
+const localStorageKey = 'currentProject';
 
-// Create a provider component
 export const ProjectProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [project, setProject] = useState<Project>(() => {
-    const storedProject = localStorage.getItem(localStorageKey);
-    return storedProject ? JSON.parse(storedProject) : defaultProject;
-  });
+  const [project, setProject] = useState<Project>(defaultProject);
 
-  useEffect(() => { //saves project context in cache storage to retrieved when page is reloaded
+  useEffect(() => {
+    // Try to load the stored project from localStorage when the component mounts
+    const storedProject = localStorage.getItem(localStorageKey);
+    if (storedProject) {
+      setProject(JSON.parse(storedProject));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save the project to localStorage whenever it changes
     localStorage.setItem(localStorageKey, JSON.stringify(project));
   }, [project]);
 
-  const updateEvent = (eventId: string, updatedEventData: Event) => { //updateEvent function to update a modified event in the context
+  const updateEvent = (eventId: string, updatedEventData: Event) => {
     setProject((currentProject) => {
       const updatedEvents = currentProject.events.map((event) => 
         event.id === eventId ? { ...event, ...updatedEventData } : event
@@ -63,7 +65,6 @@ export const ProjectProvider: React.FC<{children: ReactNode}> = ({ children }) =
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
 };
 
-// Custom hook to use the project context
 export const useProject = () => {
   const context = useContext(ProjectContext);
   if (context === undefined) {
