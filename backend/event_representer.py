@@ -1,6 +1,8 @@
 import datetime
 from mongoengine import Document, StringField, ListField, DateTimeField, BooleanField, ImageField, EmbeddedDocument, ObjectIdField
 from bson import ObjectId
+from typing import Any
+from collections.abc import Mapping
 
 class EventRepresenter(EmbeddedDocument):
     id = ObjectIdField(primary_key=True, default=ObjectId)  # Set id as a part of the class
@@ -31,6 +33,57 @@ class EventRepresenter(EmbeddedDocument):
     def __init__(self, *args, **values):
         super(EventRepresenter, self).__init__(*args, **values)
         self.id = str(self.id)
+
+
+    def get_id(self):
+        """
+        Returns the string representation of the ObjectId id field.
+        """
+        return str(self.id)
+    
+    def get_event_info(self) -> Mapping[str, Any]:
+        return {
+            "id": self.get_id(),
+            "initials": self.initials,
+            "team": self.team,
+            "vector_id": self.vector_id,
+            "description": self.description,
+            "data_source": self.data_source,
+            "action_title": self.action_title,
+            "last_modified": self.last_modified,
+            "source_host": self.source_host,
+            "target_host_list": self.target_host_list,
+            "location": self.location,
+            "posture": self.posture,
+            "timestamp": self.timestamp,
+            "is_malformed": self.is_malformed,
+        }
+    def update_event(self, updated_data: Mapping[str, str]) -> None:
+        for key, value in updated_data.items():
+            if key in [
+                "initials",
+                "team",
+                "vector_id",
+                "description",
+                "action_title",
+                "source_host",
+                "location",
+                "posture",
+                "timestamp",
+                "icon",
+            ]:
+                setattr(self, key, value)
+            elif key in ["data_source", "last_modified"]:
+                setattr(self, key, datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S"))
+            elif key in ["target_host_list"]:
+                setattr(self, key, value.split(","))
+            elif key in ["is_malformed"]:
+                setattr(self, key, bool(value))
+            else:
+                print(
+                    f"Key ({key}) doesn't match any {self.__class__.__name__} attributes."
+                )
+        #self.save() doesnt exist
 
     def __str__(self):
         return f"EventRepresenter(id={self.id}, initials={self.initials}, team={self.team}, vector_id={self.vector_id}, " \

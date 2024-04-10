@@ -73,6 +73,9 @@ class DatabaseManager:
         # Retrieve a project by name
         return self.project_manager.get_project_by_name(project_name)
 
+    def get_project_representer(self, project_name):
+        return ProjectRepresenter.objects(name=project_name).first()
+
     def add_event_to_project(self, project_name, event_data):
         # Add an event to a specific project
         project = self.get_project(project_name)

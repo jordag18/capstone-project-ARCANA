@@ -7,12 +7,13 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 from pymongo import MongoClient
-from model import Project
+from model import Project, Graph
 #from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
+from graph import GraphManager
 
 
 
@@ -58,6 +59,22 @@ class EventUpdate(BaseModel):
     action_title: Optional[str] = None
     timestamp: Optional[datetime] = None
     is_malformed: Optional[bool] = None
+
+class EventCreate(BaseModel):
+    location: str
+    initials: str
+    team: str
+    vector_id: str
+    description: str
+    data_source: str
+    action_title: str
+    last_modified: datetime
+    icon: str
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = None
+    timestamp: datetime
+    is_malformed: bool
 
 class Project(BaseModel): 
     name: str
@@ -188,6 +205,15 @@ async def get_events(project_name: str):
         return events
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
+async def create_event(event: EventCreate):
+    try:
+        created_event = db_manager.add_event_to_project(
+        )
+        return created_event
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
@@ -201,6 +227,16 @@ async def delete_event(project_name: str, event_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/{project_name}/graphs", response_model=Graph)
+async def get_project_graphs(project_name: str):
+    try:
+        project = db_manager.get_project_representer(project_name)
+
+    except Exception as e:
+        raise HTTPException(detail=str(e))
+    if not project:
+        return {"error_message": f"Invalid project name: {project_name}"}
+    return GraphManager.get_project_graphs(project)
 
 
 # ------------------------------------------------------------
