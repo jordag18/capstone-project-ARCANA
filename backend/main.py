@@ -61,7 +61,20 @@ class EventUpdate(BaseModel):
     is_malformed: Optional[bool] = None
 
 class EventCreate(BaseModel):
-    pass
+    location: str
+    initials: str
+    team: str
+    vector_id: str
+    description: str
+    data_source: str
+    action_title: str
+    last_modified: datetime
+    icon: str
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = None
+    timestamp: datetime
+    is_malformed: bool
 
 class Project(BaseModel): 
     name: str

@@ -36,10 +36,10 @@ const CreateEventModal = () => {
 
         try {
             console.log('Sending event data: ', eventData)
-            const response = await fetch("http://localhost:8000/api/project/events", {
+            const response = await fetch('http://localhost:8000/api/createEvent/${project.name}/${formData.id}', {
                 method: "POST",
                 headers: {
-                    
+                    "Content-type": "application/json"
                 },
                 body: JSON.stringify(eventData)
             })
@@ -172,20 +172,16 @@ const CreateEventModal = () => {
                             <input
                                 type="text"
                                 className="grow"
-                                placeholder="Malformed"
-                                value={is_malformed}
-                                onChange={(e) => setIs_Malformed(e)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
                                 placeholder="Last Modified"
                                 value={last_modified}
                                 onChange={(e) => setLast_Modified(e.target.value)}
                             />
                         </label>
+                        <div>
+                            <button onClick={() => {handleSubmit(); document.getElementById("create_event_modal").close();}}>
+                                Create Event
+                            </button>
+                        </div>
                     </div>
                 </div>
             </dialog>
