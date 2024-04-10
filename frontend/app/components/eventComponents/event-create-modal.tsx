@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 const CreateEventModal = () => {
-    const [id, setId] = useState('')
     const [action_title, setAction_Title] = useState('')
     const [data_source, setData_Source] = useState('')
     const [description, setDescription] = useState('')
@@ -19,7 +18,6 @@ const CreateEventModal = () => {
 
     const handleSubmit = async () => {
         const eventData = {
-            id: id,
             action_title: action_title,
             data_source: data_source,
             description: description,
@@ -159,6 +157,33 @@ const CreateEventModal = () => {
                                 placeholder="Posture"
                                 value={posture}
                                 onChange={(e) => setPosture(e.target.value)}
+                            />
+                        </label>
+                        <label className="input input-bordered flex items-center gap-2">
+                            <input
+                                type="text"
+                                className="grow"
+                                placeholder="Timestamp"
+                                value={timestamp}
+                                onChange={(e) => setTimestamp(e.target.value)}
+                            />
+                        </label>
+                        <label className="input input-bordered flex items-center gap-2">
+                            <input
+                                type="text"
+                                className="grow"
+                                placeholder="Malformed"
+                                value={is_malformed}
+                                onChange={(e) => setIs_Malformed(e)}
+                            />
+                        </label>
+                        <label className="input input-bordered flex items-center gap-2">
+                            <input
+                                type="text"
+                                className="grow"
+                                placeholder="Last Modified"
+                                value={last_modified}
+                                onChange={(e) => setLast_Modified(e.target.value)}
                             />
                         </label>
                     </div>
