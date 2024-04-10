@@ -1,4 +1,7 @@
 from pydantic import BaseModel
+from typing import List, Optional, Dict
+from datetime import datetime
+from collections.abc import Mapping
 
 
 class Project(BaseModel):
@@ -23,3 +26,8 @@ class Event(BaseModel):
     posture:str
     timestamp:str
     is_malformed:str
+
+class Graph(BaseModel):
+    roots: List[str]
+    graph: Mapping[str, list]
+    malformed_key: str = ""

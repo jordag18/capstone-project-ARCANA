@@ -7,12 +7,13 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 from pymongo import MongoClient
-from model import Project
+from model import Project, Graph
 #from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
+from graph import GraphManager
 
 
 
@@ -214,6 +215,16 @@ async def delete_event(project_name: str, event_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/{project_name}/graphs", response_model=Graph)
+async def get_project_graphs(project_name: str):
+    try:
+        project = db_manager.get_project_representer(project_name)
+
+    except Exception as e:
+        raise HTTPException(detail=str(e))
+    if not project:
+        return {"error_message": f"Invalid project name: {project_name}"}
+    return GraphManager.get_project_graphs(project)
 
 
 # ------------------------------------------------------------

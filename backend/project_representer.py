@@ -3,6 +3,7 @@ from event_representer import EventRepresenter
 from events_manager import EventsManager
 from user_activity_logger import UserActivityLogger
 import datetime
+from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
 
@@ -74,6 +75,23 @@ class ProjectRepresenter(Document):
             }
             event_representers_info.append(event_info)
         return event_representers_info
+    
+    def group_events_by(self, attrs: List[str]) -> List[List[EventRepresenter]]:
+            # If no attribute is passed, all events are returned in a group
+            if len(attrs) == 0:
+                return [self.event_list]
+
+            output_list = EventsManager.group_events_by(self.event_list, attrs[0]).values()
+
+            for group_by in attrs[1:]:
+                input_list = output_list
+                output_list = []
+                for group in input_list:
+                    output_list.extend(
+                        EventsManager.group_events_by(group, group_by).values()
+                    )
+
+            return output_list
     
 
         
