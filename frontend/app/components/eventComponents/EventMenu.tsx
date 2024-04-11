@@ -1,15 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import EditEventModal from "./event-modify-modal";
 import { Event } from "./event-interface";
 
-const EventMenu = ({ filterCriteria }) => {
-  const { project} = useProject();
+const EventMenu = ({ criteria }) => {
+  const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
-  const handleOpenModal = (event: Event) => { //when an event's modify button is pressed and the modal is opened the event is set as the selected project
+  const handleOpenModal = (event: Event) => {
+    //when an event's modify button is pressed and the modal is opened the event is set as the selected project
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
@@ -19,11 +21,43 @@ const EventMenu = ({ filterCriteria }) => {
     setSelectedEvent(null);
   };
 
-  const filteredEvents = project?.events.filter(event => {
-    // Apply filtering logic based on criteria, for example:
-    return event.timestamp >= filterCriteria.startDate && event.timestamp <= filterCriteria.endDate;
-    // Add more conditions as needed
-  });
+  useEffect(() => {
+    // Filter the events based on the criteria, defaulting to showing all
+    const filtered = project.events.filter((event) => {
+      const [eventDatePart, eventTimePart] = event.timestamp.split("T");
+      console.log("Event Time Stamp", event.timestamp)
+
+      // Handling Date Criteria
+      if (criteria.startDate) {
+        const criteriaStartDate = new Date(criteria.startDate);
+        console.log("criteria start date: ", criteriaStartDate)
+        criteriaStartDate.setHours(0, 0, 0, 0);
+        const eventDate = new Date(eventDatePart);
+        console.log("event start date: ", eventDate)
+        if (eventDate <= criteriaStartDate) return false;
+      }
+
+      if (criteria.endDate) {
+        const criteriaEndDate = new Date(criteria.endDate);
+        criteriaEndDate.setHours(23, 59, 59, 999);
+        const eventDate = new Date(eventDatePart);
+        if (eventDate > criteriaEndDate) return false;
+      }
+
+      // Handling Time Criteria (if applicable)
+      // Assuming you have criteria.startTime and criteria.endTime in 'HH:mm:ss' format
+      // Compare only if both event time and criteria time are specified
+      if (criteria.startTime && eventTimePart < criteria.startTime)
+        return false;
+      if (criteria.endTime && eventTimePart > criteria.endTime) return false;
+      // Example: filter by team if criteria.team is specified
+      if (criteria.team && event.team !== criteria.team) return false;
+      // Implement additional criteria checks here...
+      return true; // Event matches all specified criteria
+    });
+    console.log(filtered);
+    setFilteredEvents(filtered);
+  }, [criteria, project.events]); // Re-run this effect if criteria or project.events change
 
   return (
     <div className="flex overflow-auto rounded-lg">
@@ -50,7 +84,7 @@ const EventMenu = ({ filterCriteria }) => {
           </tr>
         </thead>
         <tbody className="bg-base-200">
-          {project?.events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <tr key={index} className="hover:bg-slate-200 ">
               {/* Each <td> is a cell for the project's attribute */}
               <td>{event.id}</td>
@@ -69,14 +103,19 @@ const EventMenu = ({ filterCriteria }) => {
               <td>{event.is_malformed}</td>
               <td>{event.last_modified}</td>
               <td>
-              <button className="btn bg-gray-300 shadow-md hover:bg-gray-200" onClick={() => handleOpenModal(event)}>Modify</button>
-      {selectedEvent && (
-        <EditEventModal
-          selectedEvent={selectedEvent}
-          isModalOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
-      )}
+                <button
+                  className="btn bg-gray-300 shadow-md hover:bg-gray-200"
+                  onClick={() => handleOpenModal(event)}
+                >
+                  Modify
+                </button>
+                {selectedEvent && (
+                  <EditEventModal
+                    selectedEvent={selectedEvent}
+                    isModalOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                  />
+                )}
               </td>
             </tr>
           ))}

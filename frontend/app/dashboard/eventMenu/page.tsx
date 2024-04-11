@@ -31,6 +31,7 @@ const EventsList = () => {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
 
+
   const handleCreateModal = () => {
     //when the create button is pressed and the modal is opened the event is set as the selected project
     setIsModalOpen(true);
@@ -40,10 +41,13 @@ const EventsList = () => {
     setIsFilterDialogOpen(true);
   };
 
-  // Pass this function to FilterEventsDialog to update filter criteria
   const updateFilterCriteria = (criteria) => {
-    setFilterCriteria(criteria);
-  };
+  setFilterCriteria(criteria); // Update current criteria
+  console.log(criteria)
+
+};
+
+
 
   return (
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
@@ -65,7 +69,7 @@ const EventsList = () => {
         />
       </div>
       <div className="px-5 py-1 rounded-3xl">
-        <EventMenu filterCriteria={filterCriteria} />
+        <EventMenu criteria={filterCriteria} />
       </div>
     </div>
   );

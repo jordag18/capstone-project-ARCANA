@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-const FilterEventsDialog = ({ isOpen, onClose }) => {
+const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endDate, setEndDate] = useState("");
   const [endTime, setEndTime] = useState("");
   const [initials, setInitials] = useState("");
-  const [team, setTeam] = useState("All");
+  const [team, setTeam] = useState("");
   const [location, setLocation] = useState("");
   const [vectorId, setVectorId] = useState("");
   const [sourceHost, setSourceHost] = useState("0.0.0.0");
@@ -18,7 +18,7 @@ const FilterEventsDialog = ({ isOpen, onClose }) => {
     setEndDate("");
     setEndTime("");
     setInitials("");
-    setTeam("All");
+    setTeam("");
     setLocation("");
     setVectorId("");
     setSourceHost("0.0.0.0");
@@ -31,21 +31,22 @@ const FilterEventsDialog = ({ isOpen, onClose }) => {
       startDate,
       startTime,
       endDate,
-      // Include all criteria you need
+      endTime,
+      initials,
+      team,
+      location,
+      vectorId,
+      sourceHost,
+      targetHost,
     };
-    props.onUpdateCriteria(criteria);
+    onUpdateCriteria(criteria); // Use it directly
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
     <>
-      {/* <div
-        className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-        onClick={() => document.getElementById("filter_events_dialog").showModal()}    
-      >
-        Filter Events
-      </div> */}
       <dialog open={isOpen} className="modal" id="filter_events_dialog">
         <div className="modal-box">
           <form onSubmit={handleFilter}>
@@ -137,6 +138,7 @@ const FilterEventsDialog = ({ isOpen, onClose }) => {
                 value={team}
                 onChange={(e) => setTeam(e.target.value)}
               >
+                <option>All</option>
                 <option>Red</option>
                 <option>Blue</option>
                 <option>White</option>
