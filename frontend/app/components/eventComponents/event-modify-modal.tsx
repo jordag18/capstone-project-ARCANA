@@ -16,7 +16,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   onClose,
 }) => {
   const { project} = useProject();
-  const {updateEvent} = useProject();
+  const { updateEvent } = useProject();
   const [formData, setFormData] = useState<Event>(selectedEvent);
 
   const handleSaveEvent = async () => {

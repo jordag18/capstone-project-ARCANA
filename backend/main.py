@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 from pymongo import MongoClient
-from model import Project, Graph
+from model import *
 #from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
@@ -31,65 +31,6 @@ app = FastAPI()
 #client = MongoClient("mongodb://localhost:27017/")
 #b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
-
-class Event(BaseModel):
-    id: str
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    icon: str
-    source_host: Optional[str] = None
-    target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
-
-class EventUpdate(BaseModel):
-    location: Optional[str] = None
-    initials: Optional[str] = None
-    team: Optional[str] = None
-    vector_id: Optional[str] = None
-    description: Optional[str] = None
-    data_source: Optional[str] = None
-    action_title: Optional[str] = None
-    timestamp: Optional[datetime] = None
-    is_malformed: Optional[bool] = None
-
-class EventCreate(BaseModel):
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    icon: str
-    source_host: Optional[str] = None
-    target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
-
-class Project(BaseModel): 
-    name: str
-    start_date: datetime
-    end_date: datetime
-    location: str 
-    initials: str 
-    events: List[Event] = []
-
-class ProjectCreate(BaseModel):
-    name: str
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    location: str = ""
-    initials: str = ""
 
 from database import (
     fetch_one_project,
@@ -206,7 +147,7 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.patch("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
+@app.patch("/api/createEvent/{project_name}", response_model=EventCreate)
 async def create_event(project_name: str, event_create: EventCreate = Body(...)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:

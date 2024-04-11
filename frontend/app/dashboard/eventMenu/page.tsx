@@ -5,7 +5,7 @@ import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 import Sidebar from "@/app/ui/sidebar";
 import FilterEventsDialog from "@/app/components/eventComponents/FilterEventsDialog";
-import { Event, CreateEvent } from "@/app/components/eventComponents/event-interface";
+import { CreateEvent } from "@/app/components/eventComponents/event-interface";
 
 
 const EventsList = () => {
@@ -14,10 +14,12 @@ const EventsList = () => {
   const [showIconLibrary, setShowIconLibrary] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
+  const [newEvent, setNewEvent] = useState<CreateEventEvent | null>(null);
 
 
-  const handleCreateModal = () => {
-    setIsModalOpen(true);
+  const handleCreateModal = (createEvent: CreateEvent) => {
+    setNewEvent(createEvent)
+    setIsModalOpen(true)
   };
 
   const handleOpenFilterDialog = () => {
@@ -47,6 +49,11 @@ const EventsList = () => {
           >
             + Create Event
           </div>
+          <CreateEventModal 
+            newEvent={newEvent}
+            isModalOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" // Added some left margin for spacing
             onClick={handleOpenFilterDialog}
