@@ -41,26 +41,16 @@ const EventMenu = ({ criteria }) => {
         if (eventDateAndTime > endDateCriteria) return false;
       }
 
-      // // Start Time Filtering
-      // if (criteria.startTime) {
-        
-      //   if (eventTimeInMinutes < criteriaStartTimeInMinutes) return false;
-      // }
-
-      // // End Time Filtering
-      // if (criteria.endTime) {
-      //   const [endHour, endMinute] = criteria.endTime.split(":").map(Number);
-      //   const criteriaEndTimeInMinutes = endHour * 60 + endMinute;
-      //   if (eventTimeInMinutes > criteriaEndTimeInMinutes) return false;
-      // }
-
       if (criteria.vectorId && event.vector_id !== criteria.vectorId) return false;
 
       if (criteria.id && event.id !== criteria.id) return false;
 
-      // Example: filter by team if criteria.team is specified
+      if (criteria.location && event.location !== criteria.location) return false;
+
+      if (criteria.initials && event.initials !== criteria.initials) return false;
+
       if (criteria.team && event.team !== criteria.team) return false;
-      // Implement additional criteria checks here...
+      
       return true; // Event matches all specified criteria
     });
     console.log(filtered);
