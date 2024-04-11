@@ -9,6 +9,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
   const [team, setTeam] = useState("");
   const [location, setLocation] = useState("");
   const [vectorId, setVectorId] = useState("");
+  const [id, setID] = useState("");
   const [sourceHost, setSourceHost] = useState("0.0.0.0");
   const [targetHost, setTargetHost] = useState("0.0.0.0");
 
@@ -23,6 +24,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
     setVectorId("");
     setSourceHost("0.0.0.0");
     setTargetHost("0.0.0.0");
+    setID("");
   };
 
   const handleFilter = (e) => {
@@ -38,6 +40,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
       vectorId,
       sourceHost,
       targetHost,
+      id,
     };
     onUpdateCriteria(criteria); // Use it directly
     onClose();
@@ -80,7 +83,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
                 <input
                   id="start-time"
                   type="text"
-                  placeholder="hh:mm:ss"
+                  placeholder="hh:mm"
                   className="input input-bordered w-full"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
@@ -108,7 +111,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
                 </label>
                 <input
                   type="text"
-                  placeholder="hh:mm:ss"
+                  placeholder="hh:mm"
                   className="input input-bordered"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
@@ -168,6 +171,19 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
                 className="input input-bordered"
                 value={vectorId}
                 onChange={(e) => setVectorId(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Event ID</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Event ID"
+                className="input input-bordered"
+                value={id}
+                onChange={(e) => setID(e.target.value)}
               />
             </div>
 

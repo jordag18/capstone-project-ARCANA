@@ -22,34 +22,42 @@ const EventMenu = ({ criteria }) => {
   };
 
   useEffect(() => {
-    // Filter the events based on the criteria, defaulting to showing all
     const filtered = project.events.filter((event) => {
-      const [eventDatePart, eventTimePart] = event.timestamp.split("T");
-      console.log("Event Time Stamp", event.timestamp)
+      // For date comparisons, create Date objects from parts to ensure accuracy
+      const eventDateAndTime = new Date(event.timestamp);
+      const startDateCriteria = new Date(criteria.startDate)
+      const endDateCriteria = new Date(criteria.endDate)
+      console.log("Vector ID ", event.vector_id)
 
-      // Handling Date Criteria
+      // Start Date Filtering
       if (criteria.startDate) {
-        const criteriaStartDate = new Date(criteria.startDate);
-        console.log("criteria start date: ", criteriaStartDate)
-        criteriaStartDate.setHours(0, 0, 0, 0);
-        const eventDate = new Date(eventDatePart);
-        console.log("event start date: ", eventDate)
-        if (eventDate <= criteriaStartDate) return false;
+        //const criteriaDate = new Date(criteria.startDate); // Ensuring comparison at the start of the day
+        console.log("Event with Date and Time", eventDateAndTime)
+        if (eventDateAndTime < startDateCriteria) return false;
       }
 
+      // End Date Filtering
       if (criteria.endDate) {
-        const criteriaEndDate = new Date(criteria.endDate);
-        criteriaEndDate.setHours(23, 59, 59, 999);
-        const eventDate = new Date(eventDatePart);
-        if (eventDate > criteriaEndDate) return false;
+        if (eventDateAndTime > endDateCriteria) return false;
       }
 
-      // Handling Time Criteria (if applicable)
-      // Assuming you have criteria.startTime and criteria.endTime in 'HH:mm:ss' format
-      // Compare only if both event time and criteria time are specified
-      if (criteria.startTime && eventTimePart < criteria.startTime)
-        return false;
-      if (criteria.endTime && eventTimePart > criteria.endTime) return false;
+      // // Start Time Filtering
+      // if (criteria.startTime) {
+        
+      //   if (eventTimeInMinutes < criteriaStartTimeInMinutes) return false;
+      // }
+
+      // // End Time Filtering
+      // if (criteria.endTime) {
+      //   const [endHour, endMinute] = criteria.endTime.split(":").map(Number);
+      //   const criteriaEndTimeInMinutes = endHour * 60 + endMinute;
+      //   if (eventTimeInMinutes > criteriaEndTimeInMinutes) return false;
+      // }
+
+      if (criteria.vectorId && event.vector_id !== criteria.vectorId) return false;
+
+      if (criteria.id && event.id !== criteria.id) return false;
+
       // Example: filter by team if criteria.team is specified
       if (criteria.team && event.team !== criteria.team) return false;
       // Implement additional criteria checks here...
