@@ -147,17 +147,17 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.patch("/api/createEvent/{project_name}", response_model=EventCreate)
+@app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
 async def create_event(project_name: str, event_create: EventCreate = Body(...)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:
-        success = db_manager.add_event_to_project(project_name, created_data)
-        if success:
-            return success
-        else:
-            raise HTTPException(status_code=404, detail="Event creation failed")
-    except Exception as e:
-        raise HTTPException(status_code=201, detail=str(e))
+        created_event = db_manager.add_event_to_project(project_name, created_data)
+        if created_event:
+            return created_event
+        # If `add_event_to_project` returns None or False, assume the project was not found
+        raise HTTPException(status_code=404, detail="Project not found or event creation failed")
+    except HTTPException as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):

@@ -86,6 +86,22 @@ class DatabaseManager:
             project.save()  # Save the updated project
             return new_event
         return None
+    
+    def create_event_to_project(self, project_name, event_data):
+        try:
+            new_event = EventRepresenter(id=ObjectId(), **event_data)
+            new_event.save()
+
+            result = self.projects_collection.update_one(
+                {"name": project_name},
+                {"$push": {"event_list": new_event.id}}
+            )
+            if result.modified_count == 1:
+                return True
+            else:
+                return False
+        except Exception as e:
+            return False
 
     def remove_event_from_project(self, project_name, event_id):
         try:
@@ -183,11 +199,6 @@ class DatabaseManager:
         # Retrieve all events
         return list(EventRepresenter.objects.all())
     
-    def create_event(self, event_data):
-        #create and save a new event
-        new_event = EventRepresenter(**event_data)
-        new_event.save()
-        return new_event
     def delete_event(self, event_id):
         #delete an event by ID
         event = EventRepresenter.objects(id=event_id).first()
