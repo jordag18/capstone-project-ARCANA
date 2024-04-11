@@ -1,5 +1,12 @@
 import { useState } from 'react'
 import { useProject } from '@/app/contexts/ProjectContext'
+import { CreateEvent } from './event-interface'
+
+interface createEventProp {
+    newEvent: CreateEvent
+    isModalOpen: boolean
+    onClose: () => void
+}
 
 const CreateEventModal = () => {
     const [action_title, setAction_Title] = useState('')
@@ -40,7 +47,7 @@ const CreateEventModal = () => {
         try {
             console.log('Sending event data: ', eventData)
             const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}/${eventData}`, {
-                method: "POST",
+                method: "PATCH",
                 headers: {
                     "Content-type": "application/json"
                 },

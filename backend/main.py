@@ -206,14 +206,17 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
-async def create_event(event: EventCreate):
+@app.patch("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
+async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+    created_data = event_create.model_dump(exclude_unset=True)
     try:
-        created_event = db_manager.add_event_to_project(
-        )
-        return created_event
+        success = db_manager.add_event_to_project(project_name, created_data)
+        if success:
+            return success
+        else:
+            raise HTTPException(status_code=404, detail="Event creation failed")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=201, detail=str(e))
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
