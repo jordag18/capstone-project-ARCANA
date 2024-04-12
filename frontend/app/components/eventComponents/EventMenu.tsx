@@ -31,8 +31,6 @@ const EventMenu = ({ criteria }) => {
 
       // Start Date Filtering
       if (criteria.startDate) {
-        //const criteriaDate = new Date(criteria.startDate); // Ensuring comparison at the start of the day
-        console.log("Event with Date and Time", eventDateAndTime)
         if (eventDateAndTime < startDateCriteria) return false;
       }
 
@@ -40,6 +38,8 @@ const EventMenu = ({ criteria }) => {
       if (criteria.endDate) {
         if (eventDateAndTime > endDateCriteria) return false;
       }
+
+      //Need to add time check criteria
 
       if (criteria.vectorId && event.vector_id !== criteria.vectorId) return false;
 
@@ -50,7 +50,7 @@ const EventMenu = ({ criteria }) => {
       if (criteria.initials && event.initials !== criteria.initials) return false;
 
       if (criteria.team && event.team !== criteria.team) return false;
-      
+
       return true; // Event matches all specified criteria
     });
     console.log(filtered);
