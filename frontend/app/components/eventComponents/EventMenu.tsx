@@ -4,7 +4,7 @@ import { useProject } from "@/app/contexts/ProjectContext";
 import EditEventModal from "./event-modify-modal";
 import { Event } from "./event-interface";
 
-const EventMenu = ({ criteria }) => {
+const EventMenu = ({ criteria, sortCriterion }) => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -25,9 +25,9 @@ const EventMenu = ({ criteria }) => {
     const filtered = project.events.filter((event) => {
       // For date comparisons, create Date objects from parts to ensure accuracy
       const eventDateAndTime = new Date(event.timestamp);
-      const startDateCriteria = new Date(criteria.startDate)
-      const endDateCriteria = new Date(criteria.endDate)
-      console.log("Vector ID ", event.vector_id)
+      const startDateCriteria = new Date(criteria.startDate);
+      const endDateCriteria = new Date(criteria.endDate);
+      console.log("Vector ID ", event.vector_id);
 
       // Start Date Filtering
       if (criteria.startDate) {
@@ -41,21 +41,47 @@ const EventMenu = ({ criteria }) => {
 
       //Need to add time check criteria
 
-      if (criteria.vectorId && event.vector_id !== criteria.vectorId) return false;
+      if (criteria.vectorId && event.vector_id !== criteria.vectorId)
+        return false;
 
       if (criteria.id && event.id !== criteria.id) return false;
 
-      if (criteria.location && event.location !== criteria.location) return false;
+      if (criteria.location && event.location !== criteria.location)
+        return false;
 
-      if (criteria.initials && event.initials !== criteria.initials) return false;
+      if (criteria.initials && event.initials !== criteria.initials)
+        return false;
 
       if (criteria.team && event.team !== criteria.team) return false;
 
       return true; // Event matches all specified criteria
     });
+
+    if (sortCriterion) {
+      filtered.sort((a, b) => {
+        if (sortCriterion === "timestamp") {
+          return (
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+        } else if (sortCriterion === "initials") {
+          return a.initials.localeCompare(b.initials);
+        } else if (sortCriterion === "team") {
+          return a.team.localeCompare(b.team);
+        } else if (sortCriterion === "location") {
+          return a.location.localeCompare(b.location);
+        } else if (sortCriterion === "sourceHost") {
+          return a.source_host.localeCompare(b.source_host);
+        } else if (sortCriterion === "targetHost") {
+          return a.target_host_list.localeCompare(b.target_host_list);
+        } else if (sortCriterion === "vectorId") {
+          return a.vector_id.localeCompare(b.vector_id);
+        }
+        return 0;
+      });
+    }
     console.log(filtered);
     setFilteredEvents(filtered);
-  }, [criteria, project.events]); // Re-run this effect if criteria or project.events change
+  }, [criteria, project.events, sortCriterion]); // Re-run this effect if criteria or project.events change
 
   return (
     <div className="flex overflow-auto rounded-lg">
