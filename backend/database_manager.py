@@ -207,3 +207,57 @@ class DatabaseManager:
             return True
         return False
     
+    def get_icon_library_from_project(self, project_name):
+        try:
+            project = ProjectRepresenter.objects(name=project_name).first()
+            if project:
+                return project.toa_icon_library
+
+            else:
+                print(f"Project with name '{project_name}' not found.")
+                return None
+        except Exception as e:
+            print("An error occurred while retrieving the icon library from the database:", e)
+            return None
+        
+    def add_icon_to_icon_library(self, project_name: str, team: str, action_title: str, icon_filename: str) -> None:
+        project = ProjectRepresenter.objects(name=project_name).first()
+        if project:
+            project.add_toa_icon(team, action_title, icon_filename)
+        else:
+            print("didn't work")
+    
+    def delete_icon(self, project_name: str, category: str, name: str):
+        project = ProjectRepresenter.objects(name=project_name).first()
+        if project:
+            try:
+                icon_library = project.toa_icon_library
+                if category in icon_library and name in icon_library[category]:
+                    # Delete the icon from the icon library
+                    del icon_library[category][name]
+                    project.save()
+
+                    # Iterate over each event in the project's event list
+                    events = project.event_list
+                    for event in events:
+                        # Check if the event's action title and team match the deleted icon
+                        if event.action_title == name and event.category == category:
+                            # Wanna make it so the replacement icon is the default ones
+                            #replacement_action_title = f"{category.lower()} Team Activity"
+                            #replacement_icon = f"{replacement_action_title.lower().replace(' ', '-')}"
+                            print("needs replacement")
+                            # Update the event's action title and icon with replacement values
+                            #event.action_title = replacement_action_title
+                            #event.icon = replacement_icon
+
+                    return True
+                else:
+                    print(f"Icon '{name}' in category '{category}' not found in the icon library.")
+                    return False
+            except Exception as e:
+                print("An error occurred while deleting the icon from the icon library:", e)
+                return False
+        else:
+            print(f"Project with name '{project_name}' not found.")
+            return False
+    

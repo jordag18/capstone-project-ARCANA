@@ -182,6 +182,39 @@ async def get_project_graphs(project_name: str):
         return {"error_message": f"Invalid project name: {project_name}"}
     return GraphManager.get_project_graphs(project)
 
+@app.get("/api/project/{project_name}/icon-libraries", response_model=Dict[str, Dict[str, str]])
+async def get_project_icon_libraries(project_name: str):
+    try:
+        response = db_manager.get_icon_library_from_project(project_name)
+
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/project/{project_name}/create-toa")
+async def create_toa(project_name: str, data: Dict[str, str]):
+    try:
+
+        db_manager.add_icon_to_icon_library(project_name, data['team'], data['actionTitle'], data['imageName'])
+
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "icon has been saved successfully"}
+
+@app.delete("/api/project/{project_name}/delete-icon")
+async def delete_icon(project_name: str, category: str, name: str):
+    #print("projname", projectName, "cat", category, "name", name)
+    try:
+        print("pone")
+        response = db_manager.delete_icon(project_name, category, name)
+        if response:
+            return f"Successfully deleted icon"
+        raise HTTPException(404, f"No icon found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")

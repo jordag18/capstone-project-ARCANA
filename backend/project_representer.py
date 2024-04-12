@@ -4,7 +4,7 @@ from events_manager import EventsManager
 from user_activity_logger import UserActivityLogger
 import datetime
 from typing import List, Optional
-from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField, EmbeddedDocumentField
+from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
 
 ##########################################################################################
@@ -25,7 +25,31 @@ class ProjectRepresenter(Document):
     location = StringField(default="")
     initials = StringField(default="")
     event_list = ListField(EmbeddedDocumentField(EventRepresenter), default = [])
-
+    toa_icon_library = DictField(default={
+        'blue': {
+            "detect": "detect.png",
+            "react": "react.png",
+            "protect": "protect.png",
+            "restore": "restore.png",
+            "blue team activity": "BlueTeam_Activity.png"
+        },
+        'red': {
+            "failed attempt": "RedTeam_Activity.png",
+            "red team activity": "RedTeam_Activity.png"
+        },
+        'white': {
+            "white team activity": "Whitecard.png"
+        },
+        'blue default': {
+            "blue team activity": "BlueTeam_Activity.png"
+        },
+        'red default': {
+            "red team activity": "RedTeam_Activity.png"
+        },
+        'white default': {
+            "white team activity": "Whitecard.png"
+        }
+    })
     meta = {
         'collection': 'Projects',  # Specifies the collection name in MongoDB
         'ordering': ['-timestamp']  # Documents will be ordered by timestamp descending by default
@@ -93,5 +117,24 @@ class ProjectRepresenter(Document):
 
             return output_list
     
+    def add_toa_icon(self, team, action_title, icon_filename):
+        # Retrieve the current TOA icon library
+        toa_icon_library = self.toa_icon_library
 
+        # Check if the team exists in the TOA icon library
+        if team.lower() not in toa_icon_library:
+            toa_icon_library[team.lower()] = {}
+
+        # Check if the action title already exists for the team
+        if action_title.lower() in toa_icon_library[team.lower()]:
+            raise ValueError(f"Action title '{action_title}' already exists for the {team.lower()} team.")
+
+        # Add the icon to the TOA icon library
+        toa_icon_library[team.lower()][action_title.lower()] = icon_filename
+
+        # Update the TOA icon library in the document
+        self.toa_icon_library = toa_icon_library
+        self.save()
+
+        print("Icon added to TOA icon library:", icon_filename)
         
