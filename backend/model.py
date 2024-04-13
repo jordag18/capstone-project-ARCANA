@@ -67,3 +67,13 @@ class Graph(BaseModel):
     roots: List[str]
     graph: Mapping[str, list]
     malformed_key: str = ""
+
+class Icon(BaseModel):
+    image: str
+    isDefault: bool
+
+
+class IconLibraryResponse(BaseModel):
+    blue: Dict[str, Icon]
+    red: Dict[str, Icon]
+    white: Dict[str, Icon]

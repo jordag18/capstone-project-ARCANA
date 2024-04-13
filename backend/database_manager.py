@@ -227,6 +227,14 @@ class DatabaseManager:
         else:
             print("didn't work")
     
+    def edit_icon(self, project_name: str, old_team: str, old_action_title: str, new_team: str, new_action_title: str, new_icon_filename: str, new_is_default: bool):
+        project = ProjectRepresenter.objects(name=project_name).first()
+        if project:
+            project.edit_toa_icon(old_team, old_action_title, new_team, new_action_title, new_icon_filename, new_is_default)
+        else:
+            print("didn't work")
+    
+    #category = team (color), name = action title
     def delete_icon(self, project_name: str, category: str, name: str):
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
@@ -237,19 +245,22 @@ class DatabaseManager:
                     del icon_library[category][name]
                     project.save()
 
+                    # Get the default icon for the team category
+                    default_icon = None
+                    if category in icon_library:
+                        for name, icon_info in icon_library[category].items():
+                            if icon_info["isDefault"]:
+                                default_icon = icon_info["image"]
+                                break
+
                     # Iterate over each event in the project's event list
                     events = project.event_list
                     for event in events:
                         # Check if the event's action title and team match the deleted icon
-                        if event.action_title == name and event.category == category:
-                            # Wanna make it so the replacement icon is the default ones
-                            #replacement_action_title = f"{category.lower()} Team Activity"
-                            #replacement_icon = f"{replacement_action_title.lower().replace(' ', '-')}"
-                            print("needs replacement")
+                        if event.action_title == name and event.team == category:
                             # Update the event's action title and icon with replacement values
-                            #event.action_title = replacement_action_title
-                            #event.icon = replacement_icon
-
+                            event.action_title = f"{category.capitalize()} Team Activity"
+                            event.icon = default_icon or f"{category.lower().replace(' ', '-')}-team-activity.png"
                     return True
                 else:
                     print(f"Icon '{name}' in category '{category}' not found in the icon library.")
