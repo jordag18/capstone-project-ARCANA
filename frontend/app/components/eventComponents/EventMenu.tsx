@@ -4,7 +4,7 @@ import { useProject } from "@/app/contexts/ProjectContext";
 import EditEventModal from "./event-modify-modal";
 import { Event } from "./event-interface";
 
-const EventMenu = ({ criteria, sortCriterion }) => {
+const EventMenu = ({ criteria, sortCriterion}) => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);

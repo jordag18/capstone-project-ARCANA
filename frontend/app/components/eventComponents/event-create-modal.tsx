@@ -195,7 +195,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
             </div>
           </div>
             <div>
-                <button onClick={handleSubmit}>
+                <button className='btn' onClick={handleSubmit}>
                     Create Event
                 </button>
             </div>

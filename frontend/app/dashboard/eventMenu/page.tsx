@@ -3,19 +3,19 @@ import React, { useEffect, useState } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
-import { TableCellsIcon } from "@heroicons/react/20/solid";
 import FilterEventsDialog from "@/app/components/eventComponents/FilterEventsDialog";
 import { CreateEvent } from "@/app/components/eventComponents/event-interface";
+import { useHistory } from "@/app/contexts/EventHistoryContext";
+
 
 const EventsList = () => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showIconLibrary, setShowIconLibrary] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [sortCriterion, setSortCriterion] = useState("");
-
-  const [newEvent, setNewEvent] = useState<CreateEventEvent | null>(null);
+  const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
+  const { applyEvent, undo, redo } = useHistory();
 
   const handleCreateModal = (createEvent: CreateEvent) => {
     setNewEvent(createEvent);
@@ -44,6 +44,20 @@ const EventsList = () => {
       <div className="flex flex-row items-center justify-between w-full rounded-3xl pr-5">
         <h1 className="text-3xl font-semibold pl-5">{project.name}</h1>
         <div className="flex items-center">
+          <div className="px-5 py-1 space-x-1 rounded-3xl">
+            <button
+              className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
+              onClick={undo}
+            >
+              Undo
+            </button>
+            <button
+              className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
+              onClick={redo}
+            >
+              Redo
+            </button>
+          </div>
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
             onClick={handleCreateModal}
@@ -66,7 +80,9 @@ const EventsList = () => {
             value={sortCriterion}
             onChange={handleSortChange}
           >
-            <option value="" disabled>Sort By</option> 
+            <option value="" disabled>
+              Sort By
+            </option>
             <option value="">None</option>
             <option value="timestamp">Timestamp</option>
             <option value="initials">Initials</option>
@@ -84,7 +100,10 @@ const EventsList = () => {
         />
       </div>
       <div className="px-5 py-1 rounded-3xl">
-        <EventMenu criteria={filterCriteria} sortCriterion={sortCriterion}/>
+        <EventMenu
+          criteria={filterCriteria}
+          sortCriterion={sortCriterion}
+        />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 import { ProjectProvider } from "@/app/contexts/ProjectContext";
+import { HistoryProvider } from "../contexts/EventHistoryContext";
 
 export const metadata: Metadata = {
   title: "ARCANA-Dashboard",
@@ -15,9 +16,11 @@ export default function DashboardLayout({
 }) {
   return (
     <ProjectProvider>
-      <div className="bg-base-200 flex flex-auto justify-center m-1 p-1 rounded-3xl">
-        {children}
-      </div>
+      <HistoryProvider>
+        <div className="bg-base-200 flex flex-auto justify-center m-1 p-1 rounded-3xl">
+          {children}
+        </div>
+      </HistoryProvider>
     </ProjectProvider>
   );
 }
