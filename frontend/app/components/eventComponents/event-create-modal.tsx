@@ -1,195 +1,207 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useProject } from '@/app/contexts/ProjectContext'
+import { CreateEvent } from './event-interface'
 
-const CreateEventModal = () => {
-    const [action_title, setAction_Title] = useState('')
-    const [data_source, setData_Source] = useState('')
-    const [description, setDescription] = useState('')
-    const [icon, setIcon] = useState('')
-    const [initials, setInitials] = useState('')
-    const [is_malformed, setIs_Malformed] = useState(false)
-    const [last_modified, setLast_Modified] = useState('')
-    const [location, setLocation] = useState('')
-    const [posture, setPosture] = useState('')
-    const [source_host, setSource_Host] = useState('')
-    const [target_host_list, setTarget_Host_List] = useState('')
-    const [team, setTeam] = useState('')
-    const [timestamp, setTimestamp] = useState('')
-    const [vector_id, setVector_Id] = useState('')
+interface createEventProp {
+    newEvent: CreateEvent
+    isModalOpen: boolean
+    onClose: () => void
+}
 
+const CreateEventModal: React.FC<createEventProp> = ({
+    newEvent,
+    isModalOpen,
+    onClose
+}) => {
     const { project } = useProject()
+    const [formData, setFormData] = useState<CreateEvent>(newEvent)
 
     const handleSubmit = async () => {
-        const eventData = {
-            action_title: action_title,
-            data_source: data_source,
-            description: description,
-            icon: icon,
-            initials: initials,
-            is_malformed: is_malformed,
-            last_modified: last_modified,
-            location: location,
-            posture: posture,
-            source_host: source_host,
-            target_host_list: target_host_list,
-            team: team,
-            timestamp: timestamp,
-            vector_id: vector_id
-        }
-
+        console.log("Create Event",formData,"body",JSON.stringify(formData))
         try {
-            console.log('Sending event data: ', eventData)
-            const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}/${eventData}`, {
-                method: "POST",
+            const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
+                method: "PATCH",
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify(eventData)
+                body: JSON.stringify(formData)
             })
 
             if (!response.ok) {
                 throw new Error('Failed to create event')
             }
 
-            close()
+            onClose
         } catch (error) {
             console.error("Error creating event: ", error)
-            alert("Error creating event: ", error.message)
         }
-    }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value
+        }))
+    };
+
+    useEffect(() => {
+        const modal = document.getElementById("create_event_modal")
+        if (modal) {
+            modal.showModal()
+        } else {
+            modal.close()
+        }
+    }, [isModalOpen]);
 
     return (
-        <>
-            <div
-                className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-                onClick={() => document.getElementById("create_event_modal").showModal()}    
-            >
-                + Create Event
+        <dialog id='create_event_modal' className='modal'>
+        <div className='modal-box'>
+            <form method='dialog'>
+                <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
+                    X
+                </button>
+            </form>
+            <div className="flex flex-col space-y-2">
+          <h3 className="font-bold text-lg">Create Event</h3>
+          <div className="flex flex-row space-x-2">
+            <div className="flex-1 flex-col">
+              <div className="flex-col">
+                <h2>Action Title</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="action_title"
+                    className="grow"
+                    placeholder="Action Title"
+                    value={formData?.action_title}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Initials</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="initials"
+                    className="grow"
+                    placeholder="Initials"
+                    value={formData?.initials}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Team</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="Team"
+                    className="grow"
+                    value={formData?.team}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Vector ID</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="vector_id"
+                    className="grow"
+                    placeholder="Vector ID"
+                    value={formData?.vector_id}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Location</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="location"
+                    className="grow"
+                    value={formData?.location}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
             </div>
-            <dialog id='create_event_modal' className='modal'>
-                <div className='modal-box'>
-                    <form method='dialog'>
-                        <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>
-                            X
-                        </button>
-                    </form>
-                    <div className="flex flex-col space-y-4">
-                        <h3 className="font-bold text-lg">Create Event</h3>
-                        <label className='flex items-center gap-2'>Action Title</label>
-                        <select
-                            name="action-titles" 
-                            id="action-titles"   
-                            onChange={(e) => setAction_Title(e.target.value)}
-                        >
-                            <option value="Blue Team Activity">Blue Team Activity</option>
-                            <option value="Red Team Activity">Red Team Activity</option>
-                        </select>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Initials"
-                                value={initials}
-                                onChange={(e) => setInitials(e.target.value)}
-                            />
-                        </label>
-                        <label className='flex items-center gap-2'>Team</label>
-                        <select 
-                            name="action-titles" 
-                            id="action-titles"
-                            onChange={(e) => setTeam(e.target.value)}
-                            value={team}
-                        >
-                            <option value="Blue Team Activity">Blue</option>
-                            <option value="Red Team Activity">Red</option>
-                        </select>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Vector ID"
-                                value={vector_id}
-                                onChange={(e) => setVector_Id(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Location"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
-                        </label>
-                        <label className="textarea textarea-bordered flex items-center gap-2">
-                            <textarea
-                                placeholder='Description'
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Source Host"
-                                value={source_host}
-                                onChange={(e) => setSource_Host(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Target Host"
-                                value={target_host_list}
-                                onChange={(e) => setTarget_Host_List(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Data Source"
-                                value={data_source}
-                                onChange={(e) => setData_Source(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Posture"
-                                value={posture}
-                                onChange={(e) => setPosture(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            Timestamp:
-                            <input
-                                type="datetime-local"
-                                className="form-control"
-                                value={timestamp}
-                                onChange={(e) => setTimestamp(e.target.value)}
-                            />
-                        </label>
-                        <label className="input input-bordered flex items-center gap-2">
-                            Last Modified:
-                            <input
-                                type="datetime-local"
-                                className="form-control"
-                                value={last_modified}
-                                onChange={(e) => setLast_Modified(e.target.value)}
-                            />
-                        </label>
-                        <div>
-                            <button onClick={() => {handleSubmit(); document.getElementById("create_event_modal").close();}}>
-                                Create Event
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </dialog>
-        </>
+            <div className="flex-1 flex-col">
+              <div className="flex-col">
+                <h2>Source Host</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="source_host"
+                    className="grow"
+                    value={formData?.source_host}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Target Host</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="target_host_list"
+                    className="grow"
+                    value={formData?.target_host_list}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Data Source</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="data_source"
+                    className="grow"
+                    placeholder="Data Source"
+                    value={formData?.data_source}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Posture</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="posture"
+                    className="grow"
+                    value={formData?.posture}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <div className="flex-col">
+                <h2>Timestamp</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="datetime-local"
+                    name="timestamp"
+                    className="grow"
+                    value={formData?.timestamp}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+            <div>
+                <button onClick={handleSubmit}>
+                    Create Event
+                </button>
+            </div>
+            </div>
+            </div>
+        </dialog>
     );
 };
 

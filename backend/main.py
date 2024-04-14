@@ -5,9 +5,9 @@ from fastapi.middleware.cors import (
 )  # CORS = Cross Origin Resource Sharing
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 from pymongo import MongoClient
-from model import Project, Graph
+from model import *
 #from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
@@ -31,65 +31,6 @@ app = FastAPI()
 #client = MongoClient("mongodb://localhost:27017/")
 #b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
-
-class Event(BaseModel):
-    id: str
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    icon: str
-    source_host: Optional[str] = None
-    target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
-
-class EventUpdate(BaseModel):
-    location: Optional[str] = None
-    initials: Optional[str] = None
-    team: Optional[str] = None
-    vector_id: Optional[str] = None
-    description: Optional[str] = None
-    data_source: Optional[str] = None
-    action_title: Optional[str] = None
-    timestamp: Optional[datetime] = None
-    is_malformed: Optional[bool] = None
-
-class EventCreate(BaseModel):
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    icon: str
-    source_host: Optional[str] = None
-    target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
-
-class Project(BaseModel): 
-    name: str
-    start_date: datetime
-    end_date: datetime
-    location: str 
-    initials: str 
-    events: List[Event] = []
-
-class ProjectCreate(BaseModel):
-    name: str
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    location: str = ""
-    initials: str = ""
 
 from database import (
     fetch_one_project,
@@ -206,14 +147,17 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/api/createEvent/{project_name}/{eventData}", response_model=EventCreate)
-async def create_event(event: EventCreate):
+@app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
+async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+    created_data = event_create.model_dump(exclude_unset=True)
     try:
-        created_event = db_manager.add_event_to_project(
-        )
-        return created_event
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        created_event = db_manager.add_event_to_project(project_name, created_data)
+        if created_event:
+            return created_event
+        # If `add_event_to_project` returns None or False, assume the project was not found
+        raise HTTPException(status_code=404, detail="Project not found or event creation failed")
+    except HTTPException as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
@@ -237,6 +181,74 @@ async def get_project_graphs(project_name: str):
     if not project:
         return {"error_message": f"Invalid project name: {project_name}"}
     return GraphManager.get_project_graphs(project)
+
+@app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
+async def get_project_icon_libraries(project_name: str):
+    try:
+        response = db_manager.get_icon_library_from_project(project_name)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/project/{project_name}/create-toa")
+async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+    try:
+        print("uydsss")
+        team = data['team']
+        action_title = data['actionTitle']
+        image_name = data['imageName']
+        
+        
+        # Save the icon to the icon library
+        db_manager.add_icon_to_icon_library(project_name, team, action_title, image_name)
+
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Icon has been saved successfully"}
+
+
+@app.delete("/api/project/{project_name}/delete-icon")
+async def delete_icon(project_name: str, team: str, iconName: str):
+    try:
+        response = db_manager.delete_icon(project_name, team, iconName)
+        if response:
+            return f"Successfully deleted icon"
+        raise HTTPException(404, f"No icon found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+#WORKING
+@app.post("/api/project/{project_name}/edit-toa")
+async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+    try:
+        team = data['team']
+        action_title = data['actionTitle']
+        image_name = data['imageName']
+        is_default = data['isDefault']
+        old_team = data['oldTeam']
+        old_action_title = data['oldActionTitle']
+        old_image_name = data['oldImageName']
+        old_is_default = data['oldIsDefault']
+        
+        # Check which new data fields match the corresponding old data fields and set them to None
+        if team == old_team:
+            team = None
+        if action_title == old_action_title:
+            action_title = None
+        if image_name == old_image_name:
+            image_name = None
+        if is_default == old_is_default:
+            is_default = None
+
+
+        db_manager.edit_icon(project_name, old_team, old_action_title, team, action_title, image_name, is_default)
+
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Icon has been modified successfully"}
+
 
 
 # ------------------------------------------------------------

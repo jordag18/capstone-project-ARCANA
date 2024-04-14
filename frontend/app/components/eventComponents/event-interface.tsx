@@ -15,3 +15,20 @@ export interface Event {
     timestamp: string;
     vector_id: string;
   }
+
+export interface CreateEvent {
+  action_title: string;
+  data_source: string;
+  description: string;
+  icon: string;
+  initials: string;
+  is_malformed: boolean;
+  last_modified: string;
+  location: string;
+  posture: string;
+  source_host: string;
+  target_host_list: Array<any>;
+  team: string;
+  timestamp: string;
+  vector_id: string;
+}

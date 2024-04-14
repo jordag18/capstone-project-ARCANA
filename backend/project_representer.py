@@ -4,7 +4,7 @@ from events_manager import EventsManager
 from user_activity_logger import UserActivityLogger
 import datetime
 from typing import List, Optional
-from mongoengine import Document, StringField, ListField, DateTimeField, ReferenceField, EmbeddedDocumentField
+from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
 
 ##########################################################################################
@@ -25,7 +25,22 @@ class ProjectRepresenter(Document):
     location = StringField(default="")
     initials = StringField(default="")
     event_list = ListField(EmbeddedDocumentField(EventRepresenter), default = [])
-
+    toa_icon_library = DictField(default={
+        'blue': {
+            "detect": {"image": "detect.png", "isDefault": False},
+            "react": {"image": "react.png", "isDefault": False},
+            "protect": {"image": "protect.png", "isDefault": False},
+            "restore": {"image": "restore.png", "isDefault": False},
+            "blue team activity": {"image": "BlueTeam_Activity.png", "isDefault": True}
+        },
+        'red': {
+            "failed attempt": {"image": "RedTeam_Activity.png", "isDefault": False},
+            "red team activity": {"image": "RedTeam_Activity.png", "isDefault": True}
+        },
+        'white': {
+            "white team activity": {"image": "Whitecard.png", "isDefault": True}
+        }
+    })
     meta = {
         'collection': 'Projects',  # Specifies the collection name in MongoDB
         'ordering': ['-timestamp']  # Documents will be ordered by timestamp descending by default
@@ -93,5 +108,58 @@ class ProjectRepresenter(Document):
 
             return output_list
     
+    def add_toa_icon(self, team, action_title, icon_filename, is_default=False):
+        try:
+            # Retrieve the current TOA icon library for the project
+            toa_icon_library = self.toa_icon_library
 
-        
+            # Check if the team exists in the TOA icon library
+            if team.lower() not in toa_icon_library:
+                toa_icon_library[team.lower()] = {}
+
+            # Check if the action title already exists for the team
+            if action_title.lower() in toa_icon_library[team.lower()]:
+                raise ValueError(f"Action title '{action_title}' already exists for the {team.lower()} team.")
+
+            # Add the icon to the TOA icon library
+            toa_icon_library[team.lower()][action_title.lower()] = {"image": icon_filename, "isDefault": is_default}
+            
+            # Update the TOA icon library in the database
+            self.toa_icon_library = toa_icon_library
+            self.save()
+
+            print("Icon added to TOA icon library:", icon_filename)
+            return {"message": "Icon added to TOA icon library successfully"}
+
+        except Exception as e:
+            return {"error_message": f"Error occurred: {e}"}
+
+    def edit_toa_icon(self, old_team, old_action_title, new_team, new_action_title, new_icon_filename, new_is_default):
+        try: 
+            # Check if the old team and action title exist in the library
+            if old_team in self.toa_icon_library and old_action_title in self.toa_icon_library[old_team]:
+                # Remove the old action title from the old team
+                old_icon_info = self.toa_icon_library[old_team].pop(old_action_title)
+                
+                # If the new team does not exist in the library, create it
+                if new_team and new_team not in self.toa_icon_library:
+                    self.toa_icon_library[new_team] = {}
+                
+                # Update the icon info with the new values
+                old_icon_info['image'] = new_icon_filename if new_icon_filename else old_icon_info['image']
+                old_icon_info['isDefault'] = new_is_default if new_is_default is not None else old_icon_info['isDefault']
+                
+                # Add the updated icon info to the new team under the new action title
+                self.toa_icon_library[new_team if new_team else old_team][new_action_title if new_action_title else old_action_title] = old_icon_info
+                
+                # If the action title or image was changed, update the events
+                if new_action_title or new_icon_filename:
+                    for event in self.event_list:
+                        if event.team == old_team and event.action_title == old_action_title:
+                            event.action_title = new_action_title if new_action_title else old_action_title
+                            event.icon_filename = new_icon_filename if new_icon_filename else old_icon_info['image']
+                self.save()
+            else:
+                print(f"Team '{old_team}' with action title '{old_action_title}' does not exist in the library.")
+        except Exception as e:
+            return {"error_message": f"Error occurred: {e}"}

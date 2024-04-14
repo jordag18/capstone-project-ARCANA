@@ -1,112 +1,185 @@
-import React from "react";
-import { Image, Button } from "react-bootstrap";
-import CSS from "csstype";
-import { BuildingLibraryIcon } from "@heroicons/react/20/solid";
-import ToaIconCard from "@/app/components/toa-icon-card";
+'use client'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Form } from 'react-bootstrap';
 
-const lineStyles: CSS.Properties = {
-  width: "100%",
-  height: "2px",
-  borderWidth: 0,
-  color: "#323232",
-  backgroundColor: "#323232",
+interface IconInfo {
+    image: string;
+    isDefault: boolean;
+}
+
+interface IconLibrary {
+    [team: string]: {
+        [iconName: string]: IconInfo;
+    };
+}
+
+interface EditFormData {
+    team: string;
+    actionTitle: string;
+    imageName: string | null;
+    isDefault: boolean;
+    oldTeam: string; 
+    oldActionTitle: string; 
+    oldImageName: string | null; 
+    oldIsDefault: boolean | null; 
+}
+
+const IconLibrary = () => {
+    const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
+    const [editFormData, setEditFormData] = useState<EditFormData>({ team: '', actionTitle: '', imageName: null, isDefault: false, oldTeam: '', oldActionTitle: '', oldImageName: null, oldIsDefault: null });
+    const [showForm, setShowForm] = useState(false);
+    const [editIcon, setEditIcon] = useState<{ team: string, iconName: string } | null>(null);
+    const projectName = 'Tee'; // Hardcoded
+
+    const fetchIconLibrary = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/project/${projectName}/icon-libraries`);
+            setIconLibraries(response.data);
+        } catch (error) {
+            console.error('Failed to fetch icon libraries:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchIconLibrary();
+    }, [projectName]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const fileName = file.name;
+            setEditFormData({ ...editFormData, imageName: fileName });
+        }
+    };
+    // Sends the data 
+    const handleCreateTOA = async () => {
+        const requestData = { team: editFormData.team, actionTitle: editFormData.actionTitle, imageName: editFormData.imageName };
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/project/${projectName}/create-toa`,
+                requestData
+            );
+            if (response.status === 200) {
+                fetchIconLibrary();
+                setShowForm(false);
+            } else {
+                throw new Error("Failed to create TOA icon");
+            }
+        } catch (error) {
+            console.error("Error creating TOA icon:", error);
+        }
+    };
+    // Sends both the old and new data
+    const handleEditTOA = async () => {
+        if (!editIcon) return;
+        const requestData = { ...editFormData };
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/project/${projectName}/edit-toa`,
+                requestData
+            );
+            if (response.status === 200) {
+                fetchIconLibrary();
+                setShowForm(false);
+            } else {
+                throw new Error("Failed to edit TOA icon");
+            }
+        } catch (error) {
+            console.error("Error editing TOA icon:", error);
+        }
+    };
+
+    const handleEditIcon = (team: string, iconName: string) => {
+        setEditIcon({ team, iconName });
+        const iconInfo = iconLibraries[team][iconName];
+        setEditFormData({ 
+            team: team, 
+            actionTitle: iconName, 
+            imageName: iconInfo.image, 
+            isDefault: iconInfo.isDefault, 
+            oldTeam: team, 
+            oldActionTitle: iconName, 
+            oldImageName: iconInfo.image, 
+            oldIsDefault: iconInfo.isDefault 
+        });
+        setShowForm(true);
+    };
+    // Sends the team and iconName(as in the action title)
+    const handleDeleteIcon = async (team: string, iconName: string) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/project/${projectName}/delete-icon?team=${team}&iconName=${iconName}`
+            );
+            if (response.status === 200) {
+                fetchIconLibrary();
+            } else {
+                throw new Error("Failed to delete icon");
+            }
+        } catch (error) {
+            console.error("Error deleting icon:", error);
+        }
+    };
+
+    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.name === "isDefault") {
+            setEditFormData({ ...editFormData, isDefault: e.target.checked });
+        } else {
+            setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+        }
+    };
+
+    return (
+        <div>
+            {Object.entries(iconLibraries).map(([team, icons]) => (
+                <div key={team}>
+                    <h2 style={{ fontWeight: 'bold' }}>{team} Team Icons</h2>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {Object.entries(icons).map(([iconName, iconInfo]) => (
+                            <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px' }}>
+                                <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px' }} />
+                                <p>{iconName}</p>
+                                {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px' }}>default</p>}
+                                <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
+                                <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+            
+            <button onClick={() => setShowForm(true)} className="btn">Create TOA</button>
+            
+            {showForm && (
+                <div>
+                    <h2>{editIcon ? "Edit Icon" : "Create TOA Icon"}</h2>
+                    <form onSubmit={editIcon ? handleEditTOA : handleCreateTOA}>
+                        <div>
+                            <label>Team:</label>
+                            <input type="text" name="team" value={editFormData.team} onChange={handleFormChange} />
+                        </div>
+                        <div>
+                            <label>Action Title:</label>
+                            <input type="text" name="actionTitle" value={editFormData.actionTitle} onChange={handleFormChange} />
+                        </div>
+                        <Form.Group controlId="imageFile">
+                            <Form.Label>Icon Image</Form.Label>
+                            <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
+                        </Form.Group>
+                        {editFormData.imageName && (
+                            <img src={`/Icons/${editFormData.imageName}`} alt="Selected Image" style={{ marginTop: '10px', maxWidth: '100px' }} />
+                        )}
+                        <div>
+                            <input type="checkbox" name="isDefault" checked={editFormData.isDefault} onChange={handleFormChange} />
+                            <label>Set as Default</label>
+                        </div>
+                        <button type="submit">{editIcon ? "Update" : "Create"}</button>
+                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                    </form>
+                </div>
+            )}
+        </div>
+    );
 };
 
-const ToaLibrary = () => {
-  return (
-    <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2">
-      <div className="flex flex-row justify-between items-center w-full">
-        <div className="flex-1"></div>
-        <div className="flex flex-row">
-          <BuildingLibraryIcon className="h-10 w-10" />
-          <h1 className="text-3xl font-semibold px-5 text-center flex-1">
-            Icon Library
-          </h1>
-        </div>
-        <div className="flex space-x-1 pr-5 flex-1 justify-end">
-          <button className="btn bg-stone-300"> +Create TOA</button>
-          <button className="btn bg-stone-300">Edit TOA</button>
-          <button className="btn bg-stone-300">Delete TOA</button>
-        </div>
-      </div>
-      <div className="w-full mt-8">
-        <section>
-          <h2 className="text-2xl font-semibold">Red Team TOA Icons</h2>
-          <hr style={lineStyles}></hr>
-
-          {/* Red team icon selections labeled with their action titles */}
-          {/* Red team default icon labeled with "(Default)" */}
-          <div className="flex-row">
-            <ToaIconCard 
-            imageSrc = "/RedTeam/RedTeam_Activity-removebg.png"
-            cardTitle="Red Team Activity"
-            isDefault={true}
-             />
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold">Blue Team TOA Icons</h2>
-          <hr style={lineStyles}></hr>
-          <div className="flex-row">
-            {/* Blue team icon selections labeled with their action titles */}
-            {/* BLue team default icon labeled with "(Default)" */}
-            <Image
-              className="p-0"
-              src="/BlueTeam/BlueTeam_Activity.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"blue_team"}
-            ></Image>
-            <Image
-              className="p-0"
-              src="/BlueTeam/detect.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"blue_team"}
-            ></Image>
-            <Image
-              className="p-0"
-              src="/BlueTeam/protect.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"blue_team"}
-            ></Image>
-            <Image
-              className="p-0"
-              src="/BlueTeam/react.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"blue_team"}
-            ></Image>
-            <Image
-              className="p-0"
-              src="/BlueTeam/restore.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"blue_team"}
-            ></Image>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold">White Team TOA Icons</h2>
-          <hr style={lineStyles}></hr>
-          {/* White team icon selections labeled with their action titles */}
-          {/* White team default icon labeled with "(Default)" */}
-          <div className="flex-row">
-            <Image
-              className="p-0"
-              src="/WhiteTeam/Whitecard.png"
-              width={"auto"}
-              height={"auto"}
-              alt={"white_team"}
-            ></Image>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-};
-
-export default ToaLibrary;
+export default IconLibrary;
