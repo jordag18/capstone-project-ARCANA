@@ -33,20 +33,19 @@ class EventUpdate(BaseModel):
     is_malformed: Optional[bool] = None
 
 class EventCreate(BaseModel):
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    icon: str
-    source_host: Optional[str] = None
+    team: Optional[str] = ""
+    action_title: Optional[str] = ""
+    data_source: Optional[str] = ""
+    initials: Optional[str] = ""
+    location: Optional[str] = ""
+    posture: Optional[str] = ""
+    source_host: Optional[str] = ""
     target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
+    timestamp: Optional[datetime] = None
+    vector_id: Optional[str] = ""
+    icon: Optional[str] = ""
+    is_malformed: Optional[bool] = None
+    description: Optional[str] = ""
 
 class Project(BaseModel): 
     name: str

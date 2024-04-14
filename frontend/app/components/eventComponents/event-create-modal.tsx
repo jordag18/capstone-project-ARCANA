@@ -37,13 +37,33 @@ const CreateEventModal: React.FC<createEventProp> = ({
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+          setFormData((prevFormData) => ({
+              ...prevFormData,
+              icon: file.name
+          }));
+      }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "target_host_list") {
+        // Convert comma-separated string to a list of strings
+        const targetHostList = value.split(",").map(item => item.trim());
         setFormData((prevFormData) => ({
             ...prevFormData,
-            [name]: value
-        }))
-    };
+            [name]: targetHostList
+        }));
+    } else {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
+        }));
+    }
+};
+    
 
     useEffect(() => {
         const modal = document.getElementById("create_event_modal")
@@ -55,7 +75,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
     }, [isModalOpen]);
 
     return (
-        <dialog id='create_event_modal' className='modal'>
+      <dialog id='create_event_modal' className='modal' style={{ width: '80%', height: '80%' }}>
         <div className='modal-box'>
             <form method='dialog'>
                 <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
@@ -97,7 +117,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
                 <label className="input input-bordered flex items-center gap-2">
                   <input
                     type="text"
-                    name="Team"
+                    name="team"
                     className="grow"
                     value={formData?.team}
                     onChange={handleChange}
@@ -192,6 +212,29 @@ const CreateEventModal: React.FC<createEventProp> = ({
                   />
                 </label>
               </div>
+              <h2>Description</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="description"
+                    className="grow"
+                    placeholder="Description"
+                    value={formData?.description}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+              <h2>Icon</h2>
+                <label className="input input-bordered flex items-center gap-2">
+                    <input
+                        type="file"
+                        name="icon"
+                        accept="image/*"
+                        className="grow"
+                        onChange={handleFileChange}
+                    />
+                </label>
+              <div className="flex-col">
             </div>
           </div>
             <div>
