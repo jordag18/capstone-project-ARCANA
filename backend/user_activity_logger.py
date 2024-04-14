@@ -19,7 +19,7 @@ class UserActivityLogger:
             print(f"Error adding user activity log: {e}")
 
     @classmethod
-    def view_user_activity_logs(cls):
+    def get_log_data(cls):
         # returns a list of user activity logs.
         return cls.user_activity_log_list
 

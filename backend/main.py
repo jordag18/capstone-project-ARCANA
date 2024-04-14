@@ -13,6 +13,7 @@ from typing import List
 import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
+from user_activity_logger import UserActivityLogger
 
 
 
@@ -175,8 +176,29 @@ async def delete_event(project_name: str, event_id: str):
             raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
+    
+"""
+    API call to get the list of Logs from teh UserActivityLogger class
+"""
+@app.get("/api/userActivityLog")
+async def get_user_activity_log():
+    try:
+        # Fetching user activity log data from your UserActivityLogger class
+        user_activity_log = UserActivityLogger.get_log_data()  
+        return user_activity_log
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+"""
+    This API call allows the frontend to add a User Log to the Activity List
+"""
+@app.post("/api/userActivityLog")
+async def add_user_activity_log_entry(log_entry: str):
+    try:
+        UserActivityLogger.add_user_activity_log(log_entry) 
+        return {"message": "Log entry added successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")
