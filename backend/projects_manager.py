@@ -3,7 +3,6 @@ from project_representer import ProjectRepresenter
 from user_activity_logger import UserActivityLogger
 from datetime import datetime
 import json
-from user_activity_logger import UserActivityLogger
 
 ##########################################################################################
 #

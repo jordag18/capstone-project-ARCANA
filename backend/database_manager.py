@@ -39,7 +39,7 @@ class DatabaseManager:
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             project.delete()  # This deletes the project from the database
-            self.project_manager.remove_project(project_name, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
     
