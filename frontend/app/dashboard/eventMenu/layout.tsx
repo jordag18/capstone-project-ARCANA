@@ -12,7 +12,7 @@ export default function ManageEventsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <Sidebar />
       <div className="flex-1 bg-base-200 rounded-r-3xl">{children}</div>
     </div>
