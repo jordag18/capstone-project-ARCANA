@@ -78,10 +78,10 @@ class DatabaseManager:
 
     def add_event_to_project(self, project_name, event_data):
         # Add an event to a specific project
-        project = self.get_project(project_name)
+        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             new_event = EventRepresenter(**event_data)
-            new_event.save()  # Save the new event to the database
+            print(new_event)
             project.event_list.append(new_event)
             project.save()  # Save the updated project
             return new_event
