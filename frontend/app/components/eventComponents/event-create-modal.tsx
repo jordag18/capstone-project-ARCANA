@@ -37,7 +37,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
               throw new Error('Failed to create event')
           }
 
-          onClose
+          onClose()
       } catch (error) {
           console.error("Error creating event: ", error)
       }
@@ -74,9 +74,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
     useEffect(() => {
         const modal = document.getElementById("create_event_modal")
         if (modal) {
-            modal.showModal()
-        } else {
-            modal.close()
+          isModalOpen ? modal.showModal() : modal.close()
         }
     }, [isModalOpen]);
 
