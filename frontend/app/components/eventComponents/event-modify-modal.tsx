@@ -17,7 +17,12 @@ const EditEventModal: React.FC<selectedEventProp> = ({
 }) => {
   const { project} = useProject();
   const { updateEvent } = useProject();
-  const [formData, setFormData] = useState<Event>(selectedEvent);
+  const [formData, setFormData] = useState<Event>({
+  ...selectedEvent,
+  target_host_list: selectedEvent.target_host_list.length
+    ? selectedEvent.target_host_list
+    : [],
+});
 
   const handleSaveEvent = async () => {
     console.log("Save Event", formData, "body", JSON.stringify(formData))
@@ -44,12 +49,21 @@ const EditEventModal: React.FC<selectedEventProp> = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { //function to modify event data changes in the form
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    if (name === "target_host_list") {
+      // Convert comma-separated string to a list of strings
+      const targetHostList = value.split(",").map(item => item.trim());
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: targetHostList,
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
   };
 
   useEffect(() => {

@@ -31,21 +31,26 @@ class EventUpdate(BaseModel):
     action_title: Optional[str] = None
     timestamp: Optional[datetime] = None
     is_malformed: Optional[bool] = None
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = ""
+    icon: str
+
 
 class EventCreate(BaseModel):
-    team: Optional[str] = ""
+    team: str
     action_title: Optional[str] = ""
     data_source: Optional[str] = ""
-    initials: Optional[str] = ""
+    initials: str
     location: Optional[str] = ""
     posture: Optional[str] = ""
     source_host: Optional[str] = ""
     target_host_list: List[str] = []
     timestamp: Optional[datetime] = None
     vector_id: Optional[str] = ""
-    icon: Optional[str] = ""
+    icon: str
     is_malformed: Optional[bool] = None
-    description: Optional[str] = ""
+    description: str
 
 class Project(BaseModel): 
     name: str
