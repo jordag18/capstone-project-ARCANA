@@ -17,24 +17,30 @@ const CreateEventModal: React.FC<createEventProp> = ({
     const [formData, setFormData] = useState<CreateEvent>(newEvent)
 
     const handleSubmit = async () => {
-        console.log("Create Event",formData,"body",JSON.stringify(formData))
-        try {
-            const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            })
+      if ((!formData.initials || formData.initials.trim() === '') ||
+          (!formData.team || formData.team.trim() === '') ||
+          (!formData.description || formData.description.trim() === '') ||
+          (!formData.icon || formData.icon.trim() === '')) {
+            return
+      }
+      console.log("Create Event",formData,"body",JSON.stringify(formData))
+      try {
+          const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
+              method: "PATCH",
+              headers: {
+                  "Content-type": "application/json"
+              },
+              body: JSON.stringify(formData)
+          })
 
-            if (!response.ok) {
-                throw new Error('Failed to create event')
-            }
+          if (!response.ok) {
+              throw new Error('Failed to create event')
+          }
 
-            onClose
-        } catch (error) {
-            console.error("Error creating event: ", error)
-        }
+          onClose
+      } catch (error) {
+          console.error("Error creating event: ", error)
+      }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
