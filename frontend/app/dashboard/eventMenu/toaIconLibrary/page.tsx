@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
-import { AlignCenter } from 'react-bootstrap-icons';
 
 interface IconInfo {
     image: string;
@@ -156,8 +155,38 @@ const IconLibrary = () => {
                 ))}
                 <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>Blue Team TOA Icons</h2>
                 <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+                {Object.entries(iconLibraries).map(([team, icons]) => (
+                    <div key={"blue"}>
+                        <div>
+                            {Object.entries(icons).map(([iconName, iconInfo]) => (
+                                <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
+                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
+                                    <p>{iconName}</p>
+                                    {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
+                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
+                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
                 <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>White Team TOA Icons</h2>
                 <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+                {Object.entries(iconLibraries).map(([team, icons]) => (
+                    <div key={"white"}>
+                        <div>
+                            {Object.entries(icons).map(([iconName, iconInfo]) => (
+                                <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
+                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
+                                    <p>{iconName}</p>
+                                    {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
+                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
+                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
             
             {showForm && (
