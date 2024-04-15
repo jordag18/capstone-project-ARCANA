@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
+import { useProject } from '@/app/contexts/ProjectContext';
 
 interface IconInfo {
     image: string;
@@ -30,11 +31,11 @@ const IconLibrary = () => {
     const [editFormData, setEditFormData] = useState<EditFormData>({ team: '', actionTitle: '', imageName: null, isDefault: false, oldTeam: '', oldActionTitle: '', oldImageName: null, oldIsDefault: null });
     const [showForm, setShowForm] = useState(false);
     const [editIcon, setEditIcon] = useState<{ team: string, iconName: string } | null>(null);
-    const projectName = 'Tee'; // Hardcoded
+    const { project } = useProject();
 
     const fetchIconLibrary = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/project/${projectName}/icon-libraries`);
+            const response = await axios.get(`http://localhost:8000/api/project/${project.name}/icon-libraries`);
             setIconLibraries(response.data);
         } catch (error) {
             console.error('Failed to fetch icon libraries:', error);
@@ -43,7 +44,7 @@ const IconLibrary = () => {
 
     useEffect(() => {
         fetchIconLibrary();
-    }, [projectName]);
+    }, [project.name]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -57,7 +58,7 @@ const IconLibrary = () => {
         const requestData = { team: editFormData.team, actionTitle: editFormData.actionTitle, imageName: editFormData.imageName };
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/project/${projectName}/create-toa`,
+                `http://localhost:8000/api/project/${project.name}/create-toa`,
                 requestData
             );
             if (response.status === 200) {
@@ -76,7 +77,7 @@ const IconLibrary = () => {
         const requestData = { ...editFormData };
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/project/${projectName}/edit-toa`,
+                `http://localhost:8000/api/project/${project.name}/edit-toa`,
                 requestData
             );
             if (response.status === 200) {
@@ -109,7 +110,7 @@ const IconLibrary = () => {
     const handleDeleteIcon = async (team: string, iconName: string) => {
         try {
             const response = await axios.delete(
-                `http://localhost:8000/api/project/${projectName}/delete-icon?team=${team}&iconName=${iconName}`
+                `http://localhost:8000/api/project/${project.name}/delete-icon?team=${team}&iconName=${iconName}`
             );
             if (response.status === 200) {
                 fetchIconLibrary();
