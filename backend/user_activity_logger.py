@@ -11,9 +11,9 @@ class UserActivityLogger:
                 raise ValueError("Initials and timestamp are required")
             
             #construct log entry with optional data source
-            log_entry = f"[{initials}] [{timestamp}] {data_source} {statement}" if data_source else f"[{initials}] [{timestamp}] {statement}"
-            
+            log_entry = {"initials":initials, "timestamp":timestamp,"data_source":data_source,"log":statement} if data_source else {"initials":initials, "timestamp":timestamp,"log":statement}
             #add log entry to the list
+            print(log_entry)
             UserActivityLogger.user_activity_log_list.append(log_entry)
         except ValueError as e:
             print(f"Error adding user activity log: {e}")
