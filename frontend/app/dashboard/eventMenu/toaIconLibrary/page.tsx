@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
+import { AlignCenter } from 'react-bootstrap-icons';
 
 interface IconInfo {
     image: string;
@@ -148,7 +149,22 @@ const IconLibrary = () => {
                 </div>
             ))}
             
-            <button onClick={() => setShowForm(true)} className="btn">Create TOA</button>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <h1 style={{fontWeight: 'bold', marginLeft: '2rem'}}>TOA Icon Library</h1>
+                <button onClick={() => setShowForm(true)} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
+            </div>
+            <div style={{marginTop: '2rem'}}>
+                <h2 style={{marginLeft: '4rem'}}>Red Team TOA Icons</h2>
+                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+                {Object.entries(iconLibraries).map(([team, icons]) => (
+                    <div key={"red"}>
+                    </div>
+                ))}
+                <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>Blue Team TOA Icons</h2>
+                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+                <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>White Team TOA Icons</h2>
+                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+            </div>
             
             {showForm && (
                 <div>
