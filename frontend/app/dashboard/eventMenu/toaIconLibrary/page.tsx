@@ -132,23 +132,6 @@ const IconLibrary = () => {
 
     return (
         <div>
-            {Object.entries(iconLibraries).map(([team, icons]) => (
-                <div key={team}>
-                    <h2 style={{ fontWeight: 'bold' }}>{team} Team Icons</h2>
-                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                        {Object.entries(icons).map(([iconName, iconInfo]) => (
-                            <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px' }}>
-                                <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px' }} />
-                                <p>{iconName}</p>
-                                {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px' }}>default</p>}
-                                <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
-                                <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ))}
-            
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <h1 style={{fontWeight: 'bold', marginLeft: '2rem'}}>TOA Icon Library</h1>
                 <button onClick={() => setShowForm(true)} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
@@ -158,6 +141,17 @@ const IconLibrary = () => {
                 <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
                 {Object.entries(iconLibraries).map(([team, icons]) => (
                     <div key={"red"}>
+                        <div>
+                            {Object.entries(icons).map(([iconName, iconInfo]) => (
+                                <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
+                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
+                                    <p>{iconName}</p>
+                                    {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
+                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
+                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
                 <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>Blue Team TOA Icons</h2>
