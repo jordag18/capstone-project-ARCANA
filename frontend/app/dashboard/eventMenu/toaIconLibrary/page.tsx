@@ -56,6 +56,11 @@ const IconLibrary = () => {
     // Sends the data 
     const handleCreateTOA = async () => {
         const requestData = { team: editFormData.team, actionTitle: editFormData.actionTitle, imageName: editFormData.imageName };
+        if ((!requestData.team || requestData.team === "") ||
+            (!requestData.actionTitle || requestData.actionTitle === "") ||
+            (!requestData.imageName || requestData.imageName === "")) {
+            return
+        }
         try {
             const response = await axios.post(
                 `http://localhost:8000/api/project/${project.name}/create-toa`,
@@ -108,6 +113,13 @@ const IconLibrary = () => {
     };
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
+        if (Object.entries(iconLibraries).map(([team, icons]) => (
+            Object.entries(icons).map(([iconName, iconInfo]) => (
+                iconInfo.isDefault === true
+            ))
+        ))) {
+            return
+        }
         try {
             const response = await axios.delete(
                 `http://localhost:8000/api/project/${project.name}/delete-icon?team=${team}&iconName=${iconName}`
