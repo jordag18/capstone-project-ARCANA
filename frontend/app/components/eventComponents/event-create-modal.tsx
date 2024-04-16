@@ -17,7 +17,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
     const [formData, setFormData] = useState<CreateEvent>(newEvent)
 
     const handleSubmit = async () => {
-      if ((!formData.initials || formData.initials.trim() === '') ||
+      if ((!formData.initials || formData.initials.trim() === '' || formData.initials.length > 2) ||
           (!formData.team || formData.team.trim() === '') ||
           (!formData.description || formData.description.trim() === '') ||
           (!formData.icon || formData.icon.trim() === '')) {
