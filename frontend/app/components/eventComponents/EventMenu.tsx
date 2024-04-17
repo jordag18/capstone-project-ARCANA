@@ -108,7 +108,7 @@ const EventMenu = ({ criteria, sortCriterion}) => {
           </tr>
         </thead>
         <tbody className="bg-base-200">
-          {filteredEvents.map((event, index) => (
+          {filteredEvents.map((event:Event, index) => (
             <tr key={index} className="hover:bg-slate-200 ">
               {/* Each <td> is a cell for the project's attribute */}
               <td>{event.id}</td>

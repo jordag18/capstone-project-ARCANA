@@ -20,12 +20,10 @@ const ProjectMenu = () => {
           );
         }
         const projectsData: Project[] = await response.json(); // Type assertion
-        console.log(projectsData); //used for testing
+        console.log("Loaded Projects:",projectsData); //used for testing
 
-        // Log the first project's name here, after you've fetched the data but before updating the state
         if (projectsData.length > 0) {
-          console.log("First Project:", projectsData[0]);
-          setProject(projectsData[0]); // Assuming you want to set the first project as the selected project
+          setProject(projectsData[0]); //Sets the active project as the first project grabbed from the db unless other project is selected by user
         }
 
         setProjects(projectsData);

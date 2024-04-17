@@ -52,7 +52,8 @@ class EventCreate(BaseModel):
     is_malformed: Optional[bool] = None
     description: str
 
-class Project(BaseModel): 
+class Project(BaseModel):
+    id: str 
     name: str
     start_date: datetime
     end_date: datetime

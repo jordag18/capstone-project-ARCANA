@@ -5,7 +5,7 @@ import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 import FilterEventsDialog from "@/app/components/eventComponents/FilterEventsDialog";
 import { CreateEvent } from "@/app/components/eventComponents/event-interface";
-import { useHistory } from "@/app/contexts/EventHistoryContext";
+import { useUndoRedo } from "@/app/contexts/EventHistoryContext";
 
 
 const EventsList = () => {
@@ -15,7 +15,7 @@ const EventsList = () => {
   const [filterCriteria, setFilterCriteria] = useState({});
   const [sortCriterion, setSortCriterion] = useState("");
   const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
-  const { applyEvent, undo, redo } = useHistory();
+  const { undo, redo } = useUndoRedo();
 
   const handleCreateModal = (createEvent: CreateEvent) => {
     setNewEvent(createEvent);
@@ -47,13 +47,13 @@ const EventsList = () => {
           <div className="px-5 py-1 space-x-1 rounded-3xl">
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={undo}
+              onClick={() => undo(project.id)}
             >
               Undo
             </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={redo}
+              onClick={() => redo(project.id)}
             >
               Redo
             </button>

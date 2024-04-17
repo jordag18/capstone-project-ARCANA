@@ -23,6 +23,7 @@ const defaultEvent: Event = {
 };
 
 const defaultProject: Project = {
+  id: "N/A",
   name: "No Project Selected",
   start_date: "N/A",
   end_date: "N/A",

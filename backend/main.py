@@ -248,6 +248,36 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         return {"error_message": f"Error occurred: {e}"}
     else:
         return {"message": "Icon has been modified successfully"}
+    
+@app.post("/api/undo/{project_id}")
+async def undo(project_id: str):
+    """
+    Endpoint to undo the last action on a given project.
+    """
+    print("recieved pid:", project_id)
+    try:
+        success = db_manager.undo_last_action(project_id)
+        print("success status:", success)
+        if success:
+            return {"message": "Undo successful"}
+        else:
+            raise HTTPException(status_code=404, detail="No actions to undo")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/redo/{project_id}")
+async def redo(project_id: str):
+    """
+    Endpoint to redo the previously undone action on a given project.
+    """
+    try:
+        success = db_manager.redo_last_action(project_id)
+        if success:
+            return {"message": "Redo successful"}
+        else:
+            raise HTTPException(status_code=404, detail="No actions to redo")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 

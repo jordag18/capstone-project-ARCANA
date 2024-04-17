@@ -2,10 +2,12 @@
 #Daniel Lucio Project CRUD
 import datetime
 from mongoengine import connect
+from mongoengine.errors import ValidationError, DoesNotExist
 from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from events_manager import EventsManager
+from event_action_log import EventActionLog
 from bson import ObjectId
 import pymongo
 
@@ -84,6 +86,12 @@ class DatabaseManager:
             print(new_event)
             project.event_list.append(new_event)
             project.save()  # Save the updated project
+
+            EventActionLog(
+                action_type='create',
+                event_after=new_event,
+                project=project,
+            ).save()
             return new_event
         return None
     
@@ -119,6 +127,25 @@ class DatabaseManager:
     def modify_event_from_project(self, project_name, event_id, updated_data):
         try:
             event_id_obj = ObjectId(event_id)
+
+            # First, get the event's current data before updating
+            project = self.projects_collection.find_one(
+                {"name": project_name, "event_list._id": event_id_obj},
+                {"event_list.$": 1}  # This projection returns only the matching event in the event_list
+            )
+
+            if not project:
+                print("No matching project or event found")
+                return False
+
+            # Retrieve the specific event data
+            event_before_update = project['event_list'][0] if 'event_list' in project and len(project['event_list']) > 0 else None
+            if not event_before_update:
+                print("Event not found")
+                return False
+            
+            print("Event before update:", event_before_update)
+
             # Prepare the update operation
             update_operation = {
                 "$set": {
@@ -143,6 +170,23 @@ class DatabaseManager:
             if result.modified_count == 0:
                 print("No modifications were made")
                 return False
+            
+                    # Retrieve the updated event data
+            project_after_update = self.projects_collection.find_one(
+                {"name": project_name, "event_list._id": event_id_obj},
+                {"event_list.$": 1}  # Returns only the matching event
+            )
+            event_after_update = project_after_update['event_list'][0] if 'event_list' in project_after_update and len(project_after_update['event_list']) > 0 else None
+
+            print("Event after update:", event_after_update)
+
+                        # Log the action
+            EventActionLog(
+                action_type='update',
+                event_before=event_before_update,
+                event_after=event_after_update,
+                project=project,
+            ).save()
             return True
         except Exception as e:
             print("An error occurred when modifying the event:", e)
@@ -156,6 +200,7 @@ class DatabaseManager:
         # Iterate through each project and collect necessary information
         for project in projects:
             project_info = {
+                'id': str(project.id),
                 'name': project.name,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -271,4 +316,77 @@ class DatabaseManager:
         else:
             print(f"Project with name '{project_name}' not found.")
             return False
+
+    def undo_last_action(self, project_id):
+        try:
+            # Convert string project_id to ObjectId and ensure it's valid
+            project_oid = ObjectId(project_id)
+        except Exception as e:
+            print(f"Invalid project ID format: {str(e)}")
+            return False
+
+        print(f"Project ID being queried: {project_id}")
+        print(f"Converted ObjectId: {project_oid}")
+        
+        # Fetch the most recent action for the given project
+        try:
+            last_action = EventActionLog.objects(project=project_oid).order_by('-performed_at').first()
+            if not last_action:
+                print("No actions to undo")
+                return False
+            print(f"Found ActionLog: {last_action}")
+            
+            # Fetch the project
+            project = ProjectRepresenter.objects(id=project_oid).first()
+            if not project:
+                print("Project not found")
+                return False
+
+            # Process the undo based on the action type
+            if last_action.action_type == 'create':
+                project.event_list = [event for event in project.event_list if event.id != last_action.event_after.id]
+            elif last_action.action_type == 'update':
+                for index, event in enumerate(project.event_list):
+                    if event.id == last_action.event_after.id:
+                        project.event_list[index] = last_action.event_before
+                        break
+            elif last_action.action_type == 'delete':
+                project.event_list.append(last_action.event_before)
+
+            project.save()  # Save the project with updated event list
+            last_action.delete()  # Optionally remove the action log
+            return True
+
+        except DoesNotExist:
+            print("ActionLog or Project does not exist.")
+            return False
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return False
+
+    
+    def redo_last_action(project_id):
+    # This assumes you have a way to track undone actions. For simplicity, let's fetch the latest undone action.
+        last_undone_action = EventActionLog.objects(project=project_id, undone=True).order_by('-performed_at').first()
+        if not last_undone_action:
+            print("No actions to redo")
+            return False
+
+        if last_undone_action.action_type == 'create':
+            # Redo a creation
+            ProjectRepresenter.objects(id=project_id).update_one(push__event_list=last_undone_action.event_after)
+        elif last_undone_action.action_type == 'update':
+            # Redo an update
+            ProjectRepresenter.objects.filter(id=project_id, event_list__id=last_undone_action.event_before.id).update_one(
+                **{'set__event_list__$': last_undone_action.event_after}
+            )
+        elif last_undone_action.action_type == 'delete':
+            # Redo a deletion
+            ProjectRepresenter.objects(id=project_id).update_one(pull__event_list=last_undone_action.event_before)
+
+        # Optionally, mark the action as redone
+        last_undone_action.update(set__undone=False)
+        return True
+
+
     
