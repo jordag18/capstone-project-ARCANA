@@ -68,7 +68,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
             [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
         }));
     }
-};
+  };
     
 
     useEffect(() => {
