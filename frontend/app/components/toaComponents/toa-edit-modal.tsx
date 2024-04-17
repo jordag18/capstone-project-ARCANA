@@ -26,6 +26,21 @@ const EditTOAModal: React.FC<editTOAProp> = ({
                 </form>
                 <div className="flex flex-col space-y-2">
                     <h3 className="font-bold text-lg">Edit TOA</h3>
+                    <div className="flex flex-row space-x-2">
+                        <div className="flex-1 flex-col">
+                            <h2>Team</h2>
+                        </div>
+                        <div className="flex-col">
+                            <h2>Action Title</h2>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex-col">
+                    <h2>Icon</h2>
+                </div>
+                <div className="flex flex-row space-x-2 justify-end">
+                    <button className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" onClick={handleSubmit}>Submit</button>
+                    <button className="btn bg-red-300 hover:bg-red-400 ml-2" onClick={onClose}>Cancel</button>
                 </div>
             </div>
         </dialog>

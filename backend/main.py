@@ -195,6 +195,7 @@ async def get_project_icon_libraries(project_name: str):
 async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
     try:
         print("uydsss")
+        print(data)
         team = data['team']
         action_title = data['actionTitle']
         image_name = data['imageName']

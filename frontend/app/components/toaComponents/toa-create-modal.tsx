@@ -57,7 +57,7 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
             ///sets the form data
             setFormData((prevFormData) => ({
                 ...prevFormData,
-                image: file.name
+                imageName: file.name
             }))
         }
     }
@@ -96,7 +96,7 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
                             <label className="input input-bordered flex items-center gap-2">
                             <input
                                 type="text"
-                                name="action_title"
+                                name="actionTitle"
                                 className="grow"
                                 placeholder="Action Title"
                                 value={formData?.actionTitle}
