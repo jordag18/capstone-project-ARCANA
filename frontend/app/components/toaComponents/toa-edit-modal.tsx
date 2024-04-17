@@ -18,7 +18,16 @@ const EditTOAModal: React.FC<editTOAProp> = ({
 
     return (
         <dialog id="create_toa_modal" className="modal" style={{ width: '80%', height: '80%' }}>
-
+            <div className="modal-box">
+                <form method="dialog">
+                    <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
+                        X
+                    </button>
+                </form>
+                <div className="flex flex-col space-y-2">
+                    <h3 className="font-bold text-lg">Edit TOA</h3>
+                </div>
+            </div>
         </dialog>
     );
 }

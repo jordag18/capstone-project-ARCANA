@@ -54,6 +54,7 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
             const imageUrl = URL.createObjectURL(file)
             setImage(imageUrl)
 
+            ///sets the form data
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 image: file.name
