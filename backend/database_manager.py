@@ -42,7 +42,7 @@ class DatabaseManager:
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             project.delete()  # This deletes the project from the database
-            self.project_manager.remove_project(project_name, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
     
@@ -118,7 +118,9 @@ class DatabaseManager:
             # Update the project in the database to remove the event
             self.projects_collection.update_one({"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
             project = self.get_project(project_name)
+            print(type(project),project_name)
             if project:
+                project['event_manager'].delete_event(event_id)
                 project['events'] = [event for event in project['events'] if event.get('id') != event_id]
             return True
         except Exception as e:
@@ -207,6 +209,7 @@ class DatabaseManager:
                 'end_date': project.end_date,
                 'location': project.location,
                 'initials': project.initials,
+                "event_manager": project.event_manager,
                 # Add any other project attributes you need
             }
 

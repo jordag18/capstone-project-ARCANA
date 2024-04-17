@@ -52,8 +52,10 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        self.ingestLogsToProject("uploads")
-
+        if not self.id:
+            self.ingestLogsToProject("uploads")
+        
+        
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()

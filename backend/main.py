@@ -14,6 +14,7 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 from graph import GraphManager
+from user_activity_logger import UserActivityLogger
 
 
 
@@ -280,6 +281,29 @@ async def redo(project_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+    
+"""
+    API call to get the list of Logs from teh UserActivityLogger class
+"""
+@app.get("/api/userActivityLog")
+async def get_user_activity_log():
+    try:
+        # Fetching user activity log data from your UserActivityLogger class
+        user_activity_log = UserActivityLogger.get_log_data()  
+        return user_activity_log
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+"""
+    This API call allows the frontend to add a User Log to the Activity List
+"""
+@app.post("/api/userActivityLog")
+async def add_user_activity_log_entry(initials:str,timestamp:str,log_entry: str,data_source=None):
+    try:
+        UserActivityLogger.add_user_activity_log(initials,timestamp,log_entry,data_source) 
+        return {"message": "Log entry added successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detakil=str(e))
 
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")
