@@ -27,7 +27,6 @@ const EventMenu = ({ criteria, sortCriterion}) => {
       const eventDateAndTime = new Date(event.timestamp);
       const startDateCriteria = new Date(criteria.startDate);
       const endDateCriteria = new Date(criteria.endDate);
-      console.log("Vector ID ", event.vector_id);
 
       // Start Date Filtering
       if (criteria.startDate) {
@@ -39,11 +38,11 @@ const EventMenu = ({ criteria, sortCriterion}) => {
         if (eventDateAndTime > endDateCriteria) return false;
       }
 
-      //Need to add time check criteria
-
+      //if there is criteria for vector id check where it matches
       if (criteria.vectorId && event.vector_id !== criteria.vectorId)
         return false;
-
+      
+      //check where event ID matches inputted
       if (criteria.id && event.id !== criteria.id) return false;
 
       if (criteria.location && event.location !== criteria.location)
@@ -79,7 +78,6 @@ const EventMenu = ({ criteria, sortCriterion}) => {
         return 0;
       });
     }
-    console.log(filtered);
     setFilteredEvents(filtered);
   }, [criteria, project.events, sortCriterion]); // Re-run this effect if criteria or project.events change
 

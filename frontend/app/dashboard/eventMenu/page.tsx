@@ -32,7 +32,6 @@ const EventsList = () => {
 
   const updateFilterCriteria = (criteria) => {
     setFilterCriteria(criteria); // Update current criteria
-    console.log(criteria);
   };
 
   const handleSortChange = (event) => {

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
+import { useProject } from '@/app/contexts/ProjectContext';
 
 interface IconInfo {
     image: string;
@@ -30,11 +31,11 @@ const IconLibrary = () => {
     const [editFormData, setEditFormData] = useState<EditFormData>({ team: '', actionTitle: '', imageName: null, isDefault: false, oldTeam: '', oldActionTitle: '', oldImageName: null, oldIsDefault: null });
     const [showForm, setShowForm] = useState(false);
     const [editIcon, setEditIcon] = useState<{ team: string, iconName: string } | null>(null);
-    const projectName = 'Tee'; // Hardcoded
+    const { project } = useProject();
 
     const fetchIconLibrary = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/project/${projectName}/icon-libraries`);
+            const response = await axios.get(`http://localhost:8000/api/project/${project.name}/icon-libraries`);
             setIconLibraries(response.data);
         } catch (error) {
             console.error('Failed to fetch icon libraries:', error);
@@ -43,7 +44,7 @@ const IconLibrary = () => {
 
     useEffect(() => {
         fetchIconLibrary();
-    }, [projectName]);
+    }, [project.name]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -55,9 +56,14 @@ const IconLibrary = () => {
     // Sends the data 
     const handleCreateTOA = async () => {
         const requestData = { team: editFormData.team, actionTitle: editFormData.actionTitle, imageName: editFormData.imageName };
+        if ((!requestData.team || requestData.team === "") ||
+            (!requestData.actionTitle || requestData.actionTitle === "") ||
+            (!requestData.imageName || requestData.imageName === "")) {
+            return
+        }
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/project/${projectName}/create-toa`,
+                `http://localhost:8000/api/project/${project.name}/create-toa`,
                 requestData
             );
             if (response.status === 200) {
@@ -76,7 +82,7 @@ const IconLibrary = () => {
         const requestData = { ...editFormData };
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/project/${projectName}/edit-toa`,
+                `http://localhost:8000/api/project/${project.name}/edit-toa`,
                 requestData
             );
             if (response.status === 200) {
@@ -107,9 +113,16 @@ const IconLibrary = () => {
     };
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
+        if (Object.entries(iconLibraries).map(([team, icons]) => (
+            Object.entries(icons).map(([iconName, iconInfo]) => (
+                iconInfo.isDefault === true
+            ))
+        ))) {
+            return
+        }
         try {
             const response = await axios.delete(
-                `http://localhost:8000/api/project/${projectName}/delete-icon?team=${team}&iconName=${iconName}`
+                `http://localhost:8000/api/project/${project.name}/delete-icon?team=${team}&iconName=${iconName}`
             );
             if (response.status === 200) {
                 fetchIconLibrary();
@@ -136,52 +149,18 @@ const IconLibrary = () => {
                 <button onClick={() => setShowForm(true)} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
             </div>
             <div style={{marginTop: '2rem'}}>
-                <h2 style={{marginLeft: '4rem'}}>Red Team TOA Icons</h2>
-                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
                 {Object.entries(iconLibraries).map(([team, icons]) => (
-                    <div key={"red"}>
-                        <div>
+                    <div key={team}>
+                        <h2 style={{marginLeft: '4rem'}}>{team} Team TOA Icons</h2>
+                        <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
+                        <div style={{display: 'flex', alignItems: 'center', marginLeft: '5rem'}}>
                             {Object.entries(icons).map(([iconName, iconInfo]) => (
                                 <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
                                     <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
                                     <p>{iconName}</p>
                                     {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
-                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
-                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-                <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>Blue Team TOA Icons</h2>
-                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
-                {Object.entries(iconLibraries).map(([team, icons]) => (
-                    <div key={"blue"}>
-                        <div>
-                            {Object.entries(icons).map(([iconName, iconInfo]) => (
-                                <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
-                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
-                                    <p>{iconName}</p>
-                                    {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
-                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
-                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-                <h2 style={{marginLeft: '4rem', marginTop: '2rem'}}>White Team TOA Icons</h2>
-                <hr style={{marginLeft: '4rem', height: '2px', width: '90%', color: 'black', backgroundColor: 'black'}}/>
-                {Object.entries(iconLibraries).map(([team, icons]) => (
-                    <div key={"white"}>
-                        <div>
-                            {Object.entries(icons).map(([iconName, iconInfo]) => (
-                                <div key={iconName} style={{ marginRight: '20px', marginBottom: '20px'}}>
-                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
-                                    <p>{iconName}</p>
-                                    {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
-                                    <button onClick={() => handleEditIcon(team, iconName)}>Edit</button>
-                                    <button onClick={() => handleDeleteIcon(team, iconName)}>Delete</button>
+                                    <button onClick={() => handleEditIcon(team, iconName)} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Edit</button>
+                                    <button onClick={() => handleDeleteIcon(team, iconName)} style={{marginLeft: '1rem'}} className='hover:font-bold'>Delete</button>
                                 </div>
                             ))}
                         </div>
