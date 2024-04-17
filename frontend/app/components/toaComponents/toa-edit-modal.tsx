@@ -8,11 +8,19 @@ interface editTOAProp {
     onClose: () => void
 }
 
-const editTOAModal: React.FC<editTOAProp> = ({
-    editToa,
+const EditTOAModal: React.FC<editTOAProp> = ({
+    selectedToa,
     isModalOpen,
     onClose
 }) => {
     const { project } = useProject()
-    const [formData, setFormData] = useState<EditToa>(editToa)
+    const [formData, setFormData] = useState<EditToa>(selectedToa)
+
+    return (
+        <dialog id="create_toa_modal" className="modal" style={{ width: '80%', height: '80%' }}>
+
+        </dialog>
+    );
 }
+
+export default EditTOAModal;
