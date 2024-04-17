@@ -272,7 +272,7 @@ async def redo(project_id: str):
     Endpoint to redo the previously undone action on a given project.
     """
     try:
-        success = db_manager.redo_last_action(project_id)
+        success = db_manager.redo_last_undone_action(project_id)
         if success:
             return {"message": "Redo successful"}
         else:

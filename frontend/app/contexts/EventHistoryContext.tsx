@@ -15,7 +15,7 @@ export const UndoRedoProvider: React.FC<{ children: ReactNode }> = ({ children }
       const response = await fetch(`http://localhost:8000/api/undo/${projectId}`, { method: 'POST' });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Failed to undo action");
+        throw new Error(data.message || "No action to undo");
       }
       alert('Undo successful!');
     } catch (error: any) {
@@ -28,7 +28,7 @@ export const UndoRedoProvider: React.FC<{ children: ReactNode }> = ({ children }
       const response = await fetch(`http://localhost:8000/api/redo/${projectId}`, { method: 'POST' });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Failed to redo action");
+        throw new Error(data.message || "No action to redo");
       }
       alert('Redo successful!');
     } catch (error: any) {
