@@ -9,20 +9,20 @@ class GraphManager:
     def get_project_graphs(project: ProjectRepresenter) -> Graph:
         groups = project.group_events_by(["vector_id", "initials"])
         groups = [EventsManager.sort_events_by(group, "timestamp") for group in groups]
-
         # Initialize dictionaries to store nodes and edges
         nodes = {}
         edges = defaultdict(list)
-
-        # The first event in a graph is the root
-        roots = [events[0].get_id() for events in groups]
 
         # All the malfunction events are mapped to the None key
         malformed_key = ""
 
         for events in groups:
+            # Add the first event of each group to nodes
+            first_event = events[0]
+            nodes[first_event.get_id()] = first_event.get_event_info()
+
             # Set last seen nodes based on root event
-            new_event = events[0]
+            new_event = first_event
             last_red, last_blue = (
                 (new_event, None) if new_event.team == "Red" else (None, new_event)
             )
@@ -62,7 +62,6 @@ class GraphManager:
                 # R, B(T1), B(T1)   -> {R: [B(T1), B(T1)],  B(T1): [],      B(T2): []}
                 # R, B(T1), B(T2)   -> {R: [B(T1)],         B(T1): [B(T2)], B(T2): []}
                 # R1, B1, R2, B2    -> {R1: [B1, R2],       B1: [],         R2: [B2],   B2: []}
-
                 # Update edges based on team and order of events
                 for team, group in EventsManager.group_events_by(good_events, "team").items():
                     if team == "Blue" or team == "White":
@@ -84,5 +83,4 @@ class GraphManager:
                     nodes[event.get_id()] = event.get_event_info()
                     edges[malformed_key].append(event.get_id())
 
-        return {"roots": roots, "nodes": nodes, "edges": edges, "malformed_key": malformed_key}
- 
+        return {"nodes": nodes, "edges": edges, "malformed_key": malformed_key}

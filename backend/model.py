@@ -69,7 +69,6 @@ class ProjectCreate(BaseModel):
     initials: str = ""
 
 class Graph(BaseModel):
-    roots: List[str]
     nodes: Mapping[str, dict]
     edges: Mapping[str, List[str]]
     malformed_key: str = ""

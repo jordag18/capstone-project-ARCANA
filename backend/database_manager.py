@@ -9,6 +9,7 @@ from projects_manager import ProjectManager
 from events_manager import EventsManager
 from event_action_log import EventActionLog
 from bson import ObjectId
+from graph import GraphManager
 import pymongo
 
 ##########################################################################################
@@ -41,7 +42,7 @@ class DatabaseManager:
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             project.delete()  # This deletes the project from the database
-            self.project_manager.remove_project(project_name, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
     
@@ -212,6 +213,7 @@ class DatabaseManager:
                 'end_date': project.end_date,
                 'location': project.location,
                 'initials': project.initials,
+                "event_manager": project.event_manager,
                 # Add any other project attributes you need
             }
 
@@ -451,4 +453,9 @@ class DatabaseManager:
             return False
 
 
-    
+    def update_project_graph(self, project):
+        project_graph = GraphManager.get_project_graphs(project)
+        project.project_graph = project_graph
+        project.save()
+
+        return project_graph

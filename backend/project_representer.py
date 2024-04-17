@@ -41,6 +41,9 @@ class ProjectRepresenter(Document):
             "white team activity": {"image": "Whitecard.png", "isDefault": True}
         }
     })
+    project_graph = DictField(default={})
+
+
     meta = {
         'collection': 'Projects',  # Specifies the collection name in MongoDB
         'ordering': ['-timestamp']  # Documents will be ordered by timestamp descending by default
@@ -49,8 +52,10 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        self.ingestLogsToProject("uploads")
-
+        if not self.id:
+            self.ingestLogsToProject("uploads")
+        
+        
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
