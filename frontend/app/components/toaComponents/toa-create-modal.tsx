@@ -16,20 +16,13 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
 }) => {
     const { project } = useProject()
     const [formData, setFormData] = useState<CreateToa>(newToa)
+    const [image, setImage] = useState<string>()
 
     const handleSubmit = async () => {
-
-        if(!formData || !formData.team || formData.team === "none" || !formData.actionTitle) {
-            alert("Please fill in all required fields")
-            return;
-        }
-
         try{
-            const response = await axios.post(`http://localhost:8000/api/project/${project.name}/create-toa`,
-            formData)
-
+            const response = await axios.post(`http://localhost:8000/api/project/${project.name}/create-toa`, formData)
             if (response.status === 200){
-                onClose
+                onClose()
             } else {
                 throw new Error("Failed to create TOA item")
             }
@@ -52,6 +45,14 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
                 ...prevFormData,
                 [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
             }));
+        }
+    }
+
+    const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0]
+        if (file) {
+            const imageUrl = URL.createObjectURL(file)
+            setImage(imageUrl)
         }
     }
 
@@ -97,11 +98,11 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
                             />
                             </label>
                         </div>
-                        
                     </div>
                     <div className="flex-col">
                         <h2>Icon</h2>
-                            
+                        {image && <img alt='preview image' src={image}/>}
+                        <input type='file' onChange={onImageChange} className="filetype"/>
                     </div>
                     <div className="flex flex-row space-x-2 justify-end">
                         <button className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" onClick={handleSubmit}>Create</button>
