@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import { useProject } from '@/app/contexts/ProjectContext';
 import CreateTOAModal from '@/app/components/toaComponents/toa-create-modal';
-import { CreateToa } from '@/app/components/toaComponents/toa-interface';
+import { CreateToa, EditToa } from '@/app/components/toaComponents/toa-interface';
 
 interface IconInfo {
     image: string;
@@ -15,17 +15,6 @@ interface IconLibrary {
     [team: string]: {
         [iconName: string]: IconInfo;
     };
-}
-
-interface EditFormData {
-    team: string;
-    actionTitle: string;
-    imageName: string | null;
-    isDefault: boolean;
-    oldTeam: string; 
-    oldActionTitle: string; 
-    oldImageName: string | null; 
-    oldIsDefault: boolean | null; 
 }
 
 const IconLibrary = () => {
@@ -85,22 +74,7 @@ const IconLibrary = () => {
             console.error("Error editing TOA icon:", error);
         }
     };
-
-    const handleEditIcon = (team: string, iconName: string) => {
-        setEditIcon({ team, iconName });
-        const iconInfo = iconLibraries[team][iconName];
-        setEditFormData({ 
-            team: team, 
-            actionTitle: iconName, 
-            imageName: iconInfo.image, 
-            isDefault: iconInfo.isDefault, 
-            oldTeam: team, 
-            oldActionTitle: iconName, 
-            oldImageName: iconInfo.image, 
-            oldIsDefault: iconInfo.isDefault 
-        });
-        setShowForm(true);
-    };
+    
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
         try {
