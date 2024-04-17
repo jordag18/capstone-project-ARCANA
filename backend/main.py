@@ -180,7 +180,7 @@ async def get_project_graphs(project_name: str):
         raise HTTPException(detail=str(e))
     if not project:
         return {"error_message": f"Invalid project name: {project_name}"}
-    return GraphManager.get_project_graphs(project)
+    return db_manager.update_project_graph(project)
 
 @app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
 async def get_project_icon_libraries(project_name: str):

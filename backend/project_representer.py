@@ -41,6 +41,9 @@ class ProjectRepresenter(Document):
             "white team activity": {"image": "Whitecard.png", "isDefault": True}
         }
     })
+    project_graph = DictField(default={})
+
+
     meta = {
         'collection': 'Projects',  # Specifies the collection name in MongoDB
         'ordering': ['-timestamp']  # Documents will be ordered by timestamp descending by default
