@@ -1,21 +1,20 @@
-import type { Metadata } from 'next'
-
+import type { Metadata } from "next";
+import Sidebar from "@/app/ui/sidebar";
 
 export const metadata: Metadata = {
-    title: 'ARCANA-Manage-Events',
-    description: '',
-}
+  title: "ARCANA-Manage-Events",
+  description: "",
+};
 
 export default function ManageEventsLayout({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    return (
-        <>
-            <main className="flex min-h-screen flex-col items-center justify-between p-24">
-                {children}
-            </main>
-        </>
-    );
-  }
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex w-full">
+      <Sidebar />
+      <div className="flex-1 bg-base-200 rounded-r-3xl">{children}</div>
+    </div>
+  );
+}

@@ -1,18 +1,19 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import Body, FastAPI, HTTPException, UploadFile, File
 from database_manager import DatabaseManager
 from fastapi.middleware.cors import (
     CORSMiddleware,
 )  # CORS = Cross Origin Resource Sharing
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 from pymongo import MongoClient
-from model import Project
+from model import *
 #from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
+from graph import GraphManager
 from user_activity_logger import UserActivityLogger
 
 
@@ -31,38 +32,6 @@ app = FastAPI()
 #client = MongoClient("mongodb://localhost:27017/")
 #b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
-
-class Event(BaseModel):
-    id: str
-    location: str
-    initials: str
-    team: str
-    vector_id: str
-    description: str
-    data_source: str
-    action_title: str
-    last_modified: datetime
-    #icon: Optional[str] = None
-    source_host: Optional[str] = None
-    target_host_list: List[str] = []
-    posture: Optional[str] = None
-    timestamp: datetime
-    is_malformed: bool
-
-class Project(BaseModel): 
-    name: str
-    start_date: datetime
-    end_date: datetime
-    location: str 
-    initials: str 
-    events: List[Event] = []
-
-class ProjectCreate(BaseModel):
-    name: str
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    location: str = ""
-    initials: str = ""
 
 from database import (
     fetch_one_project,
@@ -158,6 +127,19 @@ def delete_project(project_name: str):
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")
 
+@app.patch("/api/editEvent/{project_name}/{event_id}")
+async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
+    updated_data = event_update.model_dump(exclude_unset=True)
+    try:
+        # Call modify_event_from_project from DatabaseManager
+        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        if success:
+            return success
+        else:
+            raise HTTPException(status_code=404, detail="Event not found or no changes made")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/events", response_model=List[Event])
 async def get_events(project_name: str):
     try:
@@ -165,9 +147,22 @@ async def get_events(project_name: str):
         return events
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
+async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+    created_data = event_create.model_dump(exclude_unset=True)
+    try:
+        created_event = db_manager.add_event_to_project(project_name, created_data)
+        if created_event:
+            return created_event
+        # If `add_event_to_project` returns None or False, assume the project was not found
+        raise HTTPException(status_code=404, detail="Project not found or event creation failed")
+    except HTTPException as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
+    print(project_name, event_id)
     try:
         response = db_manager.remove_event_from_project(project_name, event_id)
         if response:
@@ -176,6 +171,116 @@ async def delete_event(project_name: str, event_id: str):
             raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/{project_name}/graphs", response_model=Graph)
+async def get_project_graphs(project_name: str):
+    try:
+        project = db_manager.get_project_representer(project_name)
+
+    except Exception as e:
+        raise HTTPException(detail=str(e))
+    if not project:
+        return {"error_message": f"Invalid project name: {project_name}"}
+    return db_manager.update_project_graph(project)
+
+@app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
+async def get_project_icon_libraries(project_name: str):
+    try:
+        response = db_manager.get_icon_library_from_project(project_name)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/project/{project_name}/create-toa")
+async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+    try:
+        print("uydsss")
+        team = data['team']
+        action_title = data['actionTitle']
+        image_name = data['imageName']
+        
+        
+        # Save the icon to the icon library
+        db_manager.add_icon_to_icon_library(project_name, team, action_title, image_name)
+
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Icon has been saved successfully"}
+
+
+@app.delete("/api/project/{project_name}/delete-icon")
+async def delete_icon(project_name: str, team: str, iconName: str):
+    try:
+        response = db_manager.delete_icon(project_name, team, iconName)
+        if response:
+            return f"Successfully deleted icon"
+        raise HTTPException(404, f"No icon found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+#WORKING
+@app.post("/api/project/{project_name}/edit-toa")
+async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+    try:
+        team = data['team']
+        action_title = data['actionTitle']
+        image_name = data['imageName']
+        is_default = data['isDefault']
+        old_team = data['oldTeam']
+        old_action_title = data['oldActionTitle']
+        old_image_name = data['oldImageName']
+        old_is_default = data['oldIsDefault']
+        
+        # Check which new data fields match the corresponding old data fields and set them to None
+        if team == old_team:
+            team = None
+        if action_title == old_action_title:
+            action_title = None
+        if image_name == old_image_name:
+            image_name = None
+        if is_default == old_is_default:
+            is_default = None
+
+
+        db_manager.edit_icon(project_name, old_team, old_action_title, team, action_title, image_name, is_default)
+
+    except Exception as e:
+        return {"error_message": f"Error occurred: {e}"}
+    else:
+        return {"message": "Icon has been modified successfully"}
+    
+@app.post("/api/undo/{project_id}")
+async def undo(project_id: str):
+    """
+    Endpoint to undo the last action on a given project.
+    """
+    print("recieved pid:", project_id)
+    try:
+        success = db_manager.undo_last_action(project_id)
+        print("success status:", success)
+        if success:
+            return {"message": "Undo successful"}
+        else:
+            raise HTTPException(status_code=404, detail="No actions to undo")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/redo/{project_id}")
+async def redo(project_id: str):
+    """
+    Endpoint to redo the previously undone action on a given project.
+    """
+    try:
+        success = db_manager.redo_last_action(project_id)
+        if success:
+            return {"message": "Redo successful"}
+        else:
+            raise HTTPException(status_code=404, detail="No actions to redo")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
     
 """
     API call to get the list of Logs from teh UserActivityLogger class

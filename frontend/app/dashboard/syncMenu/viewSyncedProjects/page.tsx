@@ -19,7 +19,6 @@ import SyncRequestRejectedAlert from "@/app/ui/syncRequestRejectedAlert";
 function ViewSyncedProjects() {
   return (
     <>
-      <NavBar />
       <div
         className="flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle p-2 rounded-full bg-auto "
         style={{ height: "75%", width: "100%" }}>
@@ -54,7 +53,6 @@ function ViewSyncedProjects() {
             </div>
         </Container>
       </div>
-      <Footer />
     </>
   );
 }

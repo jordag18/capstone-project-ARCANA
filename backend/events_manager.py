@@ -3,6 +3,11 @@ from event_list import EventList
 import json
 from user_activity_logger import UserActivityLogger
 from datetime import datetime
+from typing import List, Any
+from collections import defaultdict
+from collections.abc import Mapping
+from event_representer import EventRepresenter
+
 
 
 class EventsManager:
@@ -77,6 +82,29 @@ class EventsManager:
         #retrieve all events
         return self.events
     
+    @staticmethod
+    def group_events_by(
+        events: List[EventRepresenter], attr: str
+    ) -> Mapping[Any, List[EventRepresenter]]:
+        groups = defaultdict(list)
+        for event in events:
+            groups[getattr(event, attr)].append(event)
+        return groups
+    
+    @staticmethod
+    def sort_events_by(
+        events: List[EventRepresenter], attr: str
+    ) -> List[EventRepresenter]:
+        return sorted(events, key=lambda obj: getattr(obj, attr))
+
+    @staticmethod
+    def group_events_by_bool(
+        events: List[EventRepresenter], attr: str
+    ) -> tuple[List[EventRepresenter], List[EventRepresenter]]:
+        true_events = [event for event in events if getattr(event, attr)]
+        false_events = [event for event in events if not getattr(event, attr)]
+        return true_events, false_events
+
 
 
 

@@ -3,6 +3,7 @@
  *
  * @returns The startup prompt component.
  */
+//Currently not used in frontend-dev branch
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Stack from "react-bootstrap/Stack";

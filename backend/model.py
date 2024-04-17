@@ -1,25 +1,84 @@
 from pydantic import BaseModel
+from typing import List, Optional, Dict
+from datetime import datetime
+from collections.abc import Mapping
 
-
-class Project(BaseModel):
-    project_name:str
-    project_location:str
-    start_date:str
-    end_date:str
-    initials:str
 
 class Event(BaseModel):
-    initials:str
-    team:str
-    vector_id:str
-    description:str
-    data_source:str
-    icon:str
-    action_title:str
-    last_modified:str
-    source_host:str
-    target_host_list:str
-    location:str
-    posture:str
-    timestamp:str
-    is_malformed:str
+    id: str
+    location: str
+    initials: str
+    team: str
+    vector_id: str
+    description: str
+    data_source: str
+    action_title: str
+    last_modified: datetime
+    icon: str
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = None
+    timestamp: datetime
+    is_malformed: bool
+
+class EventUpdate(BaseModel):
+    location: Optional[str] = None
+    initials: Optional[str] = None
+    team: Optional[str] = None
+    vector_id: Optional[str] = None
+    description: Optional[str] = None
+    data_source: Optional[str] = None
+    action_title: Optional[str] = None
+    timestamp: Optional[datetime] = None
+    is_malformed: Optional[bool] = None
+    source_host: Optional[str] = None
+    target_host_list: List[str] = []
+    posture: Optional[str] = ""
+    icon: str
+
+
+class EventCreate(BaseModel):
+    team: str
+    action_title: Optional[str] = ""
+    data_source: Optional[str] = ""
+    initials: str
+    location: Optional[str] = ""
+    posture: Optional[str] = ""
+    source_host: Optional[str] = ""
+    target_host_list: List[str] = []
+    timestamp: Optional[datetime] = None
+    vector_id: Optional[str] = ""
+    icon: str
+    is_malformed: Optional[bool] = None
+    description: str
+
+class Project(BaseModel):
+    id: str 
+    name: str
+    start_date: datetime
+    end_date: datetime
+    location: str 
+    initials: str 
+    events: List[Event] = []
+
+class ProjectCreate(BaseModel):
+    name: str
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    location: str = ""
+    initials: str = ""
+
+class Graph(BaseModel):
+    nodes: Mapping[str, dict]
+    edges: Mapping[str, List[str]]
+    malformed_key: str = ""
+
+class Icon(BaseModel):
+    image: str
+    isDefault: bool
+
+
+class IconLibraryResponse(BaseModel):
+    blue: Dict[str, Icon]
+    red: Dict[str, Icon]
+    white: Dict[str, Icon]

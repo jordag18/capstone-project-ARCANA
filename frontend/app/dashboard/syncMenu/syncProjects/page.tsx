@@ -16,7 +16,6 @@ const SyncProjects = () => {
     return (
         <div>
             {/** //<ThemeHandler /> */}
-            <NavBar />
             <div className="flex-fluid min-h-screen flex-col items-center justify-between  mx-auto p-4">
                 <Container className="d-flex flex-column align-items-center justify-content-center rounded bg-light" style={{ width: '800px', height: '500px' }}>
                     <h1>Sync Projects</h1>
@@ -38,7 +37,6 @@ const SyncProjects = () => {
                     <small className="text-muted">Hint: Enter the desired IP Address or use 0.0.0.0 for all IP Addresses.</small>
                 </Container>
             </div>
-            <Footer />
         </div>
     );
 }
