@@ -8,6 +8,7 @@
   font-size: 0.8em;
   width: 200px;
   box-sizing: border-box;
+  z-index: 1000;
 }
 
 .context-menu ul {
