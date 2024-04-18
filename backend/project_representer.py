@@ -2,7 +2,7 @@ from log_ingestor import LogIngestor
 from event_representer import EventRepresenter
 from events_manager import EventsManager
 from user_activity_logger import UserActivityLogger
-import datetime
+from datetime import datetime
 from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
@@ -18,10 +18,9 @@ from mongoengine import Document, StringField, ListField, DictField, DateTimeFie
 #TODO Create functions to make a project representer, save project representer to database, make project representer with ingested logs and save representer.
 
 class ProjectRepresenter(Document):
-    
     name = StringField(required=True)
-    start_date = DateTimeField(default=datetime.datetime.now)
-    end_date = DateTimeField(default=datetime.datetime.now)
+    start_date = DateTimeField(default=datetime.now)
+    end_date = DateTimeField(default=datetime.now)
     location = StringField(default="")
     initials = StringField(default="")
     event_list = ListField(EmbeddedDocumentField(EventRepresenter), default = [])
@@ -52,21 +51,16 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        if not self.id:
+        if not self.id:   
             self.ingestLogsToProject("uploads")
-        
+        print('call')
         
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
-    
-        # Log activity when logs are ingested
 
-        timestamp = datetime.datetime.now()
-        print("timestamp", timestamp)
-        statement = f"HardcodedFileName ingested log in Project {self.name}"  # Adjust statement
-        UserActivityLogger.add_user_activity_log(self.initials, timestamp, statement, directory)
-        
+        # Log activity when logs are ingested
+        self.record_to_logger("ingested_logs",data_source=directory)
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
@@ -112,6 +106,41 @@ class ProjectRepresenter(Document):
                     )
 
             return output_list
+    
+    def add_event_to_project(self,event:EventRepresenter):
+        new_event = self.event_manager.create_event(event)
+        if new_event:
+            self.record_to_logger("added_event",event_id=new_event.id)
+            return new_event
+        else:
+            return None
+        
+    def delete_event_from_project(self,event_id):
+        self.event_manager.delete_event(event_id)
+        self.record_to_logger("delete_event",event_id=event_id) 
+
+    def update_event_in_project(self,event_id):
+        self.record_to_logger("update_event",event_id=event_id)
+
+        
+    def record_to_logger(self,change,data_source=None,event_id=None,):
+        user_logger = UserActivityLogger()
+        match (change):
+            case "ingested_logs":
+                statement = f"Ingested log file {data_source} in Project {self.name}" 
+            case "added_event":
+                statement = f"Added Event {event_id} to Project {self.name}"
+            case "delete_event":
+                statement = f"Deleted Event {event_id} on Project {self.name}" 
+            case "update_event":
+                statement = f"Updated Event {event_id} on Project {self.name}"
+            case _:
+                statement = "Default Log Recording"
+        print('then')
+        log_data = {}
+        print(log_data)
+        user_logger.add_user_activity_log(initials="system",timestamp=datetime.now,
+            statement=statement,data_source=data_source)
     
     def add_toa_icon(self, team, action_title, icon_filename, is_default=False):
         try:

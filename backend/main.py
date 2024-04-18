@@ -115,6 +115,7 @@ async def create_project(project: ProjectCreate):
             location=project.location,
             initials=project.initials
         )
+        
         return created_project
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -127,19 +128,6 @@ def delete_project(project_name: str):
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")
 
-@app.patch("/api/editEvent/{project_name}/{event_id}")
-async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
-    updated_data = event_update.model_dump(exclude_unset=True)
-    try:
-        # Call modify_event_from_project from DatabaseManager
-        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
-        if success:
-            return success
-        else:
-            raise HTTPException(status_code=404, detail="Event not found or no changes made")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @app.get("/api/events", response_model=List[Event])
 async def get_events(project_name: str):
     try:
@@ -147,13 +135,30 @@ async def get_events(project_name: str):
         return events
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.patch("/api/editEvent/{project_name}/{event_id}")
+async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
+    updated_data = event_update.model_dump(exclude_unset=True)
+    try:
+        # Call modify_event_from_project from DatabaseManager
+        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        if success:
+            project = db_manager.get_project_representer(project_name)
+            project.update_event_in_project(event_id)
+            return success
+        else:
+            raise HTTPException(status_code=404, detail="Event not found or no changes made")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
 @app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
 async def create_event(project_name: str, event_create: EventCreate = Body(...)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:
-        created_event = db_manager.add_event_to_project(project_name, created_data)
+        project = db_manager.get_project_representer(project_name)
+        created_event = db_manager.create_event_to_project(project, created_data)
         if created_event:
+            project.add_event_to_project(created_event)
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(status_code=404, detail="Project not found or event creation failed")
@@ -162,10 +167,11 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...))
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
-    print(project_name, event_id)
     try:
-        response = db_manager.remove_event_from_project(project_name, event_id)
+        project = db_manager.get_project_representer(project_name)
+        response = db_manager.remove_event_from_project(project, event_id)
         if response:
+            project.delete_event_from_project(event_id)
             return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
         else:
             raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
@@ -281,29 +287,32 @@ async def redo(project_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-    
-"""
-    API call to get the list of Logs from teh UserActivityLogger class
-"""
 @app.get("/api/userActivityLog")
 async def get_user_activity_log():
+    """
+        API call to get the list of Logs from the UserActivityLogger class
+    """
     try:
-        # Fetching user activity log data from your UserActivityLogger class
-        user_activity_log = UserActivityLogger.get_log_data()  
+        # Fetching user activity log data from your DatabaseManager instance
+        user_activity_logger = db_manager.user_activity_logger
+        user_activity_log = user_activity_logger.user_activity_log_list
+        print(user_activity_log)
         return user_activity_log
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-"""
-    This API call allows the frontend to add a User Log to the Activity List
-"""
+
 @app.post("/api/userActivityLog")
-async def add_user_activity_log_entry(initials:str,timestamp:str,log_entry: str,data_source=None):
+async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: str, data_source: str = None):
+    """
+        This API call allows the frontend to add a User Log to the Activity List
+    """
     try:
-        UserActivityLogger.add_user_activity_log(initials,timestamp,log_entry,data_source) 
+        # Accessing the user activity logger instance from DatabaseManager
+        user_activity_logger = db_manager.user_activity_logger
+        user_activity_logger.add_user_activity_log(initials, timestamp, log_entry, data_source)
         return {"message": "Log entry added successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detakil=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")

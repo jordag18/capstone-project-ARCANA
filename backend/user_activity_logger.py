@@ -1,20 +1,43 @@
 import csv
+from mongoengine import Document,EmbeddedDocument,EmbeddedDocumentListField ,DictField,StringField, ListField, DateTimeField
 
-class UserActivityLogger:
-    user_activity_log_list = []  
 
-    @staticmethod
-    def add_user_activity_log(initials, timestamp, statement, data_source=None):
+class LogEmbedded(EmbeddedDocument):
+    initials= StringField(required=True),
+    timestamp= DateTimeField(required=True),
+    statement= StringField(required=True,default="Default Log Entry"),
+    data_source= StringField(default="")
+
+class UserActivityLogger(Document):
+    user_activity_log_list = EmbeddedDocumentListField(LogEmbedded)
+    meta = {
+        'collection': 'UserActivityLogs',  # Specifies the collection name in MongoDB
+        'ordering': ['-id']  # Documents will be ordered by timestamp descending by default
+    } 
+
+    def add_user_activity_log(self,initials, timestamp, statement, data_source=None):
         try:
             #checks if initials and timestamp are provided
             if not initials or not timestamp:
                 raise ValueError("Initials and timestamp are required")
-            
             #construct log entry with optional data source
-            log_entry = {"initials":initials, "timestamp":timestamp,"data_source":data_source,"log":statement} if data_source else {"initials":initials, "timestamp":timestamp,"log":statement}
-            #add log entry to the list
-            print(log_entry)
-            UserActivityLogger.user_activity_log_list.append(log_entry)
+            if data_source:
+                log_entry = {
+                    'initials': initials,
+                    'timestamp':timestamp,
+                    'statement':statement,
+                    'data_source':data_source
+                }
+            else:
+                log_entry = {
+                    'initials': initials,
+                    'timestamp':timestamp,
+                    'statement':statement,
+                }
+            self.user_activity_log_list.append(log_entry)
+            self.save()
+            print(self.user_activity_log_list)
+
         except ValueError as e:
             print(f"Error adding user activity log: {e}")
 

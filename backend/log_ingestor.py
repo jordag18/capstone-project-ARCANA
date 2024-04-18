@@ -54,7 +54,6 @@ class LogIngestor:
                 self.newFilesIngested.append(filepath)
             else:
                 print("Unsupported file type:", filetype)
-            print("Deleting File:",filepath)
             fileHandler.delete_file(filepath)
         fileHandler.delete_directory()
 

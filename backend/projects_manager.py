@@ -15,20 +15,23 @@ import json
 class ProjectManager:
     def __init__(self):
         self.project_representer_list = []
-        #self.user_activity_logger = UserActivityLogger()
+        self.user_activity_logger = UserActivityLogger()
 
-    def create_project(self, name, start_date=None, end_date=None, location="", initials=""):
+    def create_project(self,name, start_date=None, end_date=None, location="", initials=""):
         # Create a new ProjectRepresenter instance
+        
         start_date = start_date or datetime.now()
         end_date = end_date or datetime.now()
+        print(start_date,end_date)
         new_project = ProjectRepresenter(name=name, start_date=start_date, end_date=end_date, location=location, initials=initials)
         new_project.save()  # Save the new project to the database
         self.project_representer_list.append(new_project)  # Add the new project to the projects list
-        
         # Create an activity log for project creation
         timestamp = datetime.now()
         statement = f"Project '{name}' created"
-        UserActivityLogger.add_user_activity_log(initials, timestamp, statement)
+        print("now")
+        self.user_activity_logger.add_user_activity_log(initials=initials,
+        timestamp=timestamp,statement=statement)
         return new_project
 
     def get_project_by_name(self, name):
@@ -58,7 +61,7 @@ class ProjectManager:
             json.dump(data, file, indent=4)
         
         timestamp = datetime.now()
-        UserActivityLogger.add_user_activity_log(initials, timestamp, f"Project '{filename}' saved")
+        self.user_activity_logger.add_user_activity_log(initials, timestamp, f"Project '{filename}' saved")
 
     def update_project(self, name, updated_data, initials, timestamp):
         #update project information
@@ -69,7 +72,7 @@ class ProjectManager:
                     project[key] = value
             project.save()
 
-            UserActivityLogger.add_user_activity_log(initials,timestamp, f"Project '{name}' updated")
+            self.user_activity_logger.add_user_activity_log(initials,timestamp, f"Project '{name}' updated")
             return project
         return None
 
@@ -81,7 +84,7 @@ class ProjectManager:
                 # Create an activity log for project removal
                 timestamp = datetime.now()
                 statement = f"Project '{project_name}' removed"
-                UserActivityLogger.add_user_activity_log(initials, timestamp, statement)
+                self.user_activity_logger.add_user_activity_log(initials, timestamp, statement)
                 return True  # Project removed successfully
         return False  # Project removal failed
 
