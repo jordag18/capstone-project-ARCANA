@@ -1,18 +1,16 @@
 import csv
-from mongoengine import Document,EmbeddedDocument,EmbeddedDocumentListField ,DictField,StringField, ListField, DateTimeField
+from mongoengine import Document, StringField, DateTimeField
 
-
-class LogEmbedded(EmbeddedDocument):
-    initials= StringField(required=True),
-    timestamp= DateTimeField(required=True),
-    statement= StringField(required=True,default="Default Log Entry"),
-    data_source= StringField(default="")
 
 class UserActivityLogger(Document):
-    user_activity_log_list = EmbeddedDocumentListField(LogEmbedded)
+    initials = StringField(required=True),
+    timestamp = DateTimeField(required=True),
+    statement = StringField(required=True,default="Default Log Entry"),
+    data_source = StringField(default="")
+
     meta = {
-        'collection': 'UserActivityLogs',  # Specifies the collection name in MongoDB
-        'ordering': ['-id']  # Documents will be ordered by timestamp descending by default
+        'collection': 'UserActivityLogs', 
+        'ordering': ['-timestamp']  
     } 
 
     def add_user_activity_log(self,initials, timestamp, statement, data_source=None):

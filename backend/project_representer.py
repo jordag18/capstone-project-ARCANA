@@ -124,23 +124,27 @@ class ProjectRepresenter(Document):
 
         
     def record_to_logger(self,change,data_source=None,event_id=None,):
-        user_logger = UserActivityLogger()
-        match (change):
-            case "ingested_logs":
-                statement = f"Ingested log file {data_source} in Project {self.name}" 
-            case "added_event":
-                statement = f"Added Event {event_id} to Project {self.name}"
-            case "delete_event":
-                statement = f"Deleted Event {event_id} on Project {self.name}" 
-            case "update_event":
-                statement = f"Updated Event {event_id} on Project {self.name}"
-            case _:
-                statement = "Default Log Recording"
-        print('then')
-        log_data = {}
-        print(log_data)
-        user_logger.add_user_activity_log(initials="system",timestamp=datetime.now,
-            statement=statement,data_source=data_source)
+        try:
+            match (change):
+                case "ingested_logs":
+                    statement = f"Ingested log file {data_source} in Project {self.name}" 
+                case "added_event":
+                    statement = f"Added Event {event_id} to Project {self.name}"
+                case "delete_event":
+                    statement = f"Deleted Event {event_id} on Project {self.name}" 
+                case "update_event":
+                    statement = f"Updated Event {event_id} on Project {self.name}"
+                case _:
+                    statement = "Default Log Recording"
+            print('then')
+            UserActivityLogger(initials="system",
+                            timestamp=datetime.now(),
+                            statement=statement,
+                            data_source=data_source
+                            ).save()
+        except Exception as error:
+            print(error)
+        
     
     def add_toa_icon(self, team, action_title, icon_filename, is_default=False):
         try:
