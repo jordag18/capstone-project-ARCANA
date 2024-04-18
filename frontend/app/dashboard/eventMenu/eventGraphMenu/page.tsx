@@ -7,6 +7,7 @@ import ReactFlow, {
   Controls,
 } from "reactflow";
 import EventNodeContextMenu from "./EventNodeContextMenu";
+import EditEventModal from "../../../components/eventComponents/event-modify-modal";
 import "reactflow/dist/style.css";
 
 const rfStyle = {
@@ -32,17 +33,16 @@ const Flow = () => {
   const [edges, setEdges] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const reactFlowWrapper = useRef(null);
-  const contextMenuRef = useRef(null); // Ref for the context menu
-
 
   const addNode = useCallback(() => {
     const newNode = {
       id: `random-id-${Math.random()}`,
       type: "default",
       position: {
-        x: Math.random() * window.innerWidth / 2,
-        y: Math.random() * window.innerHeight / 2,
+        x: (Math.random() * window.innerWidth) / 2,
+        y: (Math.random() * window.innerHeight) / 2,
       },
       data: { label: "New Node" },
     };
@@ -65,13 +65,20 @@ const Flow = () => {
     setSelectedNode(null);
   };
 
+  const handleEditEvent = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     fetch(`http://localhost:8000/api/Tee/graphs`)
-      .then(response => response.json())
-      .then(data => {
-        console.log("API Data:", data); // Debugging the API response
-        const nodeSpacing = 250; // Increased spacing to 250 pixels
-        const rowSize = 4; // Nodes per row before wrapping
+      .then((response) => response.json())
+      .then((data) => {
+        const nodeSpacing = 250;
+        const rowSize = 4;
         let yOffset = 0;
         let xOffset = 0;
 
@@ -94,18 +101,19 @@ const Flow = () => {
           };
         });
 
-        const fetchedEdges = Object.entries(data.edges).flatMap(([source, targets]) =>
-          targets.map(target => ({
-            id: `${source}-${target}`,
-            source,
-            target,
-          }))
+        const fetchedEdges = Object.entries(data.edges).flatMap(
+          ([source, targets]) =>
+            targets.map((target) => ({
+              id: `${source}-${target}`,
+              source,
+              target,
+            }))
         );
 
         setNodes(fetchedNodes);
         setEdges(fetchedEdges);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching node data:", error);
       });
   }, []);
@@ -119,10 +127,19 @@ const Flow = () => {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={useCallback((changes) => setNodes((nds) => applyNodeChanges(changes, nds)), [])}
-          onEdgesChange={useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), [])}
+          onNodesChange={useCallback(
+            (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+            []
+          )}
+          onEdgesChange={useCallback(
+            (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+            []
+          )}
           onNodeContextMenu={onNodeContextMenu}
-          onConnect={useCallback((connection) => setEdges((eds) => addEdge(connection, eds)), [])}
+          onConnect={useCallback(
+            (connection) => setEdges((eds) => addEdge(connection, eds)),
+            []
+          )}
           fitView
           fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}
           style={rfStyle}
@@ -132,7 +149,7 @@ const Flow = () => {
             <EventNodeContextMenu
               node={selectedNode}
               onClose={closeContextMenu}
-              onEdit={() => console.log("Edit clicked")}
+              onEdit={handleEditEvent}
               style={{
                 position: "absolute",
                 left: `${menuPosition.x}px`,
@@ -143,6 +160,13 @@ const Flow = () => {
           )}
         </ReactFlow>
       </div>
+      {isModalOpen && selectedNode && (
+        <EditEventModal
+          selectedEvent={selectedNode.data}
+          isModalOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
