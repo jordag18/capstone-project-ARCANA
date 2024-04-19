@@ -137,7 +137,7 @@ class ProjectRepresenter(Document):
                 case _:
                     statement = "Default Log Recording"
             print('then')
-            UserActivityLogger(initials="system",
+            UserActivityLogger(initials="ss",
                             timestamp=datetime.now(),
                             statement=statement,
                             data_source=data_source

@@ -1,11 +1,11 @@
 import csv
 from mongoengine import Document, StringField, DateTimeField
-
+import datetime
 
 class UserActivityLogger(Document):
-    initials = StringField(required=True),
-    timestamp = DateTimeField(required=True),
-    statement = StringField(required=True,default="Default Log Entry"),
+    initials = StringField(required=True, min_length=2, max_length=2)
+    timestamp = DateTimeField(default=datetime.datetime.now)
+    statement = StringField()
     data_source = StringField(default="")
 
     meta = {
