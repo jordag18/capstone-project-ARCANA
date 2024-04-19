@@ -55,11 +55,11 @@ const Flow = () => {
     event.preventDefault();
     if (reactFlowWrapper.current) {
       const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      setSelectedNode(node);
       setMenuPosition({
         x: event.clientX - bounds.left,
         y: event.clientY - bounds.top,
       });
+      setSelectedNode(node); // Only select the node and set up the menu position
     }
   };
 
@@ -67,7 +67,8 @@ const Flow = () => {
     setSelectedNode(null);
   };
 
-  const handleEditEvent = () => {
+  const handleEditEvent = (node) => {
+    setSelectedNode(node);
     setIsModalOpen(true);
   };
 
@@ -85,6 +86,7 @@ const Flow = () => {
         let xOffset = 0;
 
         const fetchedNodes = Object.values(data.nodes).map((node, index) => {
+          // Calculate node positioning based on index
           if (index % rowSize === 0 && index !== 0) {
             xOffset = 0;
             yOffset += nodeSpacing;
@@ -92,6 +94,7 @@ const Flow = () => {
             xOffset += nodeSpacing;
           }
 
+          // Create the node with all required data fields
           return {
             id: node.id,
             type: "default",
@@ -99,6 +102,19 @@ const Flow = () => {
             data: {
               label: `Description: ${node.description}\nLocation: ${node.location}\nInitials: ${node.initials}`,
               value: node.id,
+              initials: node.initials,
+              team: node.team,
+              vector_id: node.vector_id,
+              description: node.description,
+              data_source: node.data_source,
+              action_title: node.action_title,
+              last_modified: node.last_modified,
+              source_host: node.source_host,
+              target_host_list: node.target_host_list,
+              location: node.location,
+              posture: node.posture,
+              timestamp: node.timestamp,
+              is_malformed: node.is_malformed,
             },
           };
         });
