@@ -224,6 +224,7 @@ async def delete_icon(project_name: str, team: str, iconName: str):
 @app.post("/api/project/{project_name}/edit-toa")
 async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
     try:
+        print("ajda")
         team = data['team']
         action_title = data['actionTitle']
         image_name = data['imageName']
@@ -232,7 +233,7 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         old_action_title = data['oldActionTitle']
         old_image_name = data['oldImageName']
         old_is_default = data['oldIsDefault']
-        
+        print("nope")
         # Check which new data fields match the corresponding old data fields and set them to None
         if team == old_team:
             team = None

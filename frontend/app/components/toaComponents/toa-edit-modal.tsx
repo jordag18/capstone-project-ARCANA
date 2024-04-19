@@ -21,8 +21,10 @@ const EditTOAModal: React.FC<editTOAProp> = ({
     const handleSubmit = async () => {
         if (!formData) return;
         try {
+            console.log("pew ", formData)
             const response = await axios.post(
                 `http://localhost:8000/api/project/${project.name}/edit-toa`,
+                formData
             );
             if (response.status === 200) {
             } else {
@@ -51,14 +53,14 @@ const EditTOAModal: React.FC<editTOAProp> = ({
     }
 
     useEffect(() => {
-        const modal = document.getElementById("create_toa_modal")
+        const modal = document.getElementById("edit_toa_modal")
         if (modal) {
           isModalOpen ? modal.showModal() : modal.close()
         }
     }, [isModalOpen]);
-
+    
     return (
-        <dialog id="create_toa_modal" className="modal" style={{ width: '80%', height: '80%' }}>
+        <dialog id="edit_toa_modal" className="modal" style={{ width: '80%', height: '80%' }}>
             <div className="modal-box">
                 <form method="dialog">
                     <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
