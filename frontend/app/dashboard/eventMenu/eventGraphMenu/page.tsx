@@ -1,5 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useState, useRef } from "react";
+import { useProject } from "@/app/contexts/ProjectContext";
 import ReactFlow, {
   addEdge,
   applyEdgeChanges,
@@ -35,6 +36,7 @@ const Flow = () => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const reactFlowWrapper = useRef(null);
+  const { project } = useProject();
 
   const addNode = useCallback(() => {
     const newNode = {
@@ -74,7 +76,7 @@ const Flow = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/Tee/graphs`)
+    fetch(`http://localhost:8000/api/${project.name}/graphs`)
       .then((response) => response.json())
       .then((data) => {
         const nodeSpacing = 250;
