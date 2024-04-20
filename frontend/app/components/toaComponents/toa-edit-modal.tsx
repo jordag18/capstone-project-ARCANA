@@ -37,16 +37,19 @@ const EditTOAModal: React.FC<editTOAProp> = ({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
+        const oldValue = `old${name.charAt(0).toUpperCase() + name.slice(1)}`
         if (name === "target_host_list") {
             // Convert comma-separated string to a list of strings
             const targetHostList = value.split(",").map(item => item.trim());
             setFormData((prevFormData) => ({
                 ...prevFormData,
+                [oldValue as keyof EditToa]: prevFormData[name as keyof EditToa],
                 [name]: targetHostList
             }));
         } else {
             setFormData((prevFormData) => ({
                 ...prevFormData,
+                [oldValue as keyof EditToa]: prevFormData[name as keyof EditToa],
                 [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
             }));
         }
