@@ -43,7 +43,18 @@ const IconLibrary = () => {
         setIsCreateModalOpen(true);
     };
 
-    const handleEditModal = (editToa: EditToa) => {
+    const handleEditModal = (team: string, iconName: string) => {
+        const iconInfo = iconLibraries[team][iconName];
+        const editToa: EditToa = {
+            team,
+            actionTitle: iconName,
+            imageName: iconInfo.image, 
+            isDefault: iconInfo.isDefault,
+            oldTeam: team,
+            oldActionTitle: iconName,
+            oldImageName: iconInfo.image,
+            oldIsDefault: iconInfo.isDefault
+        };
         setSelectedToa(editToa)
         setIsEditModalOpen(true);
     }
@@ -74,16 +85,11 @@ const IconLibrary = () => {
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <h1 style={{fontWeight: 'bold', marginLeft: '2rem'}}>TOA Icon Library</h1>
                 <button onClick={() => handleCreateModal(newToa || {})} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
-                <CreateTOAModal 
+                {isCreateModalOpen && <CreateTOAModal 
                     newToa={newToa}
                     isModalOpen={isCreateModalOpen}
                     onClose={handleCloseModal}
-                />
-                <EditTOAModal 
-                    selectedToa= {selectedToa}
-                    isModalOpen={isEditModalOpen}
-                    onCLose={handleCloseModal}
-                />
+                />}
             </div>
             <div style={{marginTop: '2rem'}}>
                 {Object.entries(iconLibraries).map(([team, icons]) => (
@@ -96,7 +102,12 @@ const IconLibrary = () => {
                                     <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
                                     <p>{iconName}</p>
                                     {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
-                                    <button onClick={handleEditModal} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Edit</button>
+                                    <button onClick={() => handleEditModal(team, iconName)} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Edit</button>
+                                    {isEditModalOpen && <EditTOAModal 
+                                        selectedToa= {selectedToa}
+                                        isModalOpen={isEditModalOpen}
+                                        onCLose={handleCloseModal}
+                                    />}
                                     <button onClick={() => handleDeleteIcon(team, iconName)} style={{marginLeft: '1rem'}} className='hover:font-bold'>Delete</button>
                                 </div>
                             ))}
