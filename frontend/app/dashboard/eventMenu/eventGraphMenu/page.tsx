@@ -1,16 +1,26 @@
 "use client";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import ReactFlow, {
+  Node,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
+  updateEdge, // Import updateEdge to handle edge updates
+  Edge,
   Controls,
+  OnConnect,
+  OnEdgeUpdateFunc, // Correct type for edge update callback
 } from "reactflow";
+import { EventNode } from "@/app/components/graphComponents/EventNodeInterface";
 import EventNodeContextMenu from "./EventNodeContextMenu";
 import EditEventModal from "../../../components/eventComponents/event-modify-modal";
 import "reactflow/dist/style.css";
+import useGraphData from "@/app/components/graphComponents/GraphDataHook";
+import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
+import ButtonEdge from "@/app/components/graphComponents/ButtonEdge";
 
+// Define component styles
 const rfStyle = {
   backgroundColor: "#B8CEFF",
   width: "100%",
@@ -29,138 +39,122 @@ const containerStyle = {
   position: "relative",
 };
 
+const nodeTypes = {
+  customEventNode: CustomEventNode,
+};
+
+const edgeTypes = {
+  buttonEdge: ButtonEdge, // This key must match the type you set in the edges
+};
+
 const Flow = () => {
-  const [nodes, setNodes] = useState([]);
-  const [edges, setEdges] = useState([]);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const reactFlowWrapper = useRef(null);
   const { project } = useProject();
-
-  const addNode = useCallback(() => {
-    const newNode = {
-      id: `random-id-${Math.random()}`,
-      type: "default",
-      position: {
-        x: (Math.random() * window.innerWidth) / 2,
-        y: (Math.random() * window.innerHeight) / 2,
-      },
-      data: { label: "New Node" },
-    };
-    setNodes((nds) => [...nds, newNode]);
-  }, []);
-
-  const onNodeContextMenu = (event, node) => {
-    event.preventDefault();
-    if (reactFlowWrapper.current) {
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      setMenuPosition({
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      });
-      setSelectedNode(node); // Only select the node and set up the menu position
-    }
-  };
-
-  const closeContextMenu = () => {
-    setSelectedNode(null);
-  };
-
-  const handleEditEvent = (node) => {
-    setSelectedNode(node);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const { nodes, edges, isLoading, error } = useGraphData(project.name);
+  const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
+  const [edgesState, setEdges] = useState<Edge[]>(edges);
+  const [selectedNode, setSelectedNode] = useState<EventNode | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/${project.name}/graphs`)
-      .then((response) => response.json())
-      .then((data) => {
-        const nodeSpacing = 250;
-        const rowSize = 4;
-        let yOffset = 0;
-        let xOffset = 0;
+    setNodes(nodes as EventNode[]);
+    setEdges(edges);
+  }, [nodes, edges]);
 
-        const fetchedNodes = Object.values(data.nodes).map((node, index) => {
-          // Calculate node positioning based on index
-          if (index % rowSize === 0 && index !== 0) {
-            xOffset = 0;
-            yOffset += nodeSpacing;
-          } else {
-            xOffset += nodeSpacing;
-          }
+  // Need to redefine Add Node
 
-          // Create the node with all required data fields
-          return {
-            id: node.id,
-            type: "default",
-            position: { x: xOffset, y: yOffset },
-            data: {
-              label: `Description: ${node.description}\nLocation: ${node.location}\nInitials: ${node.initials}`,
-              value: node.id,
-              initials: node.initials,
-              team: node.team,
-              vector_id: node.vector_id,
-              description: node.description,
-              data_source: node.data_source,
-              action_title: node.action_title,
-              last_modified: node.last_modified,
-              source_host: node.source_host,
-              target_host_list: node.target_host_list,
-              location: node.location,
-              posture: node.posture,
-              timestamp: node.timestamp,
-              is_malformed: node.is_malformed,
-            },
-          };
+  const onNodesChange = useCallback(
+    (changes) => setNodes(applyNodeChanges(changes, nodesState)),
+    [nodesState]
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges(applyEdgeChanges(changes, edgesState)),
+    [edgesState]
+  );
+
+  const onConnect = useCallback((connection) => {
+    const newEdge = {
+      ...connection,
+      type: 'buttonEdge',
+    };
+    setEdges((eds) => addEdge(newEdge, eds));
+  }, [setEdges]);
+  
+
+  // Define the onEdgeUpdate callback using the correct type
+  const onEdgeUpdate: OnEdgeUpdateFunc = useCallback(
+    (oldEdge, newConnection) =>
+      setEdges((currentEdges) =>
+        updateEdge(oldEdge, newConnection, currentEdges)
+      ),
+    []
+  );
+
+  // Event handlers for node and edge context menus, and modals
+  const onNodeContextMenu = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      event.preventDefault(); // Prevent default context menu
+      console.log("Right-clicked node:", node); // Debug log
+      if (reactFlowWrapper.current) {
+        const bounds = reactFlowWrapper.current.getBoundingClientRect();
+        setMenuPosition({
+          x: event.clientX - bounds.left,
+          y: event.clientY - bounds.top,
         });
+        setSelectedNode(node); // Only select the node and set up the menu position
+      }
+      console.log("Menu position set to:", event.clientX, event.clientY); // Debug log
+    },
+    []
+  );
 
-        const fetchedEdges = Object.entries(data.edges).flatMap(
-          ([source, targets]) =>
-            targets.map((target) => ({
-              id: `${source}-${target}`,
-              source,
-              target,
-            }))
-        );
+  if (!selectedNode) {
+    console.log("No node selected"); // This will log if no node is selected
+  }
 
-        setNodes(fetchedNodes);
-        setEdges(fetchedEdges);
-      })
-      .catch((error) => {
-        console.error("Error fetching node data:", error);
-      });
+  const deleteNode = useCallback((node: EventNode) => {
+    setNodes((currentNodes) => currentNodes.filter((n) => n.id !== node.id));
+    setEdges((currentEdges) =>
+      currentEdges.filter((e) => e.source !== node.id && e.target !== node.id)
+    );
   }, []);
 
+  const closeContextMenu = () => setSelectedNode(null);
+
+  const handleEditEvent = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedNode(null);
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div style={containerStyle}>
-      <button onClick={addNode} style={{ margin: "10px" }}>
+    <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
+      <button
+        onClick={() => {}}
+        className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+      >
         Create Event Node
       </button>
-      <div style={{ width: "100%", height: "100%" }} ref={reactFlowWrapper}>
+      <div className="w-full h-full" ref={reactFlowWrapper}>
         <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={useCallback(
-            (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-            []
-          )}
-          onEdgesChange={useCallback(
-            (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-            []
-          )}
+          nodes={nodesState}
+          edges={edgesState}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onEdgeUpdate={onEdgeUpdate}
           onNodeContextMenu={onNodeContextMenu}
-          onConnect={useCallback(
-            (connection) => setEdges((eds) => addEdge(connection, eds)),
-            []
-          )}
+          onConnect={onConnect}
           fitView
           fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}
-          style={rfStyle}
         >
           <Controls />
           {selectedNode && (
@@ -168,6 +162,7 @@ const Flow = () => {
               node={selectedNode}
               onClose={closeContextMenu}
               onEdit={handleEditEvent}
+              onDelete={deleteNode}
               style={{
                 position: "absolute",
                 left: `${menuPosition.x}px`,

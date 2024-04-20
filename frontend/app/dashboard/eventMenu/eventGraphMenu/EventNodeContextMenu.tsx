@@ -1,42 +1,27 @@
-// EventNodeContextMenu.js
-
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef } from 'react';
 import "./eventNodeMenu.css";
 
-const EventNodeContextMenu = forwardRef(({ node, onClose, style, onEdit }, ref) => {
-  // Memoized callback to ensure they are not recreated every render unless necessary
-  const handleEdit = useMemo(() => {
-    return () => {
-      if (typeof onEdit === 'function') {
-        onEdit(node);
-      } else {
-        console.error('onEdit is not a function');
-      }
-    };
-  }, [node, onEdit]);
+interface EventNodeContextMenuProps {
+  node: any;  // Consider defining a specific type for the node
+  onClose: () => void;
+  onEdit: (node: any) => void;
+  onDelete: (node: any) => void;
+  style: React.CSSProperties
+}
 
-  const handleClose = useMemo(() => {
-    return () => {
-      if (typeof onClose === 'function') {
-        onClose();
-      } else {
-        console.error('onClose is not a function');
-      }
-    };
-  }, [onClose]);
-
-  return (
-    <div className="context-menu" ref={ref} style={style}>
-      <ul>
-        <li onClick={handleEdit}>Edit Event Node</li>
-        <li onClick={() => { console.log('Delete:', node); handleClose(); }}>Delete Event Node</li>
-        <li onClick={() => { console.log('Link:', node); handleClose(); }}>Link to Another Event Node</li>
-        <li onClick={() => { console.log('View:', node); handleClose(); }}>View Event Node Information</li>
-        <li onClick={handleClose}>Close Menu</li>
-      </ul>
-    </div>
-  );
-});
+const EventNodeContextMenu = forwardRef<HTMLDivElement, EventNodeContextMenuProps>(
+  ({ node, onClose, onEdit, onDelete, style }, ref) => {
+    return (
+      <div className="context-menu" ref={ref} style={style}>
+        <ul>
+          <li onClick={() => { onEdit(node); }}>Edit Event Node</li>
+          <li onClick={() => { onDelete(node); onClose(); }}>Delete Event Node</li>
+          <li onClick={onClose}>Close Menu</li>
+        </ul>
+      </div>
+    );
+  }
+);
 
 export default EventNodeContextMenu;
 
