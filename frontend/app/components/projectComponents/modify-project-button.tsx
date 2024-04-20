@@ -6,12 +6,13 @@ import { useRouter } from 'next/navigation';
 
 interface ProjectDetailsProps {
     selectedProject: Project;
+    refreshProjects: () => void;
 }
-const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject}) => {
+const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject,refreshProjects}) => {
     const { setProject } = useProject();
     const router = useRouter();
 
-    const HandleOpenCLick = () => {
+    const handleOpenClick = () => {
         setProject(selectedProject);
         router.push('/dashboard/eventMenu');
     }
@@ -22,7 +23,7 @@ const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject}) => {
         <summary className="m-1 btn">Modify</summary>
         <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-24">
             <li>
-                <button onClick={HandleOpenCLick} className="btn bg-sky-500 text-white hover:bg-sky-600">
+                <button onClick={handleOpenClick} className="btn bg-sky-500 text-white hover:bg-sky-600">
                     Open
                 </button>
             </li>
@@ -32,7 +33,7 @@ const ProjectDetails:React.FC<ProjectDetailsProps> = ({selectedProject}) => {
                 </button>
             </li>
             <li>
-                <DeleteButton selectedProject={selectedProject} />
+                <DeleteButton selectedProject={selectedProject} refreshProjects={refreshProjects} />
             </li>
         </ul>
     </details>

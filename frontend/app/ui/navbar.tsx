@@ -43,6 +43,9 @@ const TopNav = () => {
                 <MoveToNav linkTo='/dashboard/systemMenu' buttonText='System Settings' />
 
             </li>
+            <li  className='hover:bg-stone-600 rounded-md'>
+                <MoveToNav linkTo='/dashboard/userActivityMenu' buttonText='User Logger' />
+            </li>
           </ul>
         </div>
         <div className="navbar-end">

@@ -72,7 +72,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
     
 
     useEffect(() => {
-        const modal = document.getElementById("create_event_modal")
+        const modal = document.getElementById("create_event_modal") as HTMLDialogElement | null
         if (modal) {
           isModalOpen ? modal.showModal() : modal.close()
         }

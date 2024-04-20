@@ -10,8 +10,6 @@ export default function ManageUserActivity({
   children: React.ReactNode;
 }) {
   return (
-          <section className="flex min-h-screen flex-col items-center justify-between p-24">
-              {children}
-          </section>
+    <div className="flex-1 bg-base-200 rounded-r-3xl">{children}</div>
   );
 }

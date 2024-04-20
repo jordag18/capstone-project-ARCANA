@@ -6,7 +6,6 @@ from mongoengine.errors import ValidationError, DoesNotExist
 from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
-from events_manager import EventsManager
 from event_action_log import EventActionLog
 from bson import ObjectId
 from graph import GraphManager
@@ -29,7 +28,8 @@ class DatabaseManager:
         self.client = pymongo.MongoClient(f"mongodb://{host}:{port}/")
         self.db = self.client[db_name]
         self.projects_collection = self.db["Projects"]
-
+        self.userLogs_collection = self.db["UserActivityLogs"]
+        
         # Initialize ProjectManager
         self.project_manager = ProjectManager()
 
@@ -76,17 +76,14 @@ class DatabaseManager:
         # Retrieve a project by name
         return self.project_manager.get_project_by_name(project_name)
 
-    def get_project_representer(self, project_name):
+    def get_project_representer(self, project_name) -> ProjectRepresenter:
         return ProjectRepresenter.objects(name=project_name).first()
 
-    def add_event_to_project(self, project_name, event_data):
+    def add_event_to_project(self, project, event_data):
         # Add an event to a specific project
-        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             new_event = EventRepresenter(**event_data)
             print(new_event)
-            project.event_list.append(new_event)
-            project.save()  # Save the updated project
 
             EventActionLog(
                 action_type='create',
@@ -96,32 +93,36 @@ class DatabaseManager:
             return new_event
         return None
     
-    def create_event_to_project(self, project_name, event_data):
+    def create_event_to_project(self, project, event_data):
         try:
             new_event = EventRepresenter(id=ObjectId(), **event_data)
             new_event.save()
 
             result = self.projects_collection.update_one(
-                {"name": project_name},
+                {"name": project.name},
                 {"$push": {"event_list": new_event.id}}
             )
+            project.event_list.append(new_event)
+            project.save()  # Save the updated project
             if result.modified_count == 1:
-                return True
+                EventActionLog(
+                    action_type='create',
+                    event_after=new_event,
+                    project=project,
+                ).save()
+                return new_event
             else:
-                return False
+                return None
         except Exception as e:
-            return False
+            return None
 
-    def remove_event_from_project(self, project_name, event_id):
+    def remove_event_from_project(self, project, event_id):
         try:
             event_id_obj = ObjectId(event_id)
             # Update the project in the database to remove the event
-            self.projects_collection.update_one({"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
-            project = self.get_project(project_name)
-            print(type(project),project_name)
+            self.projects_collection.update_one({"name": project.name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
             if project:
-                project['event_manager'].delete_event(event_id)
-                project['events'] = [event for event in project['events'] if event.get('id') != event_id]
+                project.event_list = [event for event in project.event_list if event.id != event_id]
             return True
         except Exception as e:
             print("An error occurred:", e)
@@ -209,7 +210,6 @@ class DatabaseManager:
                 'end_date': project.end_date,
                 'location': project.location,
                 'initials': project.initials,
-                "event_manager": project.event_manager,
                 # Add any other project attributes you need
             }
 
@@ -244,17 +244,6 @@ class DatabaseManager:
 
         return all_projects_info
 
-    def get_all_events(self):
-        # Retrieve all events
-        return list(EventRepresenter.objects.all())
-    
-    def delete_event(self, event_id):
-        #delete an event by ID
-        event = EventRepresenter.objects(id=event_id).first()
-        if event:
-            event.delete()
-            return True
-        return False
     
     def get_icon_library_from_project(self, project_name):
         try:

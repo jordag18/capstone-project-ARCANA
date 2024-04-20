@@ -1,10 +1,11 @@
 import React from 'react'
 import { Project } from './project-interface';
 
-interface ProjectDetailsProps {
+interface DeleteButtonProps  {
     selectedProject: Project;
+    refreshProjects: () => void; 
 }
-const DeleteButton: React.FC<ProjectDetailsProps> = ({selectedProject}) => {
+const DeleteButton: React.FC<DeleteButtonProps> = ({selectedProject,refreshProjects }) => {
     
     const handleConfirmDelete = async () => {
     
@@ -22,6 +23,7 @@ const DeleteButton: React.FC<ProjectDetailsProps> = ({selectedProject}) => {
             // Assuming the DELETE was successful, remove the project from the state
             //setProjects(projects.filter(project => project.name !== projectName));
             alert(`Successfully deleted ${selectedProject.name}`);
+            refreshProjects(); 
 
         } catch (error) {
             console.error('Error deleting project:', error);

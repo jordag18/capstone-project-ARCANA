@@ -139,7 +139,6 @@ class FileHandler:
         try:
             if os.path.isfile(filepath):
                 os.remove(filepath)
-                print(f"Deleted file: {filepath}")
         except Exception as e:
             print(f"Error deleting file: {filepath} - {e}")
     
@@ -152,7 +151,6 @@ class FileHandler:
             try:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
-                    print(f"Deleted file: {file_path}")
             except Exception as e:
                 print(f"Error deleting file: {file_path} - {e}")
 
@@ -172,7 +170,6 @@ class FileHandler:
         try:
             if os.path.isdir(self.directory) and not os.listdir(self.directory):
                 os.rmdir(self.directory)
-                print(f"Deleted directory: {self.directory}")
         except Exception as e:
             print(f"Error deleting directory: {self.directory} - {e}")
 
