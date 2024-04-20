@@ -85,6 +85,7 @@ const IconLibrary = () => {
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <h1 style={{fontWeight: 'bold', marginLeft: '2rem'}}>TOA Icon Library</h1>
                 <button onClick={() => handleCreateModal(newToa || {})} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
+                <button onClick={fetchIconLibrary} style={{marginLeft: '1rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Reload</button>
                 {isCreateModalOpen && <CreateTOAModal 
                     newToa={newToa}
                     isModalOpen={isCreateModalOpen}
