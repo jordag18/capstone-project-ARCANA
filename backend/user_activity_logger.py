@@ -38,7 +38,7 @@ class UserActivityLogger(Document):
             self.user_activity_log_list.append(log_entry)
             self.save() 
         except ValueError as e:
-            print(f"Error adding user activity log: {e}")
+            print(f"Error adding a user activity log: {e}")
 
     def get_log_list(self):
         return self.user_activity_log_list
