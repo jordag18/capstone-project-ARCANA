@@ -14,7 +14,7 @@ import uvicorn
 from pydantic import BaseModel
 from file_handler import FileHandler
 from graph import GraphManager
-from user_activity_logger import UserActivityLogger
+from user_activity_logger import userActivityLogger
 
 
 
@@ -288,28 +288,29 @@ async def redo(project_id: str):
 
 
 @app.get("/api/userActivityLog")
-async def get_user_activity_log():
-    """
-        API call to get the list of Logs from the UserActivityLogger class
-    """
+def get_user_activity_logs():
     try:
-        # Fetching user activity log data from your DatabaseManager instance
-        user_activity_logger = db_manager.user_activity_logger
-        user_activity_log = user_activity_logger.user_activity_log_list
-        print(user_activity_log)
-        return user_activity_log
+        logs = userActivityLogger.get_log_list()
+        log_data = []
+        for log in logs:
+            log_data.append({
+                'initials': log.initials,
+                'timestamp': log.timestamp,
+                'statement': log.statement
+            })
+        return log_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/userActivityLog")
-async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: str, data_source: str = None):
+async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: str):
     """
         This API call allows the frontend to add a User Log to the Activity List
     """
     try:
         # Accessing the user activity logger instance from DatabaseManager
-        user_activity_logger = db_manager.user_activity_logger
-        user_activity_logger.add_user_activity_log(initials, timestamp, log_entry, data_source)
+       # user_activity_logger = db_manager.user_activity_logger
+        #user_activity_logger.add_user_activity_log(initials, timestamp, log_entry, data_source)
         return {"message": "Log entry added successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

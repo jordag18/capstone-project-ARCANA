@@ -1,6 +1,6 @@
 from project_list import ProjectList
 from project_representer import ProjectRepresenter
-from user_activity_logger import UserActivityLogger
+from user_activity_logger import userActivityLogger
 from datetime import datetime
 import json
 
@@ -29,8 +29,8 @@ class ProjectManager:
         timestamp = datetime.now()
         statement = f"Project '{name}' created"
         print("now")
-        UserActivityLogger(initials=initials,
-        timestamp=timestamp,statement=statement).save()
+        userActivityLogger.add_user_activity_log(initials=initials,
+        timestamp=timestamp,statement=statement)
         return new_project
 
     def get_project_by_name(self, name):
@@ -60,8 +60,8 @@ class ProjectManager:
             json.dump(data, file, indent=4)
         
         timestamp = datetime.now()
-        UserActivityLogger(initials=initials,timestamp= timestamp,
-                            statement=f"Project '{filename}' saved").save()
+        userActivityLogger.add_user_activity_log(initials=initials,timestamp= timestamp,
+                            statement=f"Project '{filename}' saved")
 
     def update_project(self, project_name, updated_data, initials, timestamp):
         #update project information
@@ -72,8 +72,8 @@ class ProjectManager:
                     project[key] = value
             project.save()
             statement = f"Project '{project_name}' updated"  
-            UserActivityLogger(initials=initials,timestamp= timestamp,
-                            statement=statement).save()
+            userActivityLogger.add_user_activity_log(initials=initials,timestamp= timestamp,
+                            statement=statement)
             return project
         return None
 
@@ -85,8 +85,8 @@ class ProjectManager:
                 # Create an activity log for project removal
                 timestamp = datetime.now()
                 statement = f"Project '{project_name}' removed"
-                UserActivityLogger(initials=initials,timestamp= timestamp,
-                            statement=statement).save()
+                userActivityLogger.add_user_activity_log(initials=initials,timestamp= timestamp,
+                            statement=statement)
                 return True  # Project removed successfully
         return False  # Project removal failed
 

@@ -1,5 +1,5 @@
 from event_list import EventList
-from user_activity_logger import UserActivityLogger
+from user_activity_logger import userActivityLogger
 from datetime import datetime
 from typing import List, Any
 from collections import defaultdict
@@ -50,7 +50,7 @@ class EventsManager:
 
         #log activity
         statement = f"Event '{event_id}' edited"
-        UserActivityLogger.add_user_activity_log('system', datetime.now(), statement)
+        userActivityLogger.add_user_activity_log('system', datetime.now(), statement)
     
     def get_event(self, event_id):
         #retrieve an event by id

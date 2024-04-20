@@ -4,9 +4,10 @@ import { Event } from "./event-interface";
 
 interface selectedEventProp{
     selectedEvent: Event;
+    onClose: () => void;
 }
 
-const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent}) => {
+const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent, onClose}) => {
   const { project, setProject} = useProject();
 
   const handleConfirmDelete = async () => {
@@ -28,7 +29,7 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent}) => {
         const updatedEvents = project.events.filter(event => event.id !== selectedEvent.id);
         // Update the project with the new events array
         setProject({ ...project, events: updatedEvents });
-        
+        onClose()
       } catch (error) {
         console.error("Error deleting event:", error);
         alert("Error deleting event");

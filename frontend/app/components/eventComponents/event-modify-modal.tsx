@@ -67,7 +67,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   };
 
   useEffect(() => {
-    const modal = document.getElementById("edit_event_modal");
+    const modal = document.getElementById("edit_event_modal") as HTMLDialogElement | null
     if (modal) {
       if (isModalOpen) {
         modal.showModal();
@@ -235,7 +235,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
             <button className="btn" onClick={handleSaveEvent}>
               Save Event
             </button>
-            <DeleteEventButton selectedEvent={selectedEvent} />
+            <DeleteEventButton selectedEvent={selectedEvent}  onClose={onClose} />
           </div>
         </div>
       </div>

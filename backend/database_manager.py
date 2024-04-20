@@ -28,8 +28,8 @@ class DatabaseManager:
         self.client = pymongo.MongoClient(f"mongodb://{host}:{port}/")
         self.db = self.client[db_name]
         self.projects_collection = self.db["Projects"]
-        self.user_activity_logger = self.db['UserActivityLogger']
-
+        self.userLogs_collection = self.db["UserActivityLogs"]
+        
         # Initialize ProjectManager
         self.project_manager = ProjectManager()
 

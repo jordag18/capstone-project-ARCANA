@@ -1,7 +1,8 @@
 from log_ingestor import LogIngestor
 from event_representer import EventRepresenter
 from events_manager import EventsManager
-from user_activity_logger import UserActivityLogger
+#from user_activity_logger import UserActivityLogger
+from user_activity_logger import userActivityLogger
 from datetime import datetime
 from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
@@ -136,12 +137,12 @@ class ProjectRepresenter(Document):
                     statement = f"Updated Event {event_id} on Project {self.name}"
                 case _:
                     statement = "Default Log Recording"
-            print('then')
-            UserActivityLogger(initials="ss",
+            
+
+            userActivityLogger.add_user_activity_log(initials="SYS",
                             timestamp=datetime.now(),
-                            statement=statement,
-                            data_source=data_source
-                            ).save()
+                            statement=statement
+                            )
         except Exception as error:
             print(error)
         
