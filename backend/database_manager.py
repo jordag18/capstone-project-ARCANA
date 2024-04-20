@@ -119,10 +119,11 @@ class DatabaseManager:
             self.projects_collection.update_one({"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
             project = self.get_project(project_name)
             print(type(project),project_name)
+            project = ProjectRepresenter.objects(name=project_name).first()
             if project:
-                project['event_manager'].delete_event(event_id)
-                project['events'] = [event for event in project['events'] if event.get('id') != event_id]
-            return True
+                project.event_list = [event for event in project.event_list if str(event.id) != event_id]
+                project.save()
+                return True
         except Exception as e:
             print("An error occurred:", e)
             return False

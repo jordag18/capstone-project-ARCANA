@@ -113,12 +113,34 @@ const Flow = () => {
     console.log("No node selected"); // This will log if no node is selected
   }
 
-  const deleteNode = useCallback((node: EventNode) => {
+  const deleteNode = useCallback(async (node: EventNode) => {
+    if (node.data.id && project) {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/deleteEvent/${project.name}/${node.data.id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete the event");
+        }
+        
+        alert(`Successfully deleted event with ID: ${node.data.id}`);
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        alert("Error deleting event");
+        return; 
+      }
+    }
+
+    // Then update the frontend state to remove the node and any connected edges
     setNodes((currentNodes) => currentNodes.filter((n) => n.id !== node.id));
     setEdges((currentEdges) =>
       currentEdges.filter((e) => e.source !== node.id && e.target !== node.id)
     );
-  }, []);
+  }, [project]);
 
   const closeContextMenu = () => setSelectedNode(null);
 
