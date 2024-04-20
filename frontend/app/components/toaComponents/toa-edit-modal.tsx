@@ -15,7 +15,7 @@ const EditTOAModal: React.FC<editTOAProp> = ({
     onClose
 }) => {
     const { project } = useProject()
-    const [formData, setFormData] = useState<EditToa>({selectedToa}
+    const [formData, setFormData] = useState<EditToa>(selectedToa
     )
     console.log(formData)
 
@@ -39,17 +39,15 @@ const EditTOAModal: React.FC<editTOAProp> = ({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
-        if (name === "target_host_list") {
-            // Convert comma-separated string to a list of strings
-            const targetHostList = value.split(",").map(item => item.trim());
+        if (name === "icon") {
             setFormData((prevFormData) => ({
                 ...prevFormData,
-                [name]: targetHostList
+                [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
             }));
         } else {
             setFormData((prevFormData) => ({
                 ...prevFormData,
-                [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
+                [name]: value
             }));
         }
     }
