@@ -2,12 +2,34 @@
 import React, { useState } from "react";
 import IngestLogModal from "../IngestLogModal";
 
-const CreateProjectModal = () => {
-  const [projectName, setProjectName] = useState("");
-  const [projectLocation, setProjectLocation] = useState("");
-  const [dateStart, setDateStart] = useState("");
-  const [dateEnd, setDateEnd] = useState("");
-  const [initials, setInitials] = useState("");
+//passes refresh trigger to main project menu page to refresh the table
+interface CreateProjectModalProps {
+  onProjectCreated: () => void;
+}
+
+const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onProjectCreated }) => {
+  // these are to reset the fields after a project is reloaded 
+  const initialInputState = {
+    projectName: "",
+    projectLocation: "",
+    dateStart: "",
+    dateEnd: "",
+    initials: ""
+  };
+
+  const resetForm = () => {
+    setProjectName(initialInputState.projectName);
+    setProjectLocation(initialInputState.projectLocation);
+    setDateStart(initialInputState.dateStart);
+    setDateEnd(initialInputState.dateEnd);
+    setInitials(initialInputState.initials);
+  }
+
+  const [projectName, setProjectName] = useState(initialInputState.projectName);
+  const [projectLocation, setProjectLocation] = useState(initialInputState.projectLocation);
+  const [dateStart, setDateStart] = useState(initialInputState.dateStart);
+  const [dateEnd, setDateEnd] = useState(initialInputState.dateEnd);
+  const [initials, setInitials] = useState(initialInputState.initials);
 
   const handleSubmit = async () => {
     const projectData = {
@@ -33,11 +55,13 @@ const CreateProjectModal = () => {
       }
       const newProject = await response.json();
       console.log("Successfully created project:", newProject);
-      // Close the modal and clear the form
-      // Optionally, refresh the list of projects or add the new project to the state
+      onProjectCreated(); //succeful project creation triggers refresh
+      resetForm();
     } catch (error) {
-      console.error("Error creating project:", error);
-      alert(`Error creating project: ${error.message}`);
+      if (error instanceof Error) {
+        console.error("Error creating project:", error.message);
+        alert(`Error creating project: ${error.message}`);
+      }
     }
 
     // revalidatePath("/dashboard/projectsMenu");
@@ -45,28 +69,6 @@ const CreateProjectModal = () => {
 
   return (
     <>
-      <div
-        className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-        onClick={() =>
-          document.getElementById("create_projet_modal").showModal()
-        }
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15"
-          />
-        </svg>
-        Create Project
-      </div>
       <dialog id="create_projet_modal" className="modal">
         <div className="modal-box">
           <form method="dialog">
@@ -134,7 +136,8 @@ const CreateProjectModal = () => {
               className="btn"
               onClick={() => {
                 handleSubmit();
-                document.getElementById("create_projet_modal").close();
+                const modalElement = document.getElementById("create_projet_modal") as HTMLDialogElement | null
+                if (modalElement) { modalElement.close() }
               }}
             >
               Create Project

@@ -1,12 +1,10 @@
-import Card from "react-bootstrap/Card";
 import React, { useState, useEffect } from 'react';
 import ActivityLogErrorAlert from "@/app/ui/activityLogErrorAlert";
 
 interface Log {
   initials: string;
   timestamp: Date;
-  datasource?: string;
-  log: string;
+  statement: string;
 }
 
 function UserLogTable() {
@@ -31,19 +29,17 @@ function UserLogTable() {
 
   return (
     <>
-      <Card style={{ overflow: "auto", height: "800px" }}>
-        <div className="flex-fluid align-content-center justify-content-center">
+        <div className="flex items-center justify-center overflow-auto rounded-lg">
           <div>
-            <table className="table table-striped table-bordered">
-              <thead>
+          <table className="table w-full">
+            <thead className="bg-base-200 border-b-2 border-slate-500">
                 <tr>
                   <th>Initials</th>
                   <th>Time Stamp</th>
-                  <th>Source</th>
                   <th>Description</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-base-200">
                 {userActivityLog.map((log, index) => (
                   <tr key={index}>
                     <td>{log.initials}</td>
@@ -52,18 +48,13 @@ function UserLogTable() {
                           ? new Date(log.timestamp).toLocaleString()
                           : "N/A"}
                       </td>
-                    <td>{log.datasource}</td>
-                    <td>{log.log}</td>
+                    <td>{log.statement}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      </Card>
-      <div className="p-2">
-        <ActivityLogErrorAlert />
-      </div>
     </>
   );
 }

@@ -4,23 +4,35 @@ import ProjectDetails from "./modify-project-button";
 import { Project } from "./project-interface";
 import { useProject } from "@/app/contexts/ProjectContext";
 
-const ProjectMenu = () => {
+interface ProjectMenuProps {
+  refreshProjects: () => void; // to refresh projects
+}
+
+const ProjectMenu: React.FC<ProjectMenuProps> = ({ refreshProjects }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const { project, setProject } = useProject();
+  const [openProjectId, setOpenProjectId] = useState<string | null>(null);
+
+  const toggleProjectDetails = (projectId: string) => {
+    setOpenProjectId(openProjectId === projectId ? null : projectId);
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
+        console.log("First Time")
         const response = await fetch("http://localhost:8000/api/projects", {
           cache: "no-store",
         });
+
         if (!response.ok) {
           throw new Error(
             "Network response was not ok: " + response.statusText
           );
         }
+        
         const projectsData: Project[] = await response.json(); // Type assertion
-        console.log("Loaded Projects:",projectsData); //used for testing
+        console.log("Loaded Projects:", projectsData); //used for testing
 
         if (projectsData.length > 0) {
           setProject(projectsData[0]); //Sets the active project as the first project grabbed from the db unless other project is selected by user
@@ -61,8 +73,8 @@ const ProjectMenu = () => {
                 <td>{project.initials}</td>
                 <td>
                   {/* New <td> for the details component */}
-                  <ProjectDetails selectedProject={project} />
-                </td>
+                  <ProjectDetails selectedProject={project} refreshProjects={refreshProjects} />
+                    </td>
               </tr>
             ))}
           </tbody>
