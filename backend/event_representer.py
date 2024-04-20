@@ -46,6 +46,7 @@ class EventRepresenter(EmbeddedDocument):
             "id": self.get_id(),
             "initials": self.initials,
             "team": self.team,
+            "icon": self.icon,
             "vector_id": self.vector_id,
             "description": self.description,
             "data_source": self.data_source,

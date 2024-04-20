@@ -9,6 +9,7 @@ interface EventNodeData {
   posture: string;
   location: string;
   data_source: string;
+  icon: string;
 }
 
 interface CustomEventNodeProps {
@@ -25,6 +26,7 @@ const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
            whiteSpace: 'normal', // Allows text to wrap
          }}>
       <Handle type="target" position={Position.Top} />
+      <img src={`${data.icon}`} alt="Event Icon" style={{ width: '100%', height: 'auto', marginBottom: '8px' }} />
       <div><strong>Timestamp:</strong> {data.timestamp}</div>
       <div><strong>Location:</strong> {data.location}</div>
       <div><strong>Posture:</strong> {data.posture}</div>
