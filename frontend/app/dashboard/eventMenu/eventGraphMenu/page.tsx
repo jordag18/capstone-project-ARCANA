@@ -20,25 +20,6 @@ import useGraphData from "@/app/components/graphComponents/GraphDataHook";
 import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
 import ButtonEdge from "@/app/components/graphComponents/ButtonEdge";
 
-// Define component styles
-const rfStyle = {
-  backgroundColor: "#B8CEFF",
-  width: "100%",
-  height: "100vh",
-};
-
-const containerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  width: "100%",
-  maxWidth: "2000px",
-  height: "100vh",
-  margin: "20px auto",
-  overflow: "auto",
-  position: "relative",
-};
-
 const nodeTypes = {
   customEventNode: CustomEventNode,
 };
@@ -73,14 +54,16 @@ const Flow = () => {
     [edgesState]
   );
 
-  const onConnect = useCallback((connection) => {
-    const newEdge = {
-      ...connection,
-      type: 'buttonEdge',
-    };
-    setEdges((eds) => addEdge(newEdge, eds));
-  }, [setEdges]);
-  
+  const onConnect = useCallback(
+    (connection) => {
+      const newEdge = {
+        ...connection,
+        type: "buttonEdge",
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
+    [setEdges]
+  );
 
   // Define the onEdgeUpdate callback using the correct type
   const onEdgeUpdate: OnEdgeUpdateFunc = useCallback(
@@ -109,38 +92,56 @@ const Flow = () => {
     []
   );
 
+  const createNode = useCallback(() => {
+    const newNode = {
+      id: `n${nodesState.length}`, // unique ID for the node
+      type: "customEventNode",
+      position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random position
+      data: {
+        initials: "NEW",
+        description: "New Event",
+        location: "New Location",
+        icon: "/path/to/default/icon.png", // Default icon path
+      },
+    };
+    setNodes((nds) => [...nds, newNode]);
+  }, [nodesState]);
+
   if (!selectedNode) {
     console.log("No node selected"); // This will log if no node is selected
   }
 
-  const deleteNode = useCallback(async (node: EventNode) => {
-    if (node.data.id && project) {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/deleteEvent/${project.name}/${node.data.id}`,
-          {
-            method: "DELETE",
+  const deleteNode = useCallback(
+    async (node: EventNode) => {
+      if (node.data.id && project) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/deleteEvent/${project.name}/${node.data.id}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to delete the event");
           }
-        );
 
-        if (!response.ok) {
-          throw new Error("Failed to delete the event");
+          alert(`Successfully deleted event with ID: ${node.data.id}`);
+        } catch (error) {
+          console.error("Error deleting event:", error);
+          alert("Error deleting event");
+          return;
         }
-        
-        alert(`Successfully deleted event with ID: ${node.data.id}`);
-      } catch (error) {
-        console.error("Error deleting event:", error);
-        alert("Error deleting event");
-        return; 
       }
-    }
 
-    // Then update the frontend state to remove the node and any connected edges
-    setNodes((currentNodes) => currentNodes.filter((n) => n.id !== node.id));
-    setEdges((currentEdges) =>
-      currentEdges.filter((e) => e.source !== node.id && e.target !== node.id)
-    );
-  }, [project]);
+      // Then update the frontend state to remove the node and any connected edges
+      setNodes((currentNodes) => currentNodes.filter((n) => n.id !== node.id));
+      setEdges((currentEdges) =>
+        currentEdges.filter((e) => e.source !== node.id && e.target !== node.id)
+      );
+    },
+    [project]
+  );
 
   const closeContextMenu = () => setSelectedNode(null);
 
@@ -159,7 +160,7 @@ const Flow = () => {
   return (
     <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
       <button
-        onClick={() => {}}
+        onClick={createNode}
         className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
       >
         Create Event Node

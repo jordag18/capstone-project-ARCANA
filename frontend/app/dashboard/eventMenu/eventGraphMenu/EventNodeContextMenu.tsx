@@ -25,7 +25,3 @@ const EventNodeContextMenu = forwardRef<HTMLDivElement, EventNodeContextMenuProp
 
 export default EventNodeContextMenu;
 
-
-//Need to add @app.delete("/api/deleteEvent/{project_name}/{event_id}") API call
-
-
