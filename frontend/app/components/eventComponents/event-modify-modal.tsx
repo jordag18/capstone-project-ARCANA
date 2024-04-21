@@ -19,9 +19,10 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   const { updateEvent } = useProject();
   const [formData, setFormData] = useState<Event>({
     ...selectedEvent,
-    target_host_list: selectedEvent.target_host_list.length
-      ? selectedEvent.target_host_list
-      : [],
+    target_host_list:
+      selectedEvent.target_host_list?.length ?? 0
+        ? selectedEvent.target_host_list
+        : [],
   });
 
   const handleSaveEvent = async () => {
