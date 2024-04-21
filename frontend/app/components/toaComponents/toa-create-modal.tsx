@@ -20,7 +20,7 @@ const CreateTOAModal: React.FC<createTOAProp> = ({
 
     const handleSubmit = async () => {
         try{
-            const response = await axios.post(`http://localhost:8000/api/project/${project.name}/create-toa`, formData)
+            const response = await axios.post(`http://localhost:8000/api/project/${project.id}/create-toa`, formData)
             if (response.status === 200){
                 onClose()
             } else {

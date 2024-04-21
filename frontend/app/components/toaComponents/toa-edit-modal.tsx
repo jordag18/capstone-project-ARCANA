@@ -25,7 +25,7 @@ const EditTOAModal: React.FC<editTOAProp> = ({
         try {
             console.log("pew ", formData)
             const response = await axios.post(
-                `http://localhost:8000/api/project/${project.name}/edit-toa`,
+                `http://localhost:8000/api/project/${project.id}/edit-toa`,
                 formData
             );
             if (response.status === 200) {

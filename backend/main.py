@@ -120,19 +120,19 @@ async def create_project(project: ProjectCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 #Deletes project from the database
-@app.delete("/api/deleteProject/{project_name}")
-def delete_project(project_name: str):
-    response = db_manager.delete_project(project_name)
+@app.delete("/api/deleteProject/{project_id}")
+def delete_project(project_id: str):
+    response = db_manager.delete_project(project_id)
     if response:
-        return f"Successfully deleted {project_name}"
-    raise HTTPException(404, f"No project found with the name {project_name}")
+        return f"Successfully deleted {project_id}"
+    raise HTTPException(404, f"No project found with the name {project_id}")
 
-@app.patch("/api/editEvent/{project_name}/{event_id}")
-async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
+@app.patch("/api/editEvent/{project_id}/{event_id}")
+async def edit_event(project_id: str, event_id: str, event_update: EventUpdate = Body(...)):
     updated_data = event_update.model_dump(exclude_unset=True)
     try:
         # Call modify_event_from_project from DatabaseManager
-        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        success = db_manager.modify_event_from_project(project_id, event_id, updated_data)
         if success:
             return success
         else:
@@ -148,11 +148,11 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
-async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+@app.patch("/api/createEvent/{project_id}", response_model=EventCreate, status_code=201)
+async def create_event(project_id: str, event_create: EventCreate = Body(...)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:
-        created_event = db_manager.add_event_to_project(project_name, created_data)
+        created_event = db_manager.add_event_to_project(project_id, created_data)
         if created_event:
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
@@ -160,15 +160,15 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...))
     except HTTPException as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-@app.delete("/api/deleteEvent/{project_name}/{event_id}")
-async def delete_event(project_name: str, event_id: str):
-    print(project_name, event_id)
+@app.delete("/api/deleteEvent/{project_id}/{event_id}")
+async def delete_event(project_id: str, event_id: str):
+    print(project_id, event_id)
     try:
-        response = db_manager.remove_event_from_project(project_name, event_id)
+        response = db_manager.remove_event_from_project(project_id, event_id)
         if response:
-            return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
+            return f"Successfully deleted event with ID: {event_id} from project: {project_id}"
         else:
-            raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
+            raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_id}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -183,16 +183,16 @@ async def get_project_graphs(project_name: str):
         return {"error_message": f"Invalid project name: {project_name}"}
     return db_manager.update_project_graph(project)
 
-@app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
-async def get_project_icon_libraries(project_name: str):
+@app.get("/api/project/{project_id}/icon-libraries", response_model=IconLibraryResponse)
+async def get_project_icon_libraries(project_id: str):
     try:
-        response = db_manager.get_icon_library_from_project(project_name)
+        response = db_manager.get_icon_library_from_project(project_id)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/api/project/{project_name}/create-toa")
-async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+@app.post("/api/project/{project_id}/create-toa")
+async def create_toa(project_id: str, data: Dict[str, Union[str, bool, str]]):
     try:
         print("uydsss")
         print(data)
@@ -202,7 +202,7 @@ async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         
         
         # Save the icon to the icon library
-        db_manager.add_icon_to_icon_library(project_name, team, action_title, image_name)
+        db_manager.add_icon_to_icon_library(project_id, team, action_title, image_name)
 
     except Exception as e:
         return {"error_message": f"Error occurred: {e}"}
@@ -210,10 +210,10 @@ async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         return {"message": "Icon has been saved successfully"}
 
 
-@app.delete("/api/project/{project_name}/delete-icon")
-async def delete_icon(project_name: str, team: str, iconName: str):
+@app.delete("/api/project/{project_id}/delete-icon")
+async def delete_icon(project_id: str, team: str, iconName: str):
     try:
-        response = db_manager.delete_icon(project_name, team, iconName)
+        response = db_manager.delete_icon(project_id, team, iconName)
         if response:
             return f"Successfully deleted icon"
         raise HTTPException(404, f"No icon found")
@@ -221,10 +221,9 @@ async def delete_icon(project_name: str, team: str, iconName: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 #WORKING
-@app.post("/api/project/{project_name}/edit-toa")
-async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
+@app.post("/api/project/{project_id}/edit-toa")
+async def edit_toa(project_id: str, data: Dict[str, Union[str, bool, str]]):
     try:
-        print("ajda")
         team = data['team']
         action_title = data['actionTitle']
         image_name = data['imageName']
@@ -233,7 +232,6 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         old_action_title = data['oldActionTitle']
         old_image_name = data['oldImageName']
         old_is_default = data['oldIsDefault']
-        print("nope")
         # Check which new data fields match the corresponding old data fields and set them to None
         if team == old_team:
             team = None
@@ -245,7 +243,7 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
             is_default = None
 
 
-        db_manager.edit_icon(project_name, old_team, old_action_title, team, action_title, image_name, is_default)
+        db_manager.edit_icon(project_id, old_team, old_action_title, team, action_title, image_name, is_default)
 
     except Exception as e:
         return {"error_message": f"Error occurred: {e}"}

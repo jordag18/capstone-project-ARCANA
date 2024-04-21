@@ -37,12 +37,12 @@ class DatabaseManager:
         # Create and save a new project
         return self.project_manager.create_project(name, start_date, end_date, location, initials)
 
-    def delete_project(self, project_name):
+    def delete_project(self, project_id):
         # Delete a project by name
-        project = ProjectRepresenter.objects(name=project_name).first()
+        project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             project.delete()  # This deletes the project from the database
-            self.project_manager.delete_project(project_name, project.initials)
+            self.project_manager.delete_project(project_id, project.initials)
             return True
         return False
     
@@ -79,9 +79,9 @@ class DatabaseManager:
     def get_project_representer(self, project_name):
         return ProjectRepresenter.objects(name=project_name).first()
 
-    def add_event_to_project(self, project_name, event_data):
+    def add_event_to_project(self, project_id, event_data):
         # Add an event to a specific project
-        project = ProjectRepresenter.objects(name=project_name).first()
+        project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             new_event = EventRepresenter(**event_data)
             print(new_event)
@@ -92,6 +92,7 @@ class DatabaseManager:
                 project_id=str(project.id),
                 action_type="create",
                 event_after=new_event,
+                event_before= None
             )
 
             return new_event
@@ -113,11 +114,11 @@ class DatabaseManager:
         except Exception as e:
             return False
 
-    def remove_event_from_project(self, project_name, event_id):
+    def remove_event_from_project(self, project_id, event_id):
         try:
             event_id_obj = ObjectId(event_id)
             # First fetch the event to log it before deletion
-            project = ProjectRepresenter.objects(name=project_name).first()
+            project = ProjectRepresenter.objects(id=project_id).first()
             if not project:
                 print("Project not found")
                 return False
@@ -153,7 +154,7 @@ class DatabaseManager:
             print("An error occurred:", e)
             return False
         
-    def modify_event_from_project(self, project_name, event_id, updated_data):
+    def modify_event_from_project(self, project_id, event_id, updated_data):
         try:
             event_id_obj = ObjectId(event_id)
         except ValidationError:
@@ -161,7 +162,7 @@ class DatabaseManager:
             return False
 
         try:
-            project = ProjectRepresenter.objects(name=project_name).first()
+            project = ProjectRepresenter.objects(id=project_id).first()
             if not project:
                 print("Project not found")
                 return False
@@ -260,36 +261,36 @@ class DatabaseManager:
             return True
         return False
     
-    def get_icon_library_from_project(self, project_name):
+    def get_icon_library_from_project(self, project_id):
         try:
-            project = ProjectRepresenter.objects(name=project_name).first()
+            project = ProjectRepresenter.objects(id=project_id).first()
             if project:
                 return project.toa_icon_library
 
             else:
-                print(f"Project with name '{project_name}' not found.")
+                print(f"Project with id '{project_id}' not found.")
                 return None
         except Exception as e:
             print("An error occurred while retrieving the icon library from the database:", e)
             return None
         
-    def add_icon_to_icon_library(self, project_name: str, team: str, action_title: str, icon_filename: str) -> None:
-        project = ProjectRepresenter.objects(name=project_name).first()
+    def add_icon_to_icon_library(self, project_id: str, team: str, action_title: str, icon_filename: str) -> None:
+        project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             project.add_toa_icon(team, action_title, icon_filename)
         else:
             print("didn't work")
     
-    def edit_icon(self, project_name: str, old_team: str, old_action_title: str, new_team: str, new_action_title: str, new_icon_filename: str, new_is_default: bool):
-        project = ProjectRepresenter.objects(name=project_name).first()
+    def edit_icon(self, project_id: str, old_team: str, old_action_title: str, new_team: str, new_action_title: str, new_icon_filename: str, new_is_default: bool):
+        project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             project.edit_toa_icon(old_team, old_action_title, new_team, new_action_title, new_icon_filename, new_is_default)
         else:
             print("didn't work")
     
     #category = team (color), name = action title
-    def delete_icon(self, project_name: str, category: str, name: str):
-        project = ProjectRepresenter.objects(name=project_name).first()
+    def delete_icon(self, project_id: str, category: str, name: str):
+        project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             try:
                 icon_library = project.toa_icon_library
@@ -322,7 +323,7 @@ class DatabaseManager:
                 print("An error occurred while deleting the icon from the icon library:", e)
                 return False
         else:
-            print(f"Project with name '{project_name}' not found.")
+            print(f"Project with id '{project_id}' not found.")
             return False
 
     def undo_last_action(self, project_id):

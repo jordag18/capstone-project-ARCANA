@@ -13,7 +13,7 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent}) => {
     if (selectedEvent && project) {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/deleteEvent/${project.name}/${selectedEvent.id}`,
+          `http://localhost:8000/api/deleteEvent/${project.id}/${selectedEvent.id}`,
           {
             method: "DELETE",
           }

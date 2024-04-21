@@ -9,8 +9,8 @@ const DeleteButton: React.FC<ProjectDetailsProps> = ({selectedProject}) => {
     const handleConfirmDelete = async () => {
     
         try {
-            console.log('Project Name:', selectedProject.name);
-            const response = await fetch(`http://localhost:8000/api/deleteProject/${selectedProject.name}`, {
+            console.log('Project ID:', selectedProject.id);
+            const response = await fetch(`http://localhost:8000/api/deleteProject/${selectedProject.id}`, {
                 method: 'DELETE'
             });
 
@@ -21,7 +21,7 @@ const DeleteButton: React.FC<ProjectDetailsProps> = ({selectedProject}) => {
 
             // Assuming the DELETE was successful, remove the project from the state
             //setProjects(projects.filter(project => project.name !== projectName));
-            alert(`Successfully deleted ${selectedProject.name}`);
+            alert(`Successfully deleted ${selectedProject.id}`);
 
         } catch (error) {
             console.error('Error deleting project:', error);

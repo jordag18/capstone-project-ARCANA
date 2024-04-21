@@ -27,7 +27,7 @@ const IconLibrary = () => {
 
     const fetchIconLibrary = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/project/${project.name}/icon-libraries`);
+            const response = await axios.get(`http://localhost:8000/api/project/${project.id}/icon-libraries`);
             setIconLibraries(response.data);
         } catch (error) {
             console.error('Failed to fetch icon libraries:', error);
@@ -36,7 +36,7 @@ const IconLibrary = () => {
 
     useEffect(() => {
         fetchIconLibrary();
-    }, [project.name]);
+    }, [project.id]);
 
     const handleCreateModal = (createToa: CreateToa) => {
         setNewToa(createToa);
@@ -68,7 +68,7 @@ const IconLibrary = () => {
     const handleDeleteIcon = async (team: string, iconName: string) => {
         try {
             const response = await axios.delete(
-                `http://localhost:8000/api/project/${project.name}/delete-icon?team=${team}&iconName=${iconName}`
+                `http://localhost:8000/api/project/${project.id}/delete-icon?team=${team}&iconName=${iconName}`
             );
             if (response.status === 200) {
                 fetchIconLibrary();
