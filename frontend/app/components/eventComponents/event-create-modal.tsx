@@ -1,94 +1,116 @@
-import { useState, useEffect } from 'react';
-import { useProject } from '@/app/contexts/ProjectContext';
-import { CreateEvent } from './event-interface';
+import { useState, useEffect } from "react";
+import { useProject } from "@/app/contexts/ProjectContext";
+import { CreateEvent } from "./event-interface";
 
 interface createEventProp {
-    newEvent: CreateEvent;
-    isModalOpen: boolean;
-    onClose: () => void;
+  newEvent: CreateEvent;
+  isModalOpen: boolean;
+  onClose: () => void;
+  onSubmit: (eventData: CreateEvent) => void;  // Ensure this line is added
+
 }
 
 const CreateEventModal: React.FC<createEventProp> = ({
-    newEvent,
-    isModalOpen,
-    onClose
+  newEvent,
+  isModalOpen,
+  onClose,
+  onSubmit,
 }) => {
-    const { project } = useProject();
-    const [formData, setFormData] = useState<CreateEvent & { autoCreateEdges: boolean }>({
-        ...newEvent,
-        autoCreateEdges: false
-    });
+  const { project } = useProject();
+  const [formData, setFormData] = useState<
+    CreateEvent & { autoCreateEdges: boolean }
+  >({
+    ...newEvent,
+    autoCreateEdges: false,
+  });
 
-    const handleSubmit = async () => {
-      if ((!formData.initials || formData.initials.trim() === '' || formData.initials.length > 2) ||
-          (!formData.team || formData.team.trim() === '') ||
-          (!formData.description || formData.description.trim() === '') ||
-          (!formData.icon || formData.icon.trim() === '')) {
-          return;
-      }
-  
-      console.log("Create Event", formData, "body", JSON.stringify(formData));
-  
-      // Create a copy of formData to modify before sending
-      const { autoCreateEdges, ...eventData } = formData;
-      const bodyData = {
-          event_create: eventData, // This should match the expected structure in the backend
-          auto_create_edges: autoCreateEdges // This will be extracted separately on the server
-      };
-  
-      try {
-          const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
-              method: "PATCH",
-              headers: {
-                  "Content-type": "application/json"
-              },
-              body: JSON.stringify(bodyData)
-          });
-  
-          if (!response.ok) {
-              throw new Error('Failed to create event');
-          }
-  
-          onClose(); // Close the modal on success
-      } catch (error) {
-          console.error("Error creating event: ", error);
-      }
+  const handleSubmit = async () => {
+    if (
+      !formData.initials ||
+      formData.initials.trim() === "" ||
+      formData.initials.length > 2 ||
+      !formData.team ||
+      formData.team.trim() === "" ||
+      !formData.description ||
+      formData.description.trim() === "" ||
+      !formData.icon ||
+      formData.icon.trim() === ""
+    ) {
+      return;
+    }
+
+    console.log("Create Event", formData, "body", JSON.stringify(formData));
+
+    // Create a copy of formData to modify before sending
+    const { autoCreateEdges, ...eventData } = formData;
+    const bodyData = {
+      event_create: eventData, // This should match the expected structure in the backend
+      auto_create_edges: autoCreateEdges, // This will be extracted separately on the server
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-          setFormData((prevFormData) => ({
-              ...prevFormData,
-              icon: file.name
-          }));
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/createEvent/${project.name}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create event");
       }
+      onSubmit(formData);
+      onClose();
+    } catch (error) {
+      console.error("Error creating event: ", error);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        icon: file.name,
+      }));
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: type === 'checkbox' ? checked : value
+      ...prevFormData,
+      [name]: type === "checkbox" ? checked : value,
     }));
-};
+  };
 
-    useEffect(() => {
-        const modal = document.getElementById("create_event_modal")
-        if (modal) {
-          isModalOpen ? modal.showModal() : modal.close()
-        }
-    }, [isModalOpen]);
+  useEffect(() => {
+    const modal = document.getElementById("create_event_modal");
+    if (modal) {
+      isModalOpen ? modal.showModal() : modal.close();
+    }
+  }, [isModalOpen]);
 
-    return (
-      <dialog id='create_event_modal' className='modal' style={{ width: '80%', height: '80%' }}>
-        <div className='modal-box'>
-            <form method='dialog'>
-                <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
-                    X
-                </button>
-            </form>
-            <div className="flex flex-col space-y-2">
+  return (
+    <dialog
+      id="create_event_modal"
+      className="modal"
+      style={{ width: "80%", height: "80%" }}
+    >
+      <div className="modal-box">
+        <form method="dialog">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={onClose}
+          >
+            X
+          </button>
+        </form>
+        <div className="flex flex-col space-y-2">
           <h3 className="font-bold text-lg">Create Event</h3>
           <div className="flex flex-row space-x-2">
             <div className="flex-1 flex-col">
@@ -219,7 +241,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
                 </label>
               </div>
               <div className="flex-col">
-              <h2>Description</h2>
+                <h2>Description</h2>
                 <label className="input input-bordered flex items-center gap-2">
                   <input
                     type="text"
@@ -232,15 +254,15 @@ const CreateEventModal: React.FC<createEventProp> = ({
                 </label>
               </div>
               <div className="flex-col">
-              <h2>Icon</h2>
+                <h2>Icon</h2>
                 <label className="input input-bordered flex items-center gap-2">
-                    <input
-                        type="file"
-                        name="icon"
-                        accept="image/*"
-                        className="grow"
-                        onChange={handleFileChange}
-                    />
+                  <input
+                    type="file"
+                    name="icon"
+                    accept="image/*"
+                    className="grow"
+                    onChange={handleFileChange}
+                  />
                 </label>
               </div>
             </div>
@@ -248,24 +270,24 @@ const CreateEventModal: React.FC<createEventProp> = ({
           <div>
             <label className="label cursor-pointer">
               <span className="label-text">Auto-create edges</span>
-              <input 
-                type="checkbox" 
-                name="autoCreateEdges" 
-                checked={formData.autoCreateEdges} 
-                className="checkbox" 
-                onChange={handleChange} 
+              <input
+                type="checkbox"
+                name="autoCreateEdges"
+                checked={formData.autoCreateEdges}
+                className="checkbox"
+                onChange={handleChange}
               />
             </label>
           </div>
-            <div>
-                <button className='btn' onClick={handleSubmit}>
-                    Create Event
-                </button>
-            </div>
-            </div>
-            </div>
-        </dialog>
-    );
+          <div>
+            <button className="btn" onClick={handleSubmit}>
+              Create Event
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
 };
 
 export default CreateEventModal;

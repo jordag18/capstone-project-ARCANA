@@ -15,10 +15,12 @@ import ReactFlow, {
 import { EventNode } from "@/app/components/graphComponents/EventNodeInterface";
 import EventNodeContextMenu from "./EventNodeContextMenu";
 import EditEventModal from "../../../components/eventComponents/event-modify-modal";
+import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 import "reactflow/dist/style.css";
 import useGraphData from "@/app/components/graphComponents/GraphDataHook";
 import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
 import ButtonEdge from "@/app/components/graphComponents/ButtonEdge";
+import { CreateEvent } from "@/app/components/eventComponents/event-interface";
 
 const nodeTypes = {
   customEventNode: CustomEventNode,
@@ -35,7 +37,9 @@ const Flow = () => {
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [selectedNode, setSelectedNode] = useState<EventNode | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
@@ -78,7 +82,6 @@ const Flow = () => {
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent, node: Node) => {
       event.preventDefault(); // Prevent default context menu
-      console.log("Right-clicked node:", node); // Debug log
       if (reactFlowWrapper.current) {
         const bounds = reactFlowWrapper.current.getBoundingClientRect();
         setMenuPosition({
@@ -87,29 +90,34 @@ const Flow = () => {
         });
         setSelectedNode(node); // Only select the node and set up the menu position
       }
-      console.log("Menu position set to:", event.clientX, event.clientY); // Debug log
     },
     []
   );
 
   const createNode = useCallback(() => {
-    const newNode = {
-      id: `n${nodesState.length}`, // unique ID for the node
-      type: "customEventNode",
-      position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random position
-      data: {
-        initials: "NEW",
-        description: "New Event",
-        location: "New Location",
-        icon: "/path/to/default/icon.png", // Default icon path
-      },
-    };
-    setNodes((nds) => [...nds, newNode]);
-  }, [nodesState]);
+    setIsCreateModalOpen(true);
+  }, []);
 
-  if (!selectedNode) {
-    console.log("No node selected"); // This will log if no node is selected
-  }
+  const handleCreateNode = useCallback(
+    (eventData: CreateEvent) => {
+      const newNode = {
+        id: `n${nodesState.length + 1}`, // Ensure unique ID by incrementing
+        type: "customEventNode",
+        position: {
+          x: Math.random() * window.innerWidth * 0.8,
+          y: Math.random() * window.innerHeight * 0.8,
+        },
+        data: eventData,
+      };
+      setNodes((nodesState) => [...nodesState, newNode]);
+      setIsCreateModalOpen(false); 
+    },
+    [nodesState]
+  );
+
+  const handleCreateEventClose = useCallback(() => {
+    setIsCreateModalOpen(false);
+  }, []);
 
   const deleteNode = useCallback(
     async (node: EventNode) => {
@@ -146,11 +154,11 @@ const Flow = () => {
   const closeContextMenu = () => setSelectedNode(null);
 
   const handleEditEvent = useCallback(() => {
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   }, []);
 
   const closeModal = useCallback(() => {
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
     setSelectedNode(null);
   }, []);
 
@@ -196,10 +204,18 @@ const Flow = () => {
           )}
         </ReactFlow>
       </div>
-      {isModalOpen && selectedNode && (
+      {isCreateModalOpen && (
+        <CreateEventModal
+          newEvent={newEvent}
+          isModalOpen={isCreateModalOpen}
+          onSubmit={handleCreateNode} // Pass the function to handle node creation
+          onClose={() => setIsCreateModalOpen(false)} // Handle closing the modal
+        />
+      )}
+      {isEditModalOpen && selectedNode && (
         <EditEventModal
           selectedEvent={selectedNode.data}
-          isModalOpen={isModalOpen}
+          isModalOpen={isEditModalOpen}
           onClose={closeModal}
         />
       )}
