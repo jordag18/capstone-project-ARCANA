@@ -51,6 +51,7 @@ class EventCreate(BaseModel):
     icon: str
     is_malformed: Optional[bool] = None
     description: str
+    
 
 class Project(BaseModel):
     id: str 

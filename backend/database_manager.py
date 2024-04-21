@@ -8,9 +8,12 @@ from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from events_manager import EventsManager
 from event_action_log import EventActionLog
+from graph import GraphManager
 from bson import ObjectId
+from collections import defaultdict
 from graph import GraphManager
 import pymongo
+
 
 ##########################################################################################
 #
@@ -79,13 +82,14 @@ class DatabaseManager:
     def get_project_representer(self, project_name):
         return ProjectRepresenter.objects(name=project_name).first()
 
-    def add_event_to_project(self, project_name, event_data):
+    def add_event_to_project(self, project_name, event_data, auto_edges):
         # Add an event to a specific project
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             new_event = EventRepresenter(**event_data)
             print(new_event)
             project.event_list.append(new_event)
+            project.update_graph(auto_edges)
             project.save()  # Save the updated project
 
             EventActionLog(
@@ -122,6 +126,7 @@ class DatabaseManager:
             project = ProjectRepresenter.objects(name=project_name).first()
             if project:
                 project.event_list = [event for event in project.event_list if str(event.id) != event_id]
+                project.update_graph(False, event_id)
                 project.save()
                 return True
         except Exception as e:
@@ -181,7 +186,8 @@ class DatabaseManager:
                 {"event_list.$": 1}  # Returns only the matching event
             )
             event_after_update = project_after_update['event_list'][0] if 'event_list' in project_after_update and len(project_after_update['event_list']) > 0 else None
-
+            project = ProjectRepresenter.objects(name=project_name).first()
+            project.update_graph(True, None, event_id, event_after_update)
             print("Event after update:", event_after_update)
 
                         # Log the action
@@ -191,6 +197,7 @@ class DatabaseManager:
                 event_after=event_after_update,
                 project=project,
             ).save()
+            project.save()
             return True
         except Exception as e:
             print("An error occurred when modifying the event:", e)
@@ -393,10 +400,28 @@ class DatabaseManager:
         last_undone_action.update(set__undone=False)
         return True
 
+    
+    # def no_edge_node(self, project_name, event_id, auto_edges):
+    #     print("no edge ")
+    #     project = ProjectRepresenter.objects(name=project_name).first()
+    #     if not auto_edges:
+    #         events = project.event_list
+    #         for event in events:
+    #             if event.get_id() == event_id:
+    #                 send_event = event
+    #         project_graph = GraphManager.get_project_graphs(project, send_event)
+    #         project.project_graph = project_graph
+    #         project.save()
+    
+    # def graph_algorithm(self, project_name):
+    #     print("graph_algo ")
+    #     project = ProjectRepresenter.objects(name=project_name).first()
+    #     if project: 
+    #         project_graph = GraphManager.get_project_graphs(project)
+    #         project.project_graph = project_graph
+    #     return project.project_graph
 
-    def update_project_graph(self, project):
-            project_graph = GraphManager.get_project_graphs(project)
-            project.project_graph = project_graph
-            project.save()
-
-            return project_graph
+    def fetch_project_graph(self, project_name):
+        print("fetch graph ")
+        project = ProjectRepresenter.objects(name=project_name).first()
+        return project.project_graph
