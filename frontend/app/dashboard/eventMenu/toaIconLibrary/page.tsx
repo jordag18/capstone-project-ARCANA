@@ -5,6 +5,7 @@ import { useProject } from '@/app/contexts/ProjectContext';
 import CreateTOAModal from '@/app/components/toaComponents/toa-create-modal';
 import { CreateToa, EditToa } from '@/app/components/toaComponents/toa-interface';
 import EditTOAModal from '@/app/components/toaComponents/toa-edit-modal';
+import { count } from 'console';
 
 interface IconInfo {
     image: string;
@@ -15,6 +16,10 @@ interface IconLibrary {
     [team: string]: {
         [iconName: string]: IconInfo;
     };
+}
+
+interface IconCounts {
+    [key: string]: number
 }
 
 const IconLibrary = () => {
@@ -63,10 +68,25 @@ const IconLibrary = () => {
         setIsCreateModalOpen(false);
         setIsEditModalOpen(false);
     };
+
+    const countDefaults = (team: string) => {
+        const icons = iconLibraries[team]
+        if (!icons) {
+            return 0;
+        }
+
+        const defaultCount = Object.values(icons).filter(icon => icon.isDefault).length
+        return defaultCount
+    }
     
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
         try {
+            const countsBefore = countDefaults(team)
+            if (countsBefore < 2) {
+                alert('Default count should be greater than 1. Please edit another icon to be the new default.')
+                return
+            }
             const response = await axios.delete(
                 `http://localhost:8000/api/project/${project.id}/delete-icon?team=${team}&iconName=${iconName}`
             );
