@@ -17,6 +17,7 @@ import EventNodeContextMenu from "./EventNodeContextMenu";
 import EditEventModal from "../../../components/eventComponents/event-modify-modal";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
 import ExportGraphData from "@/app/components/graphComponents/ExportGraphData";
+import ImportGraphModal from "@/app/components/graphComponents/ImportGraphModal";
 import "reactflow/dist/style.css";
 import useGraphData from "@/app/components/graphComponents/GraphDataHook";
 import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
@@ -33,16 +34,18 @@ const edgeTypes = {
 
 const Flow = () => {
   const { project } = useProject();
-  const { nodes, edges, isLoading, error, refresh } = useGraphData(project.name);
+  const { nodes, edges, isLoading, error, refresh } = useGraphData(
+    project.name
+  );
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [selectedNode, setSelectedNode] = useState<EventNode | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
-  
 
   useEffect(() => {
     setNodes(nodes as EventNode[]);
@@ -164,6 +167,13 @@ const Flow = () => {
     setSelectedNode(null);
   }, []);
 
+  const handleImportedContent = (content) => {
+    // You would parse the content here and update the state accordingly
+    console.log("Imported Content:", content);
+    // For example, if the content is JSON, you would do something like:
+    // const importedData = JSON.parse(content);
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -176,6 +186,12 @@ const Flow = () => {
             className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
           >
             Create Event Node
+          </button>
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+          >
+            Import Graph
           </button>
           <ExportGraphData
             nodes={nodesState}
@@ -226,6 +242,12 @@ const Flow = () => {
           selectedEvent={selectedNode.data}
           isModalOpen={isEditModalOpen}
           onClose={closeModal}
+        />
+      )}
+      {isImportModalOpen && (
+        <ImportGraphModal
+          onImport={handleImportedContent}
+          onClose={() => setIsImportModalOpen(false)}
         />
       )}
     </div>
