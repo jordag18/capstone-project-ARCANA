@@ -41,8 +41,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
   };
 
     const handleSubmit = async () => {
-      const formDataJson = JSON.stringify(formData);
-      const autoEdgesJson = JSON.stringify({ auto_edge: autoEdge})
+      console.log('formdata', JSON.stringify(formData), 'autoedge', JSON.stringify({auto_edges: {auto_edge: autoEdge}}))
 
       try {
           const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
@@ -251,7 +250,9 @@ const CreateEventModal: React.FC<createEventProp> = ({
                         <hr style={{height: '2px', width: '100%', color: 'black', backgroundColor: 'black'}}/>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             {Object.entries(icons).map(([iconName, iconInfo]) => (
-                                <div className={`hover:bg-gray-200 ${selectedIcon === iconName ? 'bg-yellow-200' : ''}`} key={iconName} style={{marginLeft: '1rem', marginRight: '2rem', marginBottom: '1rem'}} onClick={() => handleIconChange(iconName, iconInfo, team)}>
+                                <div className={`hover:bg-gray-200 ${selectedIcon === iconName ? 'bg-yellow-200' : ''}`} 
+                                    key={iconName} style={{marginLeft: '1rem', marginRight: '2rem', marginBottom: '1rem'}} 
+                                    onClick={() => handleIconChange(iconName, iconInfo, team)}>
                                     <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '50px', height: '50px'}}/>
                                     <p>{iconName}</p>
                                     {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
