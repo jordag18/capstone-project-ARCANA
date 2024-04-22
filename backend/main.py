@@ -141,10 +141,16 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
     updated_data = event_update.model_dump(exclude_unset=True)
     try:
         # Call modify_event_from_project from DatabaseManager
+        print("update 1")
+        print(project_name)
         success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        print("update 2")
         if success:
+            print("update 3")
             project = db_manager.get_project_representer(project_name)
+            print("update 4")
             project.update_event_in_project(event_id)
+            print("update 5")
             return success
         else:
             raise HTTPException(status_code=404, detail="Event not found or no changes made")
@@ -155,6 +161,7 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
 async def create_event(project_name: str, event_create: EventCreate = Body(...), auto_create_edges: bool = Body(default=False)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:
+        print("event add")
         project = db_manager.get_project_representer(project_name)
         created_event = db_manager.add_event_to_project(project_name, created_data, auto_create_edges)
         if created_event:

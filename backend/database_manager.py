@@ -86,7 +86,7 @@ class DatabaseManager:
        # Add an event to a specific project
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
-            new_event = EventRepresenter(**event_data)
+            new_event = EventRepresenter(id=ObjectId(),**event_data)
             print(new_event)
             project.event_list.append(new_event)
             project.update_graph(auto_edges)
@@ -146,9 +146,9 @@ class DatabaseManager:
         except ValidationError:
             print("Invalid event ID format")
             return False
-
         try:
-            project = ProjectRepresenter.objects(name=project.name).first()
+            project = ProjectRepresenter.objects(name=project_name).first()
+            
             if not project:
                 print("Project not found")
                 return False

@@ -4,8 +4,6 @@ from events_manager import EventsManager
 #from user_activity_logger import UserActivityLogger
 from user_activity_logger import userActivityLogger
 from datetime import datetime
-from user_activity_logger import UserActivityLogger
-import datetime
 from graph import GraphManager
 from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
@@ -23,8 +21,8 @@ from mongoengine import Document, StringField, ListField, DictField, DateTimeFie
 
 class ProjectRepresenter(Document):
     name = StringField(required=True)
-    start_date = DateTimeField(default=datetime.datetime.now)
-    end_date = DateTimeField(default=datetime.datetime.now)
+    start_date = DateTimeField(default=datetime.now)
+    end_date = DateTimeField(default=datetime.now)
     location = StringField(default="")
     initials = StringField(default="")
     event_list = ListField(EmbeddedDocumentField(EventRepresenter), default=[])
