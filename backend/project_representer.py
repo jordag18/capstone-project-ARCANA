@@ -5,6 +5,7 @@ from events_manager import EventsManager
 from user_activity_logger import userActivityLogger
 from datetime import datetime
 from graph import GraphManager
+from collections import defaultdict
 from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
@@ -53,7 +54,15 @@ class ProjectRepresenter(Document):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
         if not self.id:   
+            self.reset_graph()
             self.ingestLogsToProject("uploads")
+
+    def reset_graph(self):
+        # Reset graph data in GraphManager
+        GraphManager.nodes = {}
+        GraphManager.edges = defaultdict(list)
+        GraphManager.last_blue = None
+        GraphManager.last_red = None
 
     def update_graph(self, auto_edges, delete_node=None, edited_id=None, edited_data=None):
         if delete_node is not None:

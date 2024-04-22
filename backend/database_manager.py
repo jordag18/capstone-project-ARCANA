@@ -86,10 +86,10 @@ class DatabaseManager:
        # Add an event to a specific project
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
-            new_event = EventRepresenter(id=ObjectId(),**event_data)
+            new_event = EventRepresenter(**event_data)
             print(new_event)
             project.event_list.append(new_event)
-            #project.update_graph(auto_edges)
+            project.update_graph(auto_edges)
             project.save()  # Save the updated project
 
             EventActionLog(
@@ -139,7 +139,7 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred:", e)
             return False
-        
+            
     def modify_event_from_project(self, project_name, event_id, updated_data):
         try:
             event_id_obj = ObjectId(event_id)

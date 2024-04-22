@@ -1,20 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EventNode } from './EventNodeInterface';
 import { Event } from '../eventComponents/event-interface';
 import { Edge } from 'reactflow';
 
-
-interface GraphData {
-    nodes: EventNode[];
-    edges: Edge[];
-    isLoading: boolean;
-    error: string | null;
-}
-
-
-
 const createEventNodes = (eventsObject: Record<string, Event>): EventNode[] => {
-    const gridSize = 300; // Distance between nodes
+    const gridSize = 300;
     return Object.keys(eventsObject).map((key, index) => {
         const event = eventsObject[key];
         const x = (index % 10) * gridSize; 
@@ -27,54 +17,52 @@ const createEventNodes = (eventsObject: Record<string, Event>): EventNode[] => {
         };
     });
 };
-
 const createEdges = (edgesObject: Record<string, string[]>): Edge[] => {
-    const edges: Edge[] = [];
-  
-    Object.entries(edgesObject).forEach(([source, targets]) => {
-      targets.forEach(target => {
-        const edge: Edge = {
-          id: `e${source}-${target}`,  // Create a unique ID for the edge
-          source: source,
-          target: target,
-          type: 'buttonEdge', // This should match the key in edgeTypes
-        };
-        edges.push(edge);
-      });
-    });
-  
-    return edges;
-  };
+    let edges = []; // Initialize edges as an array
 
-const useGraphData = (projectName: string): GraphData => {
-    const [graphData, setGraphData] = useState<GraphData>({ nodes: [], edges: [], isLoading: true, error: null });
+    Object.entries(edgesObject).forEach(([source, targets]) => {
+        const sourceEdges = targets.map(target => ({
+            id: `e${source}-${target}`,
+            source: source,
+            target: target,
+            type: 'buttonEdge',
+        }));
+        edges.push(...sourceEdges); // Push all edges from sourceEdges to the main edges array
+    });
+
+    return edges; // Return the correctly populated edges array
+};
+
+const useGraphData = (projectName: string) => {
+    const [graphData, setGraphData] = useState({ nodes: [], edges: [], isLoading: true, error: null });
+    const [refreshIndex, setRefreshIndex] = useState(0);
+
+    const refresh = useCallback(() => {
+        setRefreshIndex((index) => index + 1);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
+            setGraphData((prevData) => ({ ...prevData, isLoading: true }));
             try {
                 const response = await fetch(`http://localhost:8000/api/${projectName}/graphs`);
                 const data = await response.json();
 
-                //Creates array of nodes and edges using data from response
                 const eventNodes = createEventNodes(data.nodes);
                 const projectEdges = createEdges(data.edges);
 
-                // Validate and transform data before setting state
-                const validatedNodes = Array.isArray(eventNodes) ? eventNodes : [];
-                const validatedEdges = Array.isArray(projectEdges) ? projectEdges : [];
-
-                setGraphData({ 
-                    nodes: validatedNodes, 
-                    edges: validatedEdges, 
-                    isLoading: false, 
-                    error: null 
+                setGraphData({
+                    nodes: eventNodes,
+                    edges: projectEdges,
+                    isLoading: false,
+                    error: null
                 });
             } catch (error) {
                 console.error("Error fetching graph data:", error);
-                setGraphData({ 
-                    nodes: [], 
-                    edges: [], 
-                    isLoading: false, 
+                setGraphData({
+                    nodes: [],
+                    edges: [],
+                    isLoading: false,
                     error: error instanceof Error ? error.message : String(error)
                 });
             }
@@ -83,10 +71,9 @@ const useGraphData = (projectName: string): GraphData => {
         if (projectName) {
             fetchData();
         }
-    }, [projectName]);
+    }, [projectName, refreshIndex]);
 
-
-    return graphData;
+    return { ...graphData, refresh };
 };
 
 export default useGraphData;

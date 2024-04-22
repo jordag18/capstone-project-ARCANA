@@ -83,3 +83,7 @@ class IconLibraryResponse(BaseModel):
     blue: Dict[str, Icon]
     red: Dict[str, Icon]
     white: Dict[str, Icon]
+
+
+class AutoEdge(BaseModel):
+    auto_edge: bool

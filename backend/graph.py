@@ -75,7 +75,7 @@ class GraphManager:
             GraphManager.last_blue = None
 
     @staticmethod
-    def build_graph(project, auto_edges=True):
+    def build_graph(project, auto_edges):
         groups = project.group_events_by(["vector_id", "initials"])
         groups = [EventsManager.sort_events_by(group, "timestamp") for group in groups]
         for events_group in groups:
@@ -91,7 +91,7 @@ class GraphManager:
         if auto_edges:
             if event.is_malformed:
                 GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
-            elif event.team == "Red":
+            elif event.team == "red":
                 if GraphManager.last_red is not None:
                     GraphManager.edges[GraphManager.last_red.get_id()].append(event.get_id())
                 GraphManager.last_red = event
@@ -100,7 +100,7 @@ class GraphManager:
                     GraphManager.edges[GraphManager.last_blue.get_id()].append(event.get_id())
                 GraphManager.last_blue = event
         else:
-            if event.team == "Red":
+            if event.team == "red":
                 GraphManager.last_red = None
             else:
                 GraphManager.last_blue = None
