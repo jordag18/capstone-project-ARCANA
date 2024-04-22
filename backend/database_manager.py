@@ -89,7 +89,7 @@ class DatabaseManager:
             new_event = EventRepresenter(id=ObjectId(),**event_data)
             print(new_event)
             project.event_list.append(new_event)
-            #project.update_graph(auto_edges)
+            project.update_graph(auto_edges)
             project.save()  # Save the updated project
 
             EventActionLog(

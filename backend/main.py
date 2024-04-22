@@ -158,21 +158,23 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
-async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+async def create_event(project_name: str, event_create: EventCreate = Body(...), auto_edges: AutoEdge = Body(...)):
+    print("EventCreate: ", event_create)
+    print("AutoEdges: ", auto_edges.auto_edge)
     created_data = event_create.model_dump(exclude_unset=True)
     try:
         print("event add")
         project = db_manager.get_project_representer(project_name)
-        created_event = db_manager.add_event_to_project(project_name, created_data, False)
+        created_event = db_manager.add_event_to_project(project_name, created_data, auto_edges)
        
         if created_event:
-            #db_manager.no_edge_node(project_name, created_event.get_id(), auto_create_edges)
+            
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(status_code=404, detail="Project not found or event creation failed")
     except HTTPException as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
+        
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
     try:
