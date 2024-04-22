@@ -165,7 +165,7 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
     try:
         print("event add")
         project = db_manager.get_project_representer(project_name)
-        created_event = db_manager.add_event_to_project(project_name, created_data, auto_edges)
+        created_event = db_manager.add_event_to_project(project_name, created_data,  auto_edges.auto_edge)
        
         if created_event:
             

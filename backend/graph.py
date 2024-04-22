@@ -75,7 +75,7 @@ class GraphManager:
             GraphManager.last_blue = None
 
     @staticmethod
-    def build_graph(project, auto_edges=True):
+    def build_graph(project, auto_edges):
         groups = project.group_events_by(["vector_id", "initials"])
         groups = [EventsManager.sort_events_by(group, "timestamp") for group in groups]
         for events_group in groups:
@@ -90,22 +90,17 @@ class GraphManager:
         # Conditionally add edges based on auto_edges parameter
         if auto_edges:
             if event.is_malformed:
-                # Ensure no duplicate edge for malformed nodes
-                if event.get_id() not in GraphManager.edges[GraphManager.malformed_key]:
-                    GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
-            elif event.team == "Red":
-                # Check for an existing edge to avoid duplicates
-                if GraphManager.last_red is not None and event.get_id() not in GraphManager.edges[GraphManager.last_red.get_id()]:
+                GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
+            elif event.team == "red":
+                if GraphManager.last_red is not None:
                     GraphManager.edges[GraphManager.last_red.get_id()].append(event.get_id())
                 GraphManager.last_red = event
             else:
-                # Check for an existing edge to avoid duplicates for blue team
-                if GraphManager.last_blue is not None and event.get_id() not in GraphManager.edges[GraphManager.last_blue.get_id()]:
+                if GraphManager.last_blue is not None:
                     GraphManager.edges[GraphManager.last_blue.get_id()].append(event.get_id())
                 GraphManager.last_blue = event
         else:
-            # Optionally reset pointers when not automatically adding edges
-            if event.team == "Red":
+            if event.team == "red":
                 GraphManager.last_red = None
             else:
                 GraphManager.last_blue = None

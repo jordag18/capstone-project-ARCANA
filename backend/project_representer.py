@@ -61,6 +61,8 @@ class ProjectRepresenter(Document):
         # Reset graph data in GraphManager
         GraphManager.nodes = {}
         GraphManager.edges = defaultdict(list)
+        GraphManager.last_blue = None
+        GraphManager.last_red = None
 
     def update_graph(self, auto_edges, delete_node=None, edited_id=None, edited_data=None):
         if delete_node is not None:

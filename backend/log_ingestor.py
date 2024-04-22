@@ -111,7 +111,7 @@ class LogIngestor:
                 is_malformed = False #9
                 #fields in csv file, present in table 3.2.2 - 8 #1-8
                 initials = row['initials']
-                team = row['team']                        
+                team = row['team'].lower()                        
                 sourceHost = row['sourceHost']                        
                 targetHostList = row['targetHost'].split(',') if row['targetHost'] else []                       
                 location = row['location']
@@ -167,14 +167,14 @@ class LogIngestor:
         """
         try:
             match team:
-                case "Blue":
+                case "blue":
                     #icon library not implemented 
                     icon_path = "/Icons/BlueTeam_Activity.png"
                     action_title = "Blue Team Activity"
-                case "Red":
+                case "red":
                     icon_path = '/Icons/RedTeam_Activity.png'
                     action_title = "Red Team Activity"
-                case "White":
+                case "white":
                     icon_path = "/Icons/Whitecard.png"
                     action_title = "White Card"
                 case _:
