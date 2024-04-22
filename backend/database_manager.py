@@ -83,46 +83,47 @@ class DatabaseManager:
         return ProjectRepresenter.objects(name=project_name).first()
 
     def add_event_to_project(self, project_name, event_data, auto_edges):
-        # Add an event to a specific project
-        project = ProjectRepresenter.objects(id=project_id).first()
+       # Add an event to a specific project
+        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             new_event = EventRepresenter(**event_data)
             print(new_event)
+            project.event_list.append(new_event)
+            project.update_graph(auto_edges)
+            project.save()  # Save the updated project
 
-            self.log_action(
-                project_id=str(project.id),
-                action_type="create",
+            EventActionLog(
+                action_type='create',
                 event_after=new_event,
-                event_before= None
-            )
-
+                project=project,
+            ).save()
             return new_event
         return None
     
-    def create_event_to_project(self, project, event_data):
-        try:
-            new_event = EventRepresenter(id=ObjectId(), **event_data)
-            new_event.save()
+    # def create_event_to_project(self, project, event_data):
+    #     try:
+    #         new_event = EventRepresenter(id=ObjectId(), **event_data)
+    #         new_event.save()
 
-            result = self.projects_collection.update_one(
-                {"name": project.name},
-                {"$push": {"event_list": new_event.id}}
-            )
-            project.event_list.append(new_event)
-            project.save()  # Save the updated project
-            if result.modified_count == 1:
-                EventActionLog(
-                    action_type='create',
-                    event_after=new_event,
-                    project=project,
-                ).save()
-                return new_event
-            else:
-                return None
-        except Exception as e:
-            return None
+    #         result = self.projects_collection.update_one(
+    #             {"name": project.name},
+    #             {"$push": {"event_list": new_event.id}}
+    #         )
+    #         project.event_list.append(new_event)
+    #         project.save()  # Save the updated project
+    #         if result.modified_count == 1:
+    #             EventActionLog(
+    #                 action_type='create',
+    #                 event_after=new_event,
+    #                 project=project,
+    #             ).save()
+    #             return new_event
+    #         else:
+    #             return None
+    #     except Exception as e:
+    #         return None
 
-    def remove_event_from_project(self, project_id, event_id):
+    def remove_event_from_project(self, project_name, event_id):
         try:
             event_id_obj = ObjectId(event_id)
             # Update the project in the database to remove the event
@@ -139,7 +140,7 @@ class DatabaseManager:
             print("An error occurred:", e)
             return False
         
-    def modify_event_from_project(self, project_id, event_id, updated_data):
+    def modify_event_from_project(self, project_name, event_id, updated_data):
         try:
             event_id_obj = ObjectId(event_id)
         except ValidationError:
@@ -147,7 +148,7 @@ class DatabaseManager:
             return False
 
         try:
-            project = ProjectRepresenter.objects(id=project_id).first()
+            project = ProjectRepresenter.objects(name=project.name).first()
             if not project:
                 print("Project not found")
                 return False

@@ -23,8 +23,8 @@ from mongoengine import Document, StringField, ListField, DictField, DateTimeFie
 
 class ProjectRepresenter(Document):
     name = StringField(required=True)
-    start_date = DateTimeField(default=datetime.now)
-    end_date = DateTimeField(default=datetime.now)
+    start_date = DateTimeField(default=datetime.datetime.now)
+    end_date = DateTimeField(default=datetime.datetime.now)
     location = StringField(default="")
     initials = StringField(default="")
     event_list = ListField(EmbeddedDocumentField(EventRepresenter), default=[])

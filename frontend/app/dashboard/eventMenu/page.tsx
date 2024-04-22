@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
@@ -15,7 +15,6 @@ const EventsList = () => {
   const [sortCriterion, setSortCriterion] = useState("");
   const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
   const { undo, redo } = useUndoRedo();
-  const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const handleCreateModal = (createEvent: CreateEvent) => {
     setNewEvent(createEvent);
@@ -45,40 +44,12 @@ const EventsList = () => {
     setSortCriterion(event.target.value);
   };
 
-
-  const refreshEvents = () => {
-    setRefreshTrigger(!refreshTrigger);
-  };
-
   return (
     <div className="flex flex-auto flex-col mx-0 rounded-3xl p-2 ">
       <div className="flex flex-row items-center justify-between w-full rounded-3xl pr-5">
         <h1 className="text-3xl font-semibold pl-5">{project.name}</h1>
         <div className="flex items-center">
           <div className="px-5 py-1 space-x-1 rounded-3xl">
-            <button
-              className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600"
-              onClick={refreshEvents}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-arrow-repeat"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
-
-                <path
-                  fillRule="evenodd"
-                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
-              </svg>
-              Refresh
-            </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
               onClick={() => undo(project.id)}
@@ -94,19 +65,16 @@ const EventsList = () => {
           </div>
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-            onClick={() => handleCreateModal}
+            onClick={handleCreateModal}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-            </svg>
-            Create Event
+            + Create Event
           </div>
           <CreateEventModal
             newEvent={newEvent}
             isModalOpen={isModalOpen}
             onSubmit={handleCreateEventSubmit} // Pass the handler here
             onClose={handleCloseModal}
-            />
+          />
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" // Added some left margin for spacing
             onClick={handleOpenFilterDialog}

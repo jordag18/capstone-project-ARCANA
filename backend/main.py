@@ -156,10 +156,10 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
     created_data = event_create.model_dump(exclude_unset=True)
     try:
         project = db_manager.get_project_representer(project_name)
-        created_event = db_manager.create_event_to_project(project, created_data)
+        created_event = db_manager.add_event_to_project(project_name, created_data, auto_create_edges)
         if created_event:
             project.add_event_to_project(created_event)
-        created_event = db_manager.add_event_to_project(project_name, created_data, auto_create_edges)
+       
         if created_event:
             #db_manager.no_edge_node(project_name, created_event.get_id(), auto_create_edges)
             return created_event
@@ -172,7 +172,7 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
 async def delete_event(project_name: str, event_id: str):
     try:
         project = db_manager.get_project_representer(project_name)
-        response = db_manager.remove_event_from_project(project, event_id)
+        response = db_manager.remove_event_from_project(project_name, event_id)
         if response:
             project.delete_event_from_project(event_id)
             return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
