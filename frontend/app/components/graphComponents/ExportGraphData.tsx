@@ -1,37 +1,50 @@
 import React from "react";
 
-const ExportGraphData = ({ projectName }) => {
-  const handleImport = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/getGraphData/${projectName}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch graph data");
-      }
-      const blob = await response.blob();
-      downloadBlob(blob, `${projectName}-graph-data.xml`);
-    } catch (error) {
-      console.error("Error fetching graph data:", error);
-      alert("Failed to import graph data: " + error.message);
-    }
+const ExportGraphData = ({ nodes, edges, projectName }) => {
+  const convertGraphToXML = (nodes, edges) => {
+    const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
+    let xmlContent = `<Graph projectName="${projectName}">`;
+
+    xmlContent += '<Nodes>';
+    nodes.forEach(node => {
+      xmlContent += `<Node id="${node.id}" type="${node.type}" positionX="${node.position.x}" positionY="${node.position.y}">`;
+      xmlContent += `<Data>${JSON.stringify(node.data)}</Data>`;
+      xmlContent += `</Node>`;
+    });
+    xmlContent += '</Nodes>';
+
+    xmlContent += '<Edges>';
+    edges.forEach(edge => {
+      xmlContent += `<Edge id="${edge.id}" source="${edge.source}" target="${edge.target}" type="${edge.type}" />`;
+    });
+    xmlContent += '</Edges>';
+
+    xmlContent += '</Graph>';
+
+    return xmlHeader + xmlContent;
   };
 
-  const downloadBlob = (blob, filename) => {
+  const downloadBlob = (xmlData, filename) => {
+    const blob = new Blob([xmlData], { type: 'application/xml' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
-    document.body.appendChild(a); // Append the element to the DOM to make it work in Firefox
+    document.body.appendChild(a);
     a.click();
-    a.remove(); // After downloading remove the element
+    a.remove();
     window.URL.revokeObjectURL(url);
+  };
+
+  const handleExport = () => {
+    const xmlData = convertGraphToXML(nodes, edges);
+    downloadBlob(xmlData, `${projectName}-graph-data.xml`);
   };
 
   return (
     <button
-      onClick={handleImport}
-      className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded" // Ensure consistent styling
+      onClick={handleExport}
+      className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
     >
       Export Graph Data
     </button>

@@ -171,14 +171,18 @@ const Flow = () => {
     <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
       <div className="w-full h-full" ref={reactFlowWrapper}>
         <div className="button-group mt-4 flex justify-center space-x-4">
-        <button
-          onClick={createNode}
-          className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-        >
-          Create Event Node
-        </button>
-        <ExportGraphData projectName={project.name} />
-      </div>
+          <button
+            onClick={createNode}
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+          >
+            Create Event Node
+          </button>
+          <ExportGraphData
+            nodes={nodesState}
+            edges={edgesState}
+            projectName={project.name}
+          />
+        </div>
         <ReactFlow
           nodes={nodesState}
           edges={edgesState}
