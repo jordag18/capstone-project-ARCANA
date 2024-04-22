@@ -29,32 +29,32 @@ function UserLogTable() {
 
   return (
     <>
-        <div className="flex items-center justify-center overflow-auto rounded-lg">
-          <div>
+      <div className="flex items-center justify-center overflow-auto rounded-lg">
+        <div>
           <table className="table w-full">
-            <thead className="bg-base-200 border-b-2 border-slate-500">
-                <tr>
-                  <th>Initials</th>
-                  <th>Time Stamp</th>
-                  <th>Description</th>
+            <thead className="bg-slate-300 border-b-2 border-slate-500">
+              <tr>
+                <th className="border-r-2 border-slate-200">Initials</th>
+                <th className="border-r-2 border-slate-200">Time Stamp</th>
+                <th className="border-r-2 border-slate-200">Description</th>
+              </tr>
+            </thead>
+            <tbody className="bg-base-200">
+              {userActivityLog.map((log, index) => (
+                <tr key={index}>
+                  <td>{log.initials}</td>
+                  <td>
+                    {log.timestamp
+                      ? new Date(log.timestamp).toLocaleString()
+                      : "N/A"}
+                  </td>
+                  <td>{log.statement}</td>
                 </tr>
-              </thead>
-              <tbody className="bg-base-200">
-                {userActivityLog.map((log, index) => (
-                  <tr key={index}>
-                    <td>{log.initials}</td>
-                    <td>
-                        {log.timestamp
-                          ? new Date(log.timestamp).toLocaleString()
-                          : "N/A"}
-                      </td>
-                    <td>{log.statement}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
+      </div>
     </>
   );
 }

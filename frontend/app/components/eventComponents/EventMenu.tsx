@@ -85,29 +85,29 @@ const EventMenu = ({ criteria, sortCriterion}) => {
     <div className="flex overflow-auto rounded-lg">
       <table className="table w-full">
         {/* head */}
-        <thead className="bg-base-200 border-b-2 border-slate-500">
+        <thead className="bg-slate-300 border-b-2 border-slate-500">
           <tr>
-            <th>ID</th>
-            <th>Icon</th>
-            <th>Action Title</th>
-            <th>Initials</th>
-            <th>Team</th>
-            <th>Vector ID</th>
-            <th>Location</th>
-            <th>Description</th>
-            <th>Source Host</th>
-            <th>Target Host List</th>
-            <th>Data Source</th>
-            <th>Posture</th>
-            <th>Timestamp</th>
-            <th>Malformed</th>
-            <th>Last Modified</th>
-            <th></th>
+            <th className="border-r-2 border-slate-200">ID</th>
+            <th className="border-r-2 border-slate-200">Icon</th>
+            <th className="border-r-2 border-slate-200">Action Title</th>
+            <th className="border-r-2 border-slate-200">Initials</th>
+            <th className="border-r-2 border-slate-200">Team</th>
+            <th className="border-r-2 border-slate-200">Vector ID</th>
+            <th className="border-r-2 border-slate-200">Location</th>
+            <th className="border-r-2 border-slate-200">Description</th>
+            <th className="border-r-2 border-slate-200">Source Host</th>
+            <th className="border-r-2 border-slate-200">Target Host List</th>
+            <th className="border-r-2 border-slate-200">Data Source</th>
+            <th className="border-r-2 border-slate-200">Posture</th>
+            <th className="border-r-2 border-slate-200">Timestamp</th>
+            <th className="border-r-2 border-slate-200">Malformed</th>
+            <th className="border-r-2 border-slate-200">Last Modified</th>
+            <th className="border-r-2 border-slate-200"></th>
           </tr>
         </thead>
         <tbody className="bg-base-200">
           {filteredEvents.map((event:Event, index) => (
-            <tr key={index} className="hover:bg-slate-200 ">
+            <tr key={index} className="hover:bg-slate-200 " >
               {/* Each <td> is a cell for the project's attribute */}
               <td>{event.id}</td>
               <td>{event.icon}</td>
