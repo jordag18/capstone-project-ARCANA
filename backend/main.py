@@ -307,6 +307,9 @@ async def redo(project_id: str):
 
 @app.get("/api/userActivityLog")
 def get_user_activity_logs():
+    """
+        This API Endpoint allows the frontend to get the User Activity List from the database
+    """
     try:
         logs = userActivityLogger.get_log_list()
         log_data = []
@@ -326,9 +329,10 @@ async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: 
         This API call allows the frontend to add a User Log to the Activity List
     """
     try:
-        # Accessing the user activity logger instance from DatabaseManager
-       # user_activity_logger = db_manager.user_activity_logger
-        #user_activity_logger.add_user_activity_log(initials, timestamp, log_entry, data_source)
+        userActivityLogger.add_user_activity_log(initials=initials,
+                            timestamp=timestamp,
+                            statement=log_entry
+                            )
         return {"message": "Log entry added successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
