@@ -16,7 +16,7 @@ import { EventNode } from "@/app/components/graphComponents/EventNodeInterface";
 import EventNodeContextMenu from "./EventNodeContextMenu";
 import EditEventModal from "../../../components/eventComponents/event-modify-modal";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
-import ImportGraphData from "@/app/components/graphComponents/ImportGraphData";
+import ExportGraphData from "@/app/components/graphComponents/ExportGraphData";
 import "reactflow/dist/style.css";
 import useGraphData from "@/app/components/graphComponents/GraphDataHook";
 import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
@@ -177,7 +177,7 @@ const Flow = () => {
         >
           Create Event Node
         </button>
-        <ImportGraphData projectName={project.name} />
+        <ExportGraphData projectName={project.name} />
       </div>
         <ReactFlow
           nodes={nodesState}
