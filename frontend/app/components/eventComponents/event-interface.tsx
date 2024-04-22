@@ -18,6 +18,7 @@ export interface Event {
 
 export interface CreateEvent {
   action_title: string;
+  auto_edge: boolean;
   data_source: string;
   description: string;
   icon: string;
