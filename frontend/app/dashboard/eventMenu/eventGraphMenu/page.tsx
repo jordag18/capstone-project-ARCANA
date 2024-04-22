@@ -32,7 +32,7 @@ const edgeTypes = {
 
 const Flow = () => {
   const { project } = useProject();
-  const { nodes, edges, isLoading, error } = useGraphData(project.name);
+  const { nodes, edges, isLoading, error, refresh } = useGraphData(project.name);
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [selectedNode, setSelectedNode] = useState<EventNode | null>(null);
@@ -41,6 +41,7 @@ const Flow = () => {
   const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
+  
 
   useEffect(() => {
     setNodes(nodes as EventNode[]);
@@ -172,6 +173,12 @@ const Flow = () => {
         className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
       >
         Create Event Node
+      </button>
+      <button
+        onClick={refresh}
+        className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+      >
+        Refresh Data
       </button>
       <div className="w-full h-full" ref={reactFlowWrapper}>
         <ReactFlow
