@@ -115,11 +115,6 @@ const CreateEventModal: React.FC<createEventProp> = ({
     return (
       <dialog id='create_event_modal' className='modal' style={{ width: '100%', height: '80%' }}>
         <div className='modal-box'>
-            <form method='dialog'>
-                <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
-                    X
-                </button>
-            </form>
             <div className="flex flex-col space-y-2">
               <h3 className="font-bold text-lg">Create Event</h3>
               <div className="flex flex-row space-x-2">
@@ -272,6 +267,9 @@ const CreateEventModal: React.FC<createEventProp> = ({
             </label>
               <div>
                 <button className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" onClick={handleSubmit}>Create</button>
+                <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
+                    Close
+                </button>
               </div>
             </div>
           </div>
