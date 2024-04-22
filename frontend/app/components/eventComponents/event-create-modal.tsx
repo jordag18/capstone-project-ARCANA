@@ -267,9 +267,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
             </label>
               <div>
                 <button className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" onClick={handleSubmit}>Create</button>
-                <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2' onClick={onClose}>
-                    Close
-                </button>
+                <button className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" onClick={onClose}>Close</button>
               </div>
             </div>
           </div>
