@@ -16,6 +16,7 @@ import { EventNode } from "@/app/components/graphComponents/EventNodeInterface";
 import EventNodeContextMenu from "./EventNodeContextMenu";
 import EditEventModal from "../../../components/eventComponents/event-modify-modal";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";
+import ExportGraphData from "@/app/components/graphComponents/ExportGraphData";
 import "reactflow/dist/style.css";
 import useGraphData from "@/app/components/graphComponents/GraphDataHook";
 import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
@@ -111,7 +112,7 @@ const Flow = () => {
         data: eventData,
       };
       setNodes((nodesState) => [...nodesState, newNode]);
-      setIsCreateModalOpen(false); 
+      setIsCreateModalOpen(false);
     },
     [nodesState]
   );
@@ -168,19 +169,20 @@ const Flow = () => {
 
   return (
     <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
-      <button
-        onClick={createNode}
-        className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-      >
-        Create Event Node
-      </button>
-      <button
-        onClick={refresh}
-        className="mb-4 text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-      >
-        Refresh Data
-      </button>
       <div className="w-full h-full" ref={reactFlowWrapper}>
+        <div className="button-group mt-4 flex justify-center space-x-4">
+          <button
+            onClick={createNode}
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+          >
+            Create Event Node
+          </button>
+          <ExportGraphData
+            nodes={nodesState}
+            edges={edgesState}
+            projectName={project.name}
+          />
+        </div>
         <ReactFlow
           nodes={nodesState}
           edges={edgesState}
@@ -215,8 +217,8 @@ const Flow = () => {
         <CreateEventModal
           newEvent={newEvent}
           isModalOpen={isCreateModalOpen}
-          onSubmit={handleCreateNode} // Pass the function to handle node creation
-          onClose={() => setIsCreateModalOpen(false)} // Handle closing the modal
+          onSubmit={handleCreateNode}
+          onClose={() => setIsCreateModalOpen(false)}
         />
       )}
       {isEditModalOpen && selectedNode && (
