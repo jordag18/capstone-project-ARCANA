@@ -95,12 +95,11 @@ const EventsList = () => {
             </svg>
             Create Event
           </div>
-
           <CreateEventModal
             newEvent={newEvent}
-          isModalOpen={isModalOpen}
-          onClose={handleCloseModal}
-          />
+            isModalOpen={isModalOpen}
+            onClose={handleCloseModal}
+            />
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" // Added some left margin for spacing
             onClick={handleOpenFilterDialog}

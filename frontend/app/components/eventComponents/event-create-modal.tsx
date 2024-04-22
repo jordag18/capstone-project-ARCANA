@@ -1,11 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useProject } from '@/app/contexts/ProjectContext'
 import { CreateEvent } from './event-interface'
+import axios from 'axios'
 
 interface createEventProp {
     newEvent: CreateEvent
     isModalOpen: boolean
     onClose: () => void
+}
+
+interface IconLibrary {
+  [team: string]: {
+      [iconName: string]: IconInfo;
+  };
+}
+
+interface IconInfo {
+  image: string;
+  isDefault: boolean;
 }
 
 const CreateEventModal: React.FC<createEventProp> = ({
@@ -15,6 +27,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
 }) => {
     const { project } = useProject()
     const [formData, setFormData] = useState<CreateEvent>(newEvent)
+    const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
 
     const handleSubmit = async () => {
       if ((!formData.initials || formData.initials.trim() === '' || formData.initials.length > 2) ||
@@ -43,32 +56,35 @@ const CreateEventModal: React.FC<createEventProp> = ({
       }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
+    const fetchIconLibrary = async () => {
+      try {
+          const response = await axios.get(`http://localhost:8000/api/project/${project.id}/icon-libraries`);
+          setIconLibraries(response.data);
+      } catch (error) {
+          console.error('Failed to fetch icon libraries:', error);
+      }
+    };
+
+    useEffect(() => {
+        fetchIconLibrary();
+    }, [project.id]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      if (name === "target_host_list") {
+          // Convert comma-separated string to a list of strings
+          const targetHostList = value.split(",").map(item => item.trim());
           setFormData((prevFormData) => ({
               ...prevFormData,
-              icon: file.name
+              [name]: targetHostList
+          }));
+      } else {
+          setFormData((prevFormData) => ({
+              ...prevFormData,
+              [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
           }));
       }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "target_host_list") {
-        // Convert comma-separated string to a list of strings
-        const targetHostList = value.split(",").map(item => item.trim());
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: targetHostList
-        }));
-    } else {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
-        }));
-    }
-  };
+    };
     
 
     useEffect(() => {
@@ -229,15 +245,13 @@ const CreateEventModal: React.FC<createEventProp> = ({
                 </label>
               </div>
               <h2>Icon</h2>
-                <label className="input input-bordered flex items-center gap-2">
-                    <input
-                        type="file"
-                        name="icon"
-                        accept="image/*"
-                        className="grow"
-                        onChange={handleFileChange}
+                {Object.entries(iconLibraries).map(([iconName, iconInfo]) =>
+                  <label key={iconName}>
+                    <input 
+                      value={iconName}
                     />
-                </label>
+                  </label>
+                )}
               <div className="flex-col">
             </div>
           </div>
