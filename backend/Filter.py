@@ -1,4 +1,6 @@
 import datetime
+from event_representer import EventRepresenter
+from typing import List
 
 class Filter:
     # Filters events by user's initials and only returns those events, 
@@ -121,58 +123,57 @@ class Filter:
         sorted_events = sorted(event_list, key=sorting_key, reverse=True)
         return sorted_events
     
-    def sort_events_by_location_ascending(self, event_list):
+    def sort_events_by_location_ascending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             return (event.location or 'zzzzz', event.location is None)
         
-        sorted_events = sorted(event_list, key=sorting_key)
+        sorted_events = sorted(events, key=sorting_key)
         return sorted_events
     
-    def sort_events_by_location_descending(self, event_list):
+    def sort_events_by_location_descending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             if event.location is None:
                 return ('', True)
             else:
                 return (event.location, False)
 
-        sorted_events = sorted(event_list, key=sorting_key, reverse=True)
+        sorted_events = sorted(events, key=sorting_key, reverse=True)
         return sorted_events
     
-    def sort_events_by_vector_id_ascending(event_list):
+    def sort_events_by_vector_id_ascending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             return (event.vector_id or 'zzzzz', event.vector_id is None)
         
-        sorted_events = sorted(event_list, key=sorting_key)
+        sorted_events = sorted(events, key=sorting_key)
         return sorted_events
     
-    def sort_events_by_vector_id_descending(event_list):
+    def sort_events_by_vector_id_descending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             if event.vector_id is None:
                 return ('', True)
             else:
                 return (event.vector_id, False)
 
-        sorted_events = sorted(event_list, key=sorting_key, reverse=True)
+        sorted_events = sorted(events, key=sorting_key, reverse=True)
         return sorted_events
 
-    def sort_events_by_timestamp_ascending(self, event_list):
+    def sort_events_by_timestamp_ascending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             if event.timestamp == "":
                 future_date = "9999-12-31 23:59:59"
                 return future_date, True
             else:
                 return event.timestamp, False
-        sorted_events = sorted(event_list, key=sorting_key)
+        sorted_events = sorted(events, key=sorting_key)
         return sorted_events
     
-    def sort_events_by_timestamp_descending(self, event_list):
+    def sort_events_by_timestamp_descending(self, events: List[EventRepresenter]):
         def sorting_key(event):
             if event.timestamp is not None:
                 return event.timestamp
             else:
                 return ""
         
-        sorted_events = sorted(event_list, key=sorting_key, reverse=True)
+        sorted_events = sorted(events, key=sorting_key, reverse=True)
         return sorted_events
     
-    #waiting on frontend for the search function

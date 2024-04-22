@@ -27,7 +27,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   const handleSaveEvent = async () => {
     console.log("Save Event", formData, "body", JSON.stringify(formData))
     try {
-      const response = await fetch(`http://localhost:8000/api/editEvent/${project.name}/${formData.id}`, { //response to update event in project in database
+      const response = await fetch(`http://localhost:8000/api/editEvent/${project.id}/${formData.id}`, { //response to update event in project in database
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import EventMenu from "@/app/components/eventComponents/EventMenu";
 import CreateEventModal from "@/app/components/eventComponents/event-create-modal";

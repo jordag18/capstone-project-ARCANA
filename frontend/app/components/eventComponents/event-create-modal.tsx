@@ -25,7 +25,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
       }
       console.log("Create Event",formData,"body",JSON.stringify(formData))
       try {
-          const response = await fetch(`http://localhost:8000/api/createEvent/${project.name}`, {
+          const response = await fetch(`http://localhost:8000/api/createEvent/${project.id}`, {
               method: "PATCH",
               headers: {
                   "Content-type": "application/json"
@@ -68,7 +68,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
             [name]: name === "icon" ? value.replace(/^.*[\\\/]/, '') : value
         }));
     }
-};
+  };
     
 
     useEffect(() => {

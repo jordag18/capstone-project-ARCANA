@@ -1,8 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form } from 'react-bootstrap';
 import { useProject } from '@/app/contexts/ProjectContext';
+import CreateTOAModal from '@/app/components/toaComponents/toa-create-modal';
+import { CreateToa, EditToa } from '@/app/components/toaComponents/toa-interface';
+import EditTOAModal from '@/app/components/toaComponents/toa-edit-modal';
 
 interface IconInfo {
     image: string;
@@ -15,27 +17,17 @@ interface IconLibrary {
     };
 }
 
-interface EditFormData {
-    team: string;
-    actionTitle: string;
-    imageName: string | null;
-    isDefault: boolean;
-    oldTeam: string; 
-    oldActionTitle: string; 
-    oldImageName: string | null; 
-    oldIsDefault: boolean | null; 
-}
-
 const IconLibrary = () => {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [newToa, setNewToa] = useState<CreateToa>();
+    const [selectedToa, setSelectedToa] = useState<EditToa>();
     const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
-    const [editFormData, setEditFormData] = useState<EditFormData>({ team: '', actionTitle: '', imageName: null, isDefault: false, oldTeam: '', oldActionTitle: '', oldImageName: null, oldIsDefault: null });
-    const [showForm, setShowForm] = useState(false);
-    const [editIcon, setEditIcon] = useState<{ team: string, iconName: string } | null>(null);
     const { project } = useProject();
 
     const fetchIconLibrary = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/project/${project.name}/icon-libraries`);
+            const response = await axios.get(`http://localhost:8000/api/project/${project.id}/icon-libraries`);
             setIconLibraries(response.data);
         } catch (error) {
             console.error('Failed to fetch icon libraries:', error);
@@ -44,85 +36,39 @@ const IconLibrary = () => {
 
     useEffect(() => {
         fetchIconLibrary();
-    }, [project.name]);
+    }, [project.id]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            const fileName = file.name;
-            setEditFormData({ ...editFormData, imageName: fileName });
-        }
-    };
-    // Sends the data 
-    const handleCreateTOA = async () => {
-        const requestData = { team: editFormData.team, actionTitle: editFormData.actionTitle, imageName: editFormData.imageName };
-        if ((!requestData.team || requestData.team === "") ||
-            (!requestData.actionTitle || requestData.actionTitle === "") ||
-            (!requestData.imageName || requestData.imageName === "")) {
-            return
-        }
-        try {
-            const response = await axios.post(
-                `http://localhost:8000/api/project/${project.name}/create-toa`,
-                requestData
-            );
-            if (response.status === 200) {
-                fetchIconLibrary();
-                setShowForm(false);
-            } else {
-                throw new Error("Failed to create TOA icon");
-            }
-        } catch (error) {
-            console.error("Error creating TOA icon:", error);
-        }
-    };
-    // Sends both the old and new data
-    const handleEditTOA = async () => {
-        if (!editIcon) return;
-        const requestData = { ...editFormData };
-        try {
-            const response = await axios.post(
-                `http://localhost:8000/api/project/${project.name}/edit-toa`,
-                requestData
-            );
-            if (response.status === 200) {
-                fetchIconLibrary();
-                setShowForm(false);
-            } else {
-                throw new Error("Failed to edit TOA icon");
-            }
-        } catch (error) {
-            console.error("Error editing TOA icon:", error);
-        }
+    const handleCreateModal = (createToa: CreateToa) => {
+        setNewToa(createToa);
+        setIsCreateModalOpen(true);
     };
 
-    const handleEditIcon = (team: string, iconName: string) => {
-        setEditIcon({ team, iconName });
+    const handleEditModal = (team: string, iconName: string) => {
         const iconInfo = iconLibraries[team][iconName];
-        setEditFormData({ 
-            team: team, 
-            actionTitle: iconName, 
+        const editToa: EditToa = {
+            team,
+            actionTitle: iconName,
             imageName: iconInfo.image, 
-            isDefault: iconInfo.isDefault, 
-            oldTeam: team, 
-            oldActionTitle: iconName, 
-            oldImageName: iconInfo.image, 
-            oldIsDefault: iconInfo.isDefault 
-        });
-        setShowForm(true);
+            isDefault: iconInfo.isDefault,
+            oldTeam: team,
+            oldActionTitle: iconName,
+            oldImageName: iconInfo.image,
+            oldIsDefault: iconInfo.isDefault
+        };
+        setSelectedToa(editToa)
+        setIsEditModalOpen(true);
+    }
+
+    const handleCloseModal = () => {
+        setIsCreateModalOpen(false);
+        setIsEditModalOpen(false);
     };
+    
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
-        if (Object.entries(iconLibraries).map(([team, icons]) => (
-            Object.entries(icons).map(([iconName, iconInfo]) => (
-                iconInfo.isDefault === true
-            ))
-        ))) {
-            return
-        }
         try {
             const response = await axios.delete(
-                `http://localhost:8000/api/project/${project.name}/delete-icon?team=${team}&iconName=${iconName}`
+                `http://localhost:8000/api/project/${project.id}/delete-icon?team=${team}&iconName=${iconName}`
             );
             if (response.status === 200) {
                 fetchIconLibrary();
@@ -134,19 +80,17 @@ const IconLibrary = () => {
         }
     };
 
-    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.name === "isDefault") {
-            setEditFormData({ ...editFormData, isDefault: e.target.checked });
-        } else {
-            setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
-        }
-    };
-
     return (
         <div>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <h1 style={{fontWeight: 'bold', marginLeft: '2rem'}}>TOA Icon Library</h1>
-                <button onClick={() => setShowForm(true)} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
+                <button onClick={() => handleCreateModal(newToa || {})} style={{marginLeft: '2rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">+ Create TOA</button>
+                <button onClick={fetchIconLibrary} style={{marginLeft: '1rem'}} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Reload</button>
+                {isCreateModalOpen && <CreateTOAModal 
+                    newToa={newToa}
+                    isModalOpen={isCreateModalOpen}
+                    onClose={handleCloseModal}
+                />}
             </div>
             <div style={{marginTop: '2rem'}}>
                 {Object.entries(iconLibraries).map(([team, icons]) => (
@@ -159,7 +103,12 @@ const IconLibrary = () => {
                                     <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '100px', height: '100px'}}/>
                                     <p>{iconName}</p>
                                     {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
-                                    <button onClick={() => handleEditIcon(team, iconName)} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Edit</button>
+                                    <button onClick={() => handleEditModal(team, iconName)} className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2">Edit</button>
+                                    {isEditModalOpen && <EditTOAModal 
+                                        selectedToa= {selectedToa}
+                                        isModalOpen={isEditModalOpen}
+                                        onCLose={handleCloseModal}
+                                    />}
                                     <button onClick={() => handleDeleteIcon(team, iconName)} style={{marginLeft: '1rem'}} className='hover:font-bold'>Delete</button>
                                 </div>
                             ))}
@@ -167,35 +116,6 @@ const IconLibrary = () => {
                     </div>
                 ))}
             </div>
-            
-            {showForm && (
-                <div>
-                    <h2>{editIcon ? "Edit Icon" : "Create TOA Icon"}</h2>
-                    <form onSubmit={editIcon ? handleEditTOA : handleCreateTOA}>
-                        <div>
-                            <label>Team:</label>
-                            <input type="text" name="team" value={editFormData.team} onChange={handleFormChange} />
-                        </div>
-                        <div>
-                            <label>Action Title:</label>
-                            <input type="text" name="actionTitle" value={editFormData.actionTitle} onChange={handleFormChange} />
-                        </div>
-                        <Form.Group controlId="imageFile">
-                            <Form.Label>Icon Image</Form.Label>
-                            <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
-                        </Form.Group>
-                        {editFormData.imageName && (
-                            <img src={`/Icons/${editFormData.imageName}`} alt="Selected Image" style={{ marginTop: '10px', maxWidth: '100px' }} />
-                        )}
-                        <div>
-                            <input type="checkbox" name="isDefault" checked={editFormData.isDefault} onChange={handleFormChange} />
-                            <label>Set as Default</label>
-                        </div>
-                        <button type="submit">{editIcon ? "Update" : "Create"}</button>
-                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
-                    </form>
-                </div>
-            )}
         </div>
     );
 };

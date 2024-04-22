@@ -2,6 +2,7 @@ from project_representer import ProjectRepresenter
 from collections import defaultdict
 from events_manager import EventsManager
 from model import Graph
+from Filter import Filter
 
 
 class GraphManager:
@@ -84,3 +85,53 @@ class GraphManager:
                     edges[malformed_key].append(event.get_id())
 
         return {"nodes": nodes, "edges": edges, "malformed_key": malformed_key}
+    
+   
+@staticmethod
+def sort_graph(project, sort_criteria) -> Graph:
+    """
+    Sorts a list of events based on the given criteria and returns a graph.
+    """
+
+    match sort_criteria:
+        case "timestamp_descending":
+            sorted_events = Filter.sort_events_by_timestamp_ascending(project, project.event_list)
+        case "timestamp_ascending":
+            sorted_events = Filter.sort_events_by_timestamp_descending(project, project.event_list)
+        case "location_ascending":
+            sorted_events = Filter.sort_events_by_location_ascending(project, project.event_list)
+        case "location_descending":
+            sorted_events = Filter.sort_events_by_location_descending(project, project.event_list)
+        case "vector_id_ascending":
+            sorted_events = Filter.sort_events_by_vector_id_ascending(project, project.event_list)
+        case "vector_id_descending":
+            sorted_events = Filter.sort_events_by_vector_id_descending(project, project.event_list)
+
+    # Initialize dictionaries to store nodes and edges
+    nodes = {}
+    edges = defaultdict(list)
+    
+    # All the malformed events are mapped to the None key
+    malformed_key = ""
+
+    # Initialize variable to store the previous event ID
+    previous_event_id = None
+
+    # Process sorted events
+    for event in sorted_events:
+        event_id = event.get_id()
+        nodes[event_id] = event.get_event_info()
+
+        # Handle malformed events
+        if event.is_malformed:
+            edges[malformed_key].append(event_id)
+            continue
+
+        # Connect events with edges
+        if previous_event_id:
+            edges[previous_event_id].append(event_id)
+
+        # Update previous event ID
+        previous_event_id = event_id
+
+    return {"nodes": nodes, "edges": edges, "malformed_key": malformed_key}

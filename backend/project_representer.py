@@ -175,8 +175,10 @@ class ProjectRepresenter(Document):
 
     def edit_toa_icon(self, old_team, old_action_title, new_team, new_action_title, new_icon_filename, new_is_default):
         try: 
+
             # Check if the old team and action title exist in the library
             if old_team in self.toa_icon_library and old_action_title in self.toa_icon_library[old_team]:
+                
                 # Remove the old action title from the old team
                 old_icon_info = self.toa_icon_library[old_team].pop(old_action_title)
                 
