@@ -7,7 +7,6 @@ import FilterEventsDialog from "@/app/components/eventComponents/FilterEventsDia
 import { CreateEvent } from "@/app/components/eventComponents/event-interface";
 import { useUndoRedo } from "@/app/contexts/EventHistoryContext";
 
-
 const EventsList = () => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +28,13 @@ const EventsList = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleCreateEventSubmit = (eventData: CreateEvent) => {
+    console.log("Event Created:", eventData);
+    // Implement your logic to process eventData, such as an API call or updating local state
+    // For example, refreshing event list or closing modal could be handled here
+    setIsModalOpen(false); // Assuming you want to close the modal on successful submit
   };
 
   const updateFilterCriteria = (criteria) => {
@@ -98,6 +104,7 @@ const EventsList = () => {
           <CreateEventModal
             newEvent={newEvent}
             isModalOpen={isModalOpen}
+            onSubmit={handleCreateEventSubmit} // Pass the handler here
             onClose={handleCloseModal}
             />
           <div
@@ -131,11 +138,7 @@ const EventsList = () => {
         />
       </div>
       <div className="px-5 py-1 rounded-3xl">
-        <EventMenu
-          criteria={filterCriteria}
-          sortCriterion={sortCriterion}
-          key={refreshTrigger ? "refresh" : "no-refresh"}
-        />
+        <EventMenu criteria={filterCriteria} sortCriterion={sortCriterion} />
       </div>
     </div>
   );

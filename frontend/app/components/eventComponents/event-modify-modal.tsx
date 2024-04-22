@@ -15,17 +15,18 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   isModalOpen,
   onClose,
 }) => {
-  const { project} = useProject();
+  const { project } = useProject();
   const { updateEvent } = useProject();
   const [formData, setFormData] = useState<Event>({
-  ...selectedEvent,
-  target_host_list: selectedEvent.target_host_list.length
-    ? selectedEvent.target_host_list
-    : [],
-});
+    ...selectedEvent,
+    target_host_list:
+      selectedEvent.target_host_list?.length ?? 0
+        ? selectedEvent.target_host_list
+        : [],
+  });
 
   const handleSaveEvent = async () => {
-    console.log("Save Event", formData, "body", JSON.stringify(formData))
+    console.log("Save Event", formData, "body", JSON.stringify(formData));
     try {
       const response = await fetch(`http://localhost:8000/api/editEvent/${project.id}/${formData.id}`, { //response to update event in project in database
         method: "PATCH",
@@ -41,7 +42,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
 
       const updatedEvent = await response.json();
 
-      updateEvent(formData.id, formData) //uses the updateEvent function from project context to update modified event in context level
+      updateEvent(formData.id, formData); //uses the updateEvent function from project context to update modified event in context level
 
       onClose();
     } catch (error) {
@@ -53,7 +54,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
     const { name, value } = e.target;
     if (name === "target_host_list") {
       // Convert comma-separated string to a list of strings
-      const targetHostList = value.split(",").map(item => item.trim());
+      const targetHostList = value.split(",").map((item) => item.trim());
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: targetHostList,
@@ -76,6 +77,19 @@ const EditEventModal: React.FC<selectedEventProp> = ({
       }
     }
   }, [isModalOpen]);
+
+  useEffect(() => {
+    setFormData({
+      ...selectedEvent,
+      target_host_list: Array.isArray(selectedEvent.target_host_list)
+        ? selectedEvent.target_host_list
+        : [],
+    });
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    console.log("Opening modal with event data:", selectedEvent);
+  }, [selectedEvent]);
 
   return (
     <dialog id="edit_event_modal" className="modal">

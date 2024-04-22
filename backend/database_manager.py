@@ -7,9 +7,12 @@ from project_representer import ProjectRepresenter
 from event_representer import EventRepresenter
 from projects_manager import ProjectManager
 from event_action_log import EventActionLog
+from graph import GraphManager
 from bson import ObjectId
+from collections import defaultdict
 from graph import GraphManager
 import pymongo
+
 
 ##########################################################################################
 #
@@ -79,7 +82,7 @@ class DatabaseManager:
     def get_project_representer(self, project_name) -> ProjectRepresenter:
         return ProjectRepresenter.objects(name=project_name).first()
 
-    def add_event_to_project(self, project_id, event_data):
+    def add_event_to_project(self, project_name, event_data, auto_edges):
         # Add an event to a specific project
         project = ProjectRepresenter.objects(id=project_id).first()
         if project:
@@ -122,39 +125,16 @@ class DatabaseManager:
     def remove_event_from_project(self, project_id, event_id):
         try:
             event_id_obj = ObjectId(event_id)
-            # First fetch the event to log it before deletion
-            project = ProjectRepresenter.objects(id=project_id).first()
-            if not project:
-                print("Project not found")
-                return False
-
-            # Find the event to be removed
-            event_to_remove = None
-            for event in project.event_list:
-                if str(event.id) == str(event_id_obj):
-                    event_to_remove = copy.deepcopy(event)
-                    break
-
-            if not event_to_remove:
-                print("Event not found")
-                return False
-
-            # Perform the removal
-            update_result = project.update(pull__event_list__id=event_id_obj)
-            if update_result == 0:
-                print("Failed to remove the event")
-                return False
-            
-            # Log the removal
-            self.log_action(
-                project_id=str(project.id),
-                action_type="delete",
-                event_before=event_to_remove,
-                event_after=None,
-            )
-
-
-            return True
+            # Update the project in the database to remove the event
+            self.projects_collection.update_one({"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}})
+            project = self.get_project(project_name)
+            print(type(project),project_name)
+            project = ProjectRepresenter.objects(name=project_name).first()
+            if project:
+                project.event_list = [event for event in project.event_list if str(event.id) != event_id]
+                project.update_graph(False, event_id)
+                project.save()
+                return True
         except Exception as e:
             print("An error occurred:", e)
             return False
@@ -178,28 +158,49 @@ class DatabaseManager:
                     # Deep copy the event before updates to capture the 'before' state
                     event_before_update = copy.deepcopy(event)
 
-                    # Update the event with new data
-                    for key, value in updated_data.items():
-                        setattr(event, key, value)
-                    
-                    project.save()  # Save the updated project
-                    
-                    # Log the action with before and after states
-                    self.log_action(
-                        project_id=str(project.id),
-                        action_type="update",
-                        event_before=event_before_update,
-                        event_after=copy.deepcopy(event), # Deep copy after updates to capture the 'after' state
-                    )
-
-                    event_found = True
-                    print("Event updated successfully")
-                    break
-
-            if not event_found:
-                print("Event not found in the project")
+            # Prepare the update operation
+            update_operation = {
+                "$set": {
+                    # For each key-value pair in updated_data, create an update expression
+                    # This assumes event_list is an array of embedded documents (sub-documents) within the project document
+                    f"event_list.$[elem].{key}": value for key, value in updated_data.items()
+                }
+            }
+            # Specify the arrayFilters to identify the specific event to update within the event_list array
+            array_filters = [
+                {"elem._id": event_id_obj}  # Identifies the correct event in the event_list array by _id
+            ]
+            # Perform the update operation
+            result = self.projects_collection.update_one(
+                {"name": project_name},  # Filter to identify the correct project document
+                update_operation,
+                array_filters=array_filters  # Apply the arrayFilters
+            )
+            if result.matched_count == 0:
+                print("No matching project found")
                 return False
+            if result.modified_count == 0:
+                print("No modifications were made")
+                return False
+            
+                    # Retrieve the updated event data
+            project_after_update = self.projects_collection.find_one(
+                {"name": project_name, "event_list._id": event_id_obj},
+                {"event_list.$": 1}  # Returns only the matching event
+            )
+            event_after_update = project_after_update['event_list'][0] if 'event_list' in project_after_update and len(project_after_update['event_list']) > 0 else None
+            project = ProjectRepresenter.objects(name=project_name).first()
+            project.update_graph(True, None, event_id, event_after_update)
+            print("Event after update:", event_after_update)
 
+                        # Log the action
+            EventActionLog(
+                action_type='update',
+                event_before=event_before_update,
+                event_after=event_after_update,
+                project=project,
+            ).save()
+            project.save()
             return True
         except Exception as e:
             print("An error occurred:", str(e))
@@ -446,6 +447,26 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
+    
+    # def no_edge_node(self, project_name, event_id, auto_edges):
+    #     print("no edge ")
+    #     project = ProjectRepresenter.objects(name=project_name).first()
+    #     if not auto_edges:
+    #         events = project.event_list
+    #         for event in events:
+    #             if event.get_id() == event_id:
+    #                 send_event = event
+    #         project_graph = GraphManager.get_project_graphs(project, send_event)
+    #         project.project_graph = project_graph
+    #         project.save()
+    
+    # def graph_algorithm(self, project_name):
+    #     print("graph_algo ")
+    #     project = ProjectRepresenter.objects(name=project_name).first()
+    #     if project: 
+    #         project_graph = GraphManager.get_project_graphs(project)
+    #         project.project_graph = project_graph
+    #     return project.project_graph
 
     def update_project_graph(self, project):
         project_graph = GraphManager.get_project_graphs(project)
@@ -453,3 +474,7 @@ class DatabaseManager:
         project.save()
 
         return project_graph
+    def fetch_project_graph(self, project_name):
+        print("fetch graph ")
+        project = ProjectRepresenter.objects(name=project_name).first()
+        return project.project_graph

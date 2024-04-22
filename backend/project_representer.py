@@ -4,6 +4,9 @@ from events_manager import EventsManager
 #from user_activity_logger import UserActivityLogger
 from user_activity_logger import userActivityLogger
 from datetime import datetime
+from user_activity_logger import UserActivityLogger
+import datetime
+from graph import GraphManager
 from typing import List, Optional
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
@@ -24,7 +27,7 @@ class ProjectRepresenter(Document):
     end_date = DateTimeField(default=datetime.now)
     location = StringField(default="")
     initials = StringField(default="")
-    event_list = ListField(EmbeddedDocumentField(EventRepresenter), default = [])
+    event_list = ListField(EmbeddedDocumentField(EventRepresenter), default=[])
     toa_icon_library = DictField(default={
         'blue': {
             "detect": {"image": "detect.png", "isDefault": False},
@@ -41,12 +44,11 @@ class ProjectRepresenter(Document):
             "white team activity": {"image": "Whitecard.png", "isDefault": True}
         }
     })
-    project_graph = DictField(default={})
-
+    project_graph = DictField(default={'nodes': {}, 'edges': {}})
 
     meta = {
-        'collection': 'Projects',  # Specifies the collection name in MongoDB
-        'ordering': ['-timestamp']  # Documents will be ordered by timestamp descending by default
+        'collection': 'Projects',
+        'ordering': ['-timestamp']
     }
 
     def __init__(self, *args, **values):
@@ -54,8 +56,17 @@ class ProjectRepresenter(Document):
         self.event_manager = EventsManager()
         if not self.id:   
             self.ingestLogsToProject("uploads")
-        print('call')
-        
+
+    def update_graph(self, auto_edges, delete_node=None, edited_id=None, edited_data=None):
+        if delete_node is not None:
+            GraphManager.delete_event(delete_node)
+        elif edited_id and edited_data is not None:
+            GraphManager.edit_event(edited_id, edited_data)
+        else:
+            print("Updating graph with auto_edges:", auto_edges)
+            GraphManager.build_graph(self, auto_edges)  # Using static method directly
+        self.project_graph = {'nodes': GraphManager.nodes, 'edges': dict(GraphManager.edges)}
+
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
@@ -65,6 +76,8 @@ class ProjectRepresenter(Document):
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
+        
+        self.update_graph(auto_edges=True)
         self.save()
 
 

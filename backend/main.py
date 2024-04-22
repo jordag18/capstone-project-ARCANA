@@ -152,13 +152,16 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
-async def create_event(project_name: str, event_create: EventCreate = Body(...)):
+async def create_event(project_name: str, event_create: EventCreate = Body(...), auto_create_edges: bool = Body(default=False)):
     created_data = event_create.model_dump(exclude_unset=True)
     try:
         project = db_manager.get_project_representer(project_name)
         created_event = db_manager.create_event_to_project(project, created_data)
         if created_event:
             project.add_event_to_project(created_event)
+        created_event = db_manager.add_event_to_project(project_name, created_data, auto_create_edges)
+        if created_event:
+            #db_manager.no_edge_node(project_name, created_event.get_id(), auto_create_edges)
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(status_code=404, detail="Project not found or event creation failed")
@@ -178,16 +181,26 @@ async def delete_event(project_name: str, event_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get("/api/{project_name}/graphs", response_model=Graph)
 async def get_project_graphs(project_name: str):
     try:
-        project = db_manager.get_project_representer(project_name)
+     
+        return db_manager.fetch_project_graph(project_name)
 
     except Exception as e:
         raise HTTPException(detail=str(e))
-    if not project:
-        return {"error_message": f"Invalid project name: {project_name}"}
-    return db_manager.update_project_graph(project)
+
+# @app.get("/api/{project_name}/graphs", response_model=Graph)
+# async def get_project_graphs(project_name: str):
+#     try:
+#         project = db_manager.get_project_representer(project_name)
+
+#     except Exception as e:
+#         raise HTTPException(detail=str(e))
+#     if not project:
+#         return {"error_message": f"Invalid project name: {project_name}"}
+#     return db_manager.update_project_graph(project)
 
 @app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
 async def get_project_icon_libraries(project_name: str):
