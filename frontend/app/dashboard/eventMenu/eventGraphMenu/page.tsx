@@ -29,7 +29,7 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  buttonEdge: ButtonEdge, // This key must match the type you set in the edges
+  buttonEdge: ButtonEdge,
 };
 
 const Flow = () => {
@@ -119,11 +119,6 @@ const Flow = () => {
     },
     [nodesState]
   );
-
-  const handleCreateEventClose = useCallback(() => {
-    setIsCreateModalOpen(false);
-  }, []);
-
   const deleteNode = useCallback(
     async (node: EventNode) => {
       if (node.data.id && project) {
