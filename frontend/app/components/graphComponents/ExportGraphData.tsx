@@ -5,27 +5,27 @@ const ExportGraphData = ({ nodes, edges, projectName }) => {
     const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
     let xmlContent = `<Graph projectName="${projectName}">`;
 
-    xmlContent += '<Nodes>';
-    nodes.forEach(node => {
+    xmlContent += "<Nodes>";
+    nodes.forEach((node) => {
       xmlContent += `<Node id="${node.id}" type="${node.type}" positionX="${node.position.x}" positionY="${node.position.y}">`;
       xmlContent += `<Data>${JSON.stringify(node.data)}</Data>`;
       xmlContent += `</Node>`;
     });
-    xmlContent += '</Nodes>';
+    xmlContent += "</Nodes>";
 
-    xmlContent += '<Edges>';
-    edges.forEach(edge => {
+    xmlContent += "<Edges>";
+    edges.forEach((edge) => {
       xmlContent += `<Edge id="${edge.id}" source="${edge.source}" target="${edge.target}" type="${edge.type}" />`;
     });
-    xmlContent += '</Edges>';
+    xmlContent += "</Edges>";
 
-    xmlContent += '</Graph>';
+    xmlContent += "</Graph>";
 
     return xmlHeader + xmlContent;
   };
 
   const downloadBlob = (xmlData, filename) => {
-    const blob = new Blob([xmlData], { type: 'application/xml' });
+    const blob = new Blob([xmlData], { type: "application/xml" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
