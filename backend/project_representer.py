@@ -7,6 +7,7 @@ from datetime import datetime
 from graph import GraphManager
 from collections import defaultdict
 from typing import List, Optional
+import os
 from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
 
@@ -76,11 +77,12 @@ class ProjectRepresenter(Document):
 
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
-        log_ingestor.ingest_logs()
-
+        files_ingested = log_ingestor.ingest_logs()
+        for log_file in files_ingested:
+            self.record_to_logger("ingested_logs",data_source=os.path.basename(log_file))
         # Log activity when logs are ingested
-        self.record_to_logger("ingested_logs",data_source=directory)
         for event in self.event_manager.event_representer_list.events:
+            
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
         
@@ -129,10 +131,10 @@ class ProjectRepresenter(Document):
             return output_list
     
     def add_event_to_project(self,event:EventRepresenter):
-        new_event = self.event_manager.create_event(event)
-        if new_event:
-            self.record_to_logger("added_event",event_id=new_event.id)
-            return new_event
+        #new_event = self.event_manager.create_event(event)
+        if event:
+            self.record_to_logger("added_event",event_id=event.id)
+            return event
         else:
             return None
         

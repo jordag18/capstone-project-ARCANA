@@ -2,8 +2,7 @@ from file_handler import FileHandler
 from data_services import create_event_representer
 from events_manager import EventsManager
 from datetime import datetime
-import csv
-#from PIL import Image
+import csv,os
 
 ##########################################################################################
 # I feel like this class may be individually important enough to warrant method 
@@ -51,11 +50,13 @@ class LogIngestor:
             filetype = fileHandler.get_file_type(filepath)
             if filetype == "csv":
                 self._read_csv_file(filepath)
-                self.newFilesIngested.append(filepath)
+                if filepath not in self.newFilesIngested:
+                    self.newFilesIngested.append(filepath)
             else:
                 print("Unsupported file type:", filetype)
             fileHandler.delete_file(filepath)
         fileHandler.delete_directory()
+        return self.newFilesIngested
 
     
     def _read_csv_file(self, filePath:str):
@@ -139,7 +140,7 @@ class LogIngestor:
                     team= team,
                     vector_id= vectorID,
                     description= description,
-                    data_source= dataSource,
+                    data_source= os.path.basenam(dataSource),
                     icon= icon,
                     action_title= actionTitle,
                     last_modified= lastModified,

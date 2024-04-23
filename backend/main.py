@@ -168,7 +168,7 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
         created_event = db_manager.add_event_to_project(project_name, created_data,  auto_edges.auto_edge)
        
         if created_event:
-            
+            project.add_event_to_project(created_event)
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(status_code=404, detail="Project not found or event creation failed")
