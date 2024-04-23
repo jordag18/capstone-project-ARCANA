@@ -167,11 +167,33 @@ const Flow = () => {
     setSelectedNode(null);
   }, []);
 
-  const handleImportedContent = (content) => {
-    // You would parse the content here and update the state accordingly
-    console.log("Imported Content:", content);
-    // For example, if the content is JSON, you would do something like:
-    // const importedData = JSON.parse(content);
+  const handleImportedContent = (xmlContent) => {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
+
+    const parsedNodes = Array.from(xmlDoc.getElementsByTagName("Node")).map(
+      (node) => ({
+        id: node.getAttribute("id"),
+        type: "customEventNode",
+        position: {
+          x: parseFloat(node.getAttribute("positionX")),
+          y: parseFloat(node.getAttribute("positionY")),
+        },
+        data: JSON.parse(node.getElementsByTagName("Data")[0].textContent),
+      })
+    );
+
+    const parsedEdges = Array.from(xmlDoc.getElementsByTagName("Edge")).map(
+      (edge) => ({
+        id: edge.getAttribute("id"),
+        source: edge.getAttribute("source"),
+        target: edge.getAttribute("target"),
+        type: edge.getAttribute("type") || "buttonEdge", // Default to 'buttonEdge' if not specified
+      })
+    );
+
+    setNodes(parsedNodes);
+    setEdges(parsedEdges);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -248,6 +270,7 @@ const Flow = () => {
         <ImportGraphModal
           onImport={handleImportedContent}
           onClose={() => setIsImportModalOpen(false)}
+          currentProjectName={project.name}
         />
       )}
     </div>
