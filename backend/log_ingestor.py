@@ -140,7 +140,7 @@ class LogIngestor:
                     team= team,
                     vector_id= vectorID,
                     description= description,
-                    data_source= os.path.basenam(dataSource),
+                    data_source= os.path.basename(dataSource),
                     icon= icon,
                     action_title= actionTitle,
                     last_modified= lastModified,

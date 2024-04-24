@@ -6,11 +6,11 @@ import ReactFlow, {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  updateEdge, // Import updateEdge to handle edge updates
+  updateEdge,
   Edge,
   Controls,
   OnConnect,
-  OnEdgeUpdateFunc, // Correct type for edge update callback
+  OnEdgeUpdateFunc,
 } from "reactflow";
 import { EventNode } from "@/app/components/graphComponents/EventNodeInterface";
 import EventNodeContextMenu from "./EventNodeContextMenu";
@@ -29,22 +29,73 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  buttonEdge: ButtonEdge, // This key must match the type you set in the edges
+  buttonEdge: ButtonEdge,
 };
+
+const FilterModal = ({ isOpen, onClose, filterCriteria, setFilterCriteria }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white p-4 rounded shadow-lg w-1/3">
+        <h2 className="text-lg mb-4">Set Filters</h2>
+        {Object.keys(filterCriteria).map((key) => (
+          <div key={key} className="mb-3">
+            <label className="block text-gray-700 text-sm font-bold mb-2 capitalize">
+              {key.replace(/_/g, ' ')}
+            </label>
+            <input
+              type="text"
+              placeholder={`Filter by ${key}`}
+              value={filterCriteria[key]}
+              onChange={(e) => setFilterCriteria(prev => ({ ...prev, [key]: e.target.value }))}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+        ))}
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Close
+          </button>
+          <button
+            onClick={() => { onClose(); }} // This can be replaced with a function that applies filters explicitly if needed.
+            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 const Flow = () => {
   const { project } = useProject();
-  const { nodes, edges, isLoading, error, refresh } = useGraphData(
-    project.name
-  );
+  const { nodes, edges, isLoading, error } = useGraphData(project.name);
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
+  const [filterCriteria, setFilterCriteria] = useState({
+    initials: "",
+    team: "",
+    location: "",
+    posture: "",
+    data_source: "",
+    timestamp: "",
+    vector_id: "",
+    source_host: "",
+    target_host_list: "",
+  });
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<EventNode | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newEvent, setNewEvent] = useState<CreateEvent | null>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
@@ -52,12 +103,17 @@ const Flow = () => {
     setEdges(edges);
   }, [nodes, edges]);
 
-  // Need to redefine Add Node
+  const filteredNodes = nodesState.filter(node => {
+    return Object.entries(filterCriteria).every(([key, value]) => {
+      return value === "" || node.data[key]?.includes(value);
+    });
+  });
 
   const onNodesChange = useCallback(
     (changes) => setNodes(applyNodeChanges(changes, nodesState)),
     [nodesState]
   );
+
   const onEdgesChange = useCallback(
     (changes) => setEdges(applyEdgeChanges(changes, edgesState)),
     [edgesState]
@@ -65,16 +121,12 @@ const Flow = () => {
 
   const onConnect = useCallback(
     (connection) => {
-      const newEdge = {
-        ...connection,
-        type: "buttonEdge",
-      };
+      const newEdge = { ...connection, type: "buttonEdge" };
       setEdges((eds) => addEdge(newEdge, eds));
     },
     [setEdges]
   );
 
-  // Define the onEdgeUpdate callback using the correct type
   const onEdgeUpdate: OnEdgeUpdateFunc = useCallback(
     (oldEdge, newConnection) =>
       setEdges((currentEdges) =>
@@ -83,17 +135,16 @@ const Flow = () => {
     []
   );
 
-  // Event handlers for node and edge context menus, and modals
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      event.preventDefault(); // Prevent default context menu
+      event.preventDefault();
       if (reactFlowWrapper.current) {
         const bounds = reactFlowWrapper.current.getBoundingClientRect();
         setMenuPosition({
           x: event.clientX - bounds.left,
           y: event.clientY - bounds.top,
         });
-        setSelectedNode(node); // Only select the node and set up the menu position
+        setSelectedNode(node);
       }
     },
     []
@@ -106,7 +157,7 @@ const Flow = () => {
   const handleCreateNode = useCallback(
     (eventData: CreateEvent) => {
       const newNode = {
-        id: `n${nodesState.length + 1}`, // Ensure unique ID by incrementing
+        id: `n${nodesState.length + 1}`,
         type: "customEventNode",
         position: {
           x: Math.random() * window.innerWidth * 0.8,
@@ -114,7 +165,7 @@ const Flow = () => {
         },
         data: eventData,
       };
-      setNodes((nodesState) => [...nodesState, newNode]);
+      setNodes((ns) => [...ns, newNode]);
       setIsCreateModalOpen(false);
     },
     [nodesState]
@@ -147,7 +198,6 @@ const Flow = () => {
         }
       }
 
-      // Then update the frontend state to remove the node and any connected edges
       setNodes((currentNodes) => currentNodes.filter((n) => n.id !== node.id));
       setEdges((currentEdges) =>
         currentEdges.filter((e) => e.source !== node.id && e.target !== node.id)
@@ -188,7 +238,7 @@ const Flow = () => {
         id: edge.getAttribute("id"),
         source: edge.getAttribute("source"),
         target: edge.getAttribute("target"),
-        type: edge.getAttribute("type") || "buttonEdge", // Default to 'buttonEdge' if not specified
+        type: edge.getAttribute("type") || "buttonEdge",
       })
     );
 
@@ -215,6 +265,12 @@ const Flow = () => {
           >
             Import Graph
           </button>
+          <button
+            onClick={() => setIsFilterModalOpen(true)} // This button triggers the filter modal
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+          >
+            Filter Nodes
+          </button>
           <ExportGraphData
             nodes={nodesState}
             edges={edgesState}
@@ -222,7 +278,7 @@ const Flow = () => {
           />
         </div>
         <ReactFlow
-          nodes={nodesState}
+          nodes={filteredNodes}
           edges={edgesState}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
@@ -256,7 +312,7 @@ const Flow = () => {
           newEvent={newEvent}
           isModalOpen={isCreateModalOpen}
           onSubmit={handleCreateNode}
-          onClose={() => setIsCreateModalOpen(false)}
+          onClose={handleCreateEventClose}
         />
       )}
       {isEditModalOpen && selectedNode && (
@@ -273,6 +329,12 @@ const Flow = () => {
           currentProjectName={project.name}
         />
       )}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        filterCriteria={filterCriteria}
+        setFilterCriteria={setFilterCriteria}
+      />
     </div>
   );
 };
