@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.11
 FROM python:${PYTHON_VERSION}-slim as base
 
 # Prevents Python from writing pyc files.
@@ -16,18 +16,17 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app/
+WORKDIR /home/app/backend
 
-COPY . /app/
+COPY . /home/app/backend
 
+RUN pip install --no-cache-dir -r requirements.txt
 
+EXPOSE 5000
 
-
-EXPOSE 5005
-
-ENV FAST_API=main.py
+ENV FAST_API_APP=main.py
 ENV FAST_API_RUN_HOST=0.0.0.0
-ENV FAST_API_RUN_PORT=5005
+ENV FAST_API_RUN_PORT=5000
 
 # Run the application.
 CMD uvicorn 'main:app' --host ${FAST_API_RUN_HOST} --port ${FAST_API_RUN_PORT} --reload

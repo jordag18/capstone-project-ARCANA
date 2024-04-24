@@ -23,7 +23,7 @@ from user_activity_logger import userActivityLogger
 # because everythin stems from this file. For example everything from lines 26-85 would
 # warrant their own context description and so on with the chunks of code that have the http
 # methods. As I said in some of my other notes I think global variables warrant thier own
-# description and anything not working for us in terms of improvement should be outlined 
+# description and anything not working for us in terms of improvement should be outlined
 # in its own section.
 ##########################################################################################
 
@@ -77,7 +77,7 @@ async def get_all_projects():
         return projects
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 # #FIXME not implemented fully
 # @app.get("/api/project{project_name}", response_model=Project)
 # async def get_project_by_name(project_name):
@@ -115,7 +115,7 @@ async def create_project(project: ProjectCreate):
             location=project.location,
             initials=project.initials
         )
-        
+
         return created_project
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -156,7 +156,7 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
             raise HTTPException(status_code=404, detail="Event not found or no changes made")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
 async def create_event(project_name: str, event_create: EventCreate = Body(...), auto_edges: AutoEdge = Body(...)):
     print("EventCreate: ", event_create)
@@ -166,7 +166,7 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
         print("event add")
         project = db_manager.get_project_representer(project_name)
         created_event = db_manager.add_event_to_project(project_name, created_data,  auto_edges.auto_edge)
-       
+
         if created_event:
             project.add_event_to_project(created_event)
             return created_event
@@ -174,7 +174,7 @@ async def create_event(project_name: str, event_create: EventCreate = Body(...),
         raise HTTPException(status_code=404, detail="Project not found or event creation failed")
     except HTTPException as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-        
+
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
     try:
@@ -192,7 +192,7 @@ async def delete_event(project_name: str, event_id: str):
 @app.get("/api/{project_name}/graphs", response_model=Graph)
 async def get_project_graphs(project_name: str):
     try:
-     
+
         return db_manager.fetch_project_graph(project_name)
 
     except Exception as e:
@@ -216,7 +216,7 @@ async def get_project_icon_libraries(project_name: str):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @app.post("/api/project/{project_name}/create-toa")
 async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
     try:
@@ -224,8 +224,8 @@ async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         team = data['team']
         action_title = data['actionTitle']
         image_name = data['imageName']
-        
-        
+
+
         # Save the icon to the icon library
         db_manager.add_icon_to_icon_library(project_name, team, action_title, image_name)
 
@@ -257,7 +257,7 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         old_action_title = data['oldActionTitle']
         old_image_name = data['oldImageName']
         old_is_default = data['oldIsDefault']
-        
+
         # Check which new data fields match the corresponding old data fields and set them to None
         if team == old_team:
             team = None
@@ -275,7 +275,7 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         return {"error_message": f"Error occurred: {e}"}
     else:
         return {"message": "Icon has been modified successfully"}
-    
+
 @app.post("/api/undo/{project_id}")
 async def undo(project_id: str):
     """
@@ -368,7 +368,8 @@ def get_analyst_initials():
     return {"analyst_initials": initials_list}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5005, log_level="debug")
+    uvicorn.run("main:app", host='0.0.0.0', port=8000, log_level="debug")
+
 
 
 # ---------- OTHER HTTP METHODS ---------------- #

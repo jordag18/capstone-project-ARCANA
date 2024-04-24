@@ -1,47 +1,31 @@
 services:
-  db:
-    image: mongo:latest
-    volumes:
-      - arcana-db-data:/data/db
-    env_file:
-      - .env
-    ports:
-      - "${MONGO_PORT}:${MONGO_PORT}"
-    environment:
-      - "MONGO_INITDB_DATABASE=${MONGO_DB}"
-
   backend:
-    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
-    depends_on:
-      - db
-    env_file:
-      - .env
-    volumes:
-      - ./backend:/app
+    build: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/backend # Synchronise docker container with local change
+    command: bash -c "python main.py"
+    depends_on:
+      - mongodb
     environment:
-      - SERVER_HOST=http://${DOMAIN?Variable not set}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-
+      - MONGODB_URL=mongodb://mongodb:27017/
 
   frontend:
-    image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.development
-      args:
-        FRONTEND_ENV: dev
+    build: ./frontend
     ports:
-      - "5005:5005"
+      - "3000:3000"
     volumes:
-      - ./frontend:/app # Synchronise docker container with local change
-      - /app/node_modules # Avoid re-copying local node_modules. Cache in volume. See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-    env_file:
-      - .env
-    command: npm run dev -- --host
+      - ./frontend:/frontend # Synchronise docker container with local change
+    environment:
+      - FRONTEND_ENV_URL=http://backend:8000
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - arcana-db-data:/data/db
 
 volumes:
   arcana-db-data:
