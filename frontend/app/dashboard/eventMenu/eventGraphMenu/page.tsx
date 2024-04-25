@@ -205,14 +205,12 @@ const Flow = () => {
         <div className="button-group mt-4 flex justify-center space-x-4">
           <button
             onClick={createNode}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-          >
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Create Event Node
           </button>
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-          >
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Import Graph
           </button>
           <ExportGraphData
@@ -232,8 +230,7 @@ const Flow = () => {
           onNodeContextMenu={onNodeContextMenu}
           onConnect={onConnect}
           fitView
-          fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}
-        >
+          fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}>
           <Controls />
           {selectedNode && (
             <EventNodeContextMenu

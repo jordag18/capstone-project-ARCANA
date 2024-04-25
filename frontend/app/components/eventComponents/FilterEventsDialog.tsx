@@ -55,8 +55,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
           <form onSubmit={handleFilter}>
             <button
               className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={onClose}
-            >
+              onClick={onClose}>
               X
             </button>
             <h3 className="font-bold text-lg">Filter Events</h3>
@@ -139,8 +138,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
               <select
                 className="select select-bordered"
                 value={team}
-                onChange={(e) => setTeam(e.target.value)}
-              >
+                onChange={(e) => setTeam(e.target.value)}>
                 <option>All</option>
                 <option>Red</option>
                 <option>Blue</option>
@@ -216,14 +214,12 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
             <div className="modal-action">
               <button
                 className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-                onClick={handleClear}
-              >
+                onClick={handleClear}>
                 Clear
               </button>
               <button
                 className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-                type="submit"
-              >
+                type="submit">
                 Filter
               </button>
             </div>
@@ -232,8 +228,7 @@ const FilterEventsDialog = ({ isOpen, onClose, onUpdateCriteria }) => {
       </dialog>
       <div
         className={`backdrop ${isOpen ? "flex" : "hidden"}`}
-        onClick={onClose}
-      ></div>
+        onClick={onClose}></div>
     </>
   );
 };

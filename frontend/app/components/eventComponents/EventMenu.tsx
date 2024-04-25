@@ -4,7 +4,7 @@ import { useProject } from "@/app/contexts/ProjectContext";
 import EditEventModal from "./event-modify-modal";
 import { Event } from "./event-interface";
 
-const EventMenu = ({ criteria, sortCriterion}) => {
+const EventMenu = ({ criteria, sortCriterion }) => {
   const { project } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -41,7 +41,7 @@ const EventMenu = ({ criteria, sortCriterion}) => {
       //if there is criteria for vector id check where it matches
       if (criteria.vectorId && event.vector_id !== criteria.vectorId)
         return false;
-      
+
       //check where event ID matches inputted
       if (criteria.id && event.id !== criteria.id) return false;
 
@@ -106,8 +106,8 @@ const EventMenu = ({ criteria, sortCriterion}) => {
           </tr>
         </thead>
         <tbody className="bg-base-200">
-          {filteredEvents.map((event:Event, index) => (
-            <tr key={index} className="hover:bg-slate-200 " >
+          {filteredEvents.map((event: Event, index) => (
+            <tr key={index} className="hover:bg-slate-200 ">
               {/* Each <td> is a cell for the project's attribute */}
               <td>{event.id}</td>
               <td>{event.icon}</td>
@@ -127,8 +127,7 @@ const EventMenu = ({ criteria, sortCriterion}) => {
               <td>
                 <button
                   className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-                  onClick={() => handleOpenModal(event)}
-                >
+                  onClick={() => handleOpenModal(event)}>
                   Modify
                 </button>
                 {selectedEvent && (

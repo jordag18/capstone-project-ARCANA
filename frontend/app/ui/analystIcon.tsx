@@ -10,8 +10,8 @@ export function AnalystIcon() {
           fill="black">
           {" "}
           $$$ {" "}
+      );
         </text>
       </svg>
-    );
 }
 export default AnalystIcon;

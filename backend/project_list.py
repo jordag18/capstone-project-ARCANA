@@ -6,6 +6,7 @@
 #
 ##########################################################################################
 
+
 class ProjectList:
     def __init__(self):
         # Initialize an empty list of EventRepresenters
