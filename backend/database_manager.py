@@ -12,6 +12,7 @@ from bson import ObjectId
 from collections import defaultdict
 from graph import GraphManager
 import pymongo
+import socket
 
 
 ##########################################################################################
@@ -21,18 +22,22 @@ import pymongo
 #
 #
 ##########################################################################################
+
+HOST = socket.gethostbyname(socket.gethostname())
+PORT = 27017
+
 
 class DatabaseManager:
-    def __init__(self, db_name, host='localhost', port=27017):
+    def __init__(self, db_name, host=HOST, port=PORT):
         # Establish a connection to the MongoDB database
-        connect(db_name, host=host, port=port)
+        connect(db_name)
         self.project_manager = ProjectManager()
         # Establish a connection to the MongoDB database using pymongo
-        self.client = pymongo.MongoClient(f"mongodb://{host}:{port}/")
+        self.client = pymongo.MongoClient(host, port)
         self.db = self.client[db_name]
         self.projects_collection = self.db["Projects"]
         self.userLogs_collection = self.db["UserActivityLogs"]
-        
+
         # Initialize ProjectManager
         self.project_manager = ProjectManager()
 
@@ -48,7 +53,7 @@ class DatabaseManager:
             self.project_manager.delete_project(project_id, project.initials)
             return True
         return False
-    
+
     def open_project(self, project_name):
         # open project by name
         project = ProjectRepresenter.objects(name=project_name).first()
@@ -70,7 +75,7 @@ class DatabaseManager:
         if project:
             return project.get('events')
         return []
-    
+
     def save_project(self, project):
         # Save changes to an existing project
         project.save()
@@ -99,7 +104,7 @@ class DatabaseManager:
             ).save()
             return new_event
         return None
-    
+
     # def create_event_to_project(self, project, event_data):
     #     try:
     #         new_event = EventRepresenter(id=ObjectId(), **event_data)
@@ -139,7 +144,7 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred:", e)
             return False
-            
+
     def modify_event_from_project(self, project_name, event_id, updated_data):
         try:
             event_id_obj = ObjectId(event_id)
@@ -148,7 +153,7 @@ class DatabaseManager:
             return False
         try:
             project = ProjectRepresenter.objects(name=project_name).first()
-            
+
             if not project:
                 print("Project not found")
                 return False
@@ -183,7 +188,7 @@ class DatabaseManager:
             if result.modified_count == 0:
                 print("No modifications were made")
                 return False
-            
+
                     # Retrieve the updated event data
             project_after_update = self.projects_collection.find_one(
                 {"name": project_name, "event_list._id": event_id_obj},
@@ -245,7 +250,7 @@ class DatabaseManager:
                     'is_malformed': event.is_malformed
                 }
                 event_representers_info.append(event_info)
-            
+
             # Add the list of events to the project's information
             project_info['events'] = event_representers_info
 
@@ -255,7 +260,7 @@ class DatabaseManager:
 
         return all_projects_info
 
-    
+
     def get_icon_library_from_project(self, project_id):
         try:
             project = ProjectRepresenter.objects(id=project_id).first()
@@ -268,21 +273,21 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred while retrieving the icon library from the database:", e)
             return None
-        
+
     def add_icon_to_icon_library(self, project_id: str, team: str, action_title: str, icon_filename: str) -> None:
         project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             project.add_toa_icon(team, action_title, icon_filename)
         else:
             print("didn't work")
-    
+
     def edit_icon(self, project_id: str, old_team: str, old_action_title: str, new_team: str, new_action_title: str, new_icon_filename: str, new_is_default: bool):
         project = ProjectRepresenter.objects(id=project_id).first()
         if project:
             project.edit_toa_icon(old_team, old_action_title, new_team, new_action_title, new_icon_filename, new_is_default)
         else:
             print("didn't work")
-    
+
     #category = team (color), name = action title
     def delete_icon(self, project_id: str, category: str, name: str):
         project = ProjectRepresenter.objects(id=project_id).first()
@@ -331,7 +336,7 @@ class DatabaseManager:
 
         print(f"Project ID being queried: {project_id}")
         print(f"Converted ObjectId: {project_oid}")
-        
+
         # Fetch the most recent action for the given project
         try:
             last_action = EventActionLog.objects(project=project_oid, is_undone=False).order_by('-performed_at').first()
@@ -339,7 +344,7 @@ class DatabaseManager:
                 print("No actions to undo")
                 return False
             print(f"Found ActionLog: {last_action}")
-            
+
             # Fetch the project
             project = ProjectRepresenter.objects(id=project_oid).first()
             if not project:
@@ -368,7 +373,7 @@ class DatabaseManager:
             print(f"An error occurred: {str(e)}")
             return False
 
-    
+
 
     def redo_last_undone_action(self, project_id):
         try:
@@ -416,8 +421,8 @@ class DatabaseManager:
         except Exception as e:
             print(f"An error occurred: {str(e)}")
             return False
-        
-    
+
+
     def log_action(self, project_id, action_type, event_before, event_after):
         try:
             project_oid = ObjectId(project_id)
@@ -448,7 +453,7 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
-    
+
     # def no_edge_node(self, project_name, event_id, auto_edges):
     #     print("no edge ")
     #     project = ProjectRepresenter.objects(name=project_name).first()
@@ -460,11 +465,11 @@ class DatabaseManager:
     #         project_graph = GraphManager.get_project_graphs(project, send_event)
     #         project.project_graph = project_graph
     #         project.save()
-    
+
     # def graph_algorithm(self, project_name):
     #     print("graph_algo ")
     #     project = ProjectRepresenter.objects(name=project_name).first()
-    #     if project: 
+    #     if project:
     #         project_graph = GraphManager.get_project_graphs(project)
     #         project.project_graph = project_graph
     #     return project.project_graph
