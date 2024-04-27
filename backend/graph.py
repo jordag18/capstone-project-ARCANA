@@ -4,107 +4,63 @@ from model import Graph
 
 
 class GraphManager:
-    # Static attributes
-    nodes = {}
-    edges = defaultdict(list)
-    last_red = None
-    last_blue = None
-    malformed_key = ""
 
     @staticmethod
-    def edit_event(event_id, updated_data):
-        event_id_str = str(event_id)  # Convert ObjectId to string if not already
-        if event_id_str in GraphManager.nodes:
-            # Extract and update node data from updated_data dictionary
-            node = GraphManager.nodes[event_id_str]
-            node.update(
-                {
-                    "initials": updated_data.get("initials", node.get("initials")),
-                    "team": updated_data.get("team", node.get("team")),
-                    "icon": updated_data.get("icon", node.get("icon")),
-                    "vector_id": updated_data.get("vector_id", node.get("vector_id")),
-                    "description": updated_data.get(
-                        "description", node.get("description")
-                    ),
-                    "data_source": updated_data.get(
-                        "data_source", node.get("data_source")
-                    ),
-                    "action_title": updated_data.get(
-                        "action_title", node.get("action_title")
-                    ),
-                    "last_modified": updated_data.get(
-                        "last_modified", node.get("last_modified")
-                    ),
-                    "source_host": updated_data.get(
-                        "source_host", node.get("source_host")
-                    ),
-                    "target_host_list": updated_data.get(
-                        "target_host_list", node.get("target_host_list")
-                    ),
-                    "location": updated_data.get("location", node.get("location")),
-                    "posture": updated_data.get("posture", node.get("posture")),
-                    "timestamp": updated_data.get("timestamp", node.get("timestamp")),
-                    "is_malformed": updated_data.get(
-                        "is_malformed", node.get("is_malformed")
-                    ),
-                }
-            )
-
-            # Optionally handle changes affecting edge connections
-            current_team = node.get("team")
-            new_team = updated_data.get("team", current_team)
-            if new_team != current_team:
-                # This simplistic example assumes you might need to reprocess edges
-                if new_team == "Red":
-                    GraphManager.last_red = (
-                        None  # or recalculate/redraw edges as needed
-                    )
-                else:
-                    GraphManager.last_blue = None  # Adjust similarly for other teams
-            print(f"Event {event_id_str} updated in graph with new data.")
-        else:
-            print(f"No node found for event_id {event_id_str} to update.")
+    def edit_event(graphs, vector_id, event_id, new_data):
+        """Edit a specific event based on its event_id."""
+        if vector_id in graphs:
+            for events in graphs[vector_id]['events'].values():
+                for event in events:
+                    if event['id'] == event_id:
+                        for key, value in new_data.items():
+                            event[key] = value
+                        break  # Assuming only one event per ID, break once found and updated
 
     @staticmethod
-    def delete_event(event_id):
-        # Remove the node
-        if event_id in GraphManager.nodes:
-            del GraphManager.nodes[event_id]
-
-        # Remove all edges leading to and from this node
-        # Remove outgoing edges from this node
-        if event_id in GraphManager.edges:
-            del GraphManager.edges[event_id]
-
-        # Remove this node from any incoming edges lists
-        for key in list(GraphManager.edges.keys()):
-            if event_id in GraphManager.edges[key]:
-                GraphManager.edges[key].remove(event_id)
-                # If no edges remain for this key, remove the key entirely
-                if not GraphManager.edges[key]:
-                    del GraphManager.edges[key]
-
-        # Reset last pointers if they point to the deleted node
-        if GraphManager.last_red and GraphManager.last_red.get_id() == event_id:
-            GraphManager.last_red = None
-        if GraphManager.last_blue and GraphManager.last_blue.get_id() == event_id:
-            GraphManager.last_blue = None
+    def delete_node(graphs, vector_id, event_id):
+        """Delete a node and all connected edges."""
+        if vector_id in graphs:
+            graph = graphs[vector_id]
+            if event_id in graph['events']:
+                # Remove the node
+                del graph['events'][event_id]
+                # Remove associated edges
+                if event_id in graph['edges']:
+                    del graph['edges'][event_id]
+                # Remove incoming edges
+                for key in list(graph['edges'].keys()):
+                    if event_id in graph['edges'][key]:
+                        graph['edges'][key].remove(event_id)
+            if not graph['events']:  # If no events left, remove the graph
+                del graphs[vector_id]
 
     @staticmethod
-    def build_graph(project, auto_edges):
-        groups = project.group_events_by(["vector_id", "initials"])
-        groups = [EventsManager.sort_events_by(group, "timestamp") for group in groups]
-        for events_group in groups:
-            for event in events_group:
-                GraphManager.add_event(event, auto_edges)
+    def add_node(graphs, event, vector_id, auto_edges):
+        graph_key = vector_id
+        if graph_key not in graphs:
+            graphs[graph_key] = {
+                'events': defaultdict(list),
+                'edges': defaultdict(list),
+                'last_event': None,
+                'last_red': None,
+                'unconnected_blues': []
+            }
 
-    @staticmethod
-    def add_event(event, auto_edges):
-        # Always add the node
-        GraphManager.nodes[event.get_id()] = event.get_event_info()
+        graph = graphs[graph_key]
+        events = graph['events']
+        edges = graph['edges']
+        last_event = graph['last_event']
+        last_red = graph['last_red']
+        unconnected_blues = graph['unconnected_blues']
 
-        # Conditionally add edges based on auto_edges parameter
+        event_info = event.get_event_info()
+        event_id = event.get_id()
+
+        # Always add the event info to its own ID
+        events[event_id].append(event_info)
+
         if auto_edges:
+<<<<<<< HEAD
             if event.is_malformed:
                 GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
             elif event.team == "red":
@@ -124,3 +80,50 @@ class GraphManager:
                 GraphManager.last_red = None
             else:
                 GraphManager.last_blue = None
+=======
+            if event.team == "blue":
+                if last_red:
+                    edges[last_red].append(event_id)  # Connect current blue to the last red
+                    last_red = None  # Clear last red after connecting
+                elif last_event:
+                    edges[last_event].append(event_id)  # Chain blue directly to last event if no reds to connect to
+            else:  # event.team == "red"
+                if last_event and last_event != event_id:
+                    edges[last_event].append(event_id)  # Chain red to red
+                last_red = event_id  # Update last red node
+
+            # Update the last event tracker for both red and blue events
+            last_event = event_id
+
+        # Update the graph structure
+        graph['last_event'] = last_event
+        graph['last_red'] = last_red
+        graph['unconnected_blues'] = unconnected_blues
+
+    @staticmethod
+    def get_project_graphs(project, auto_edges=True):
+        groups = project.group_events_by(["vector_id"])
+        sorted_groups = [sorted(group, key=lambda x: x.timestamp) for group in groups]  # Sort each group by timestamp
+        graphs = {}
+
+        # Print sorted groups to see their structure and order
+        for index, group in enumerate(sorted_groups):
+            print(f"Group {index + 1}:")
+            for event in group:
+                print(f" - {event.vector_id}, {event.initials}, {event.timestamp}")
+
+        for group in sorted_groups:
+            vector_id = group[0].vector_id  # Assuming all events in a group have the same vector_id
+            for event in group:
+                if event.is_malformed:
+                    continue
+                GraphManager.add_node(graphs, event, vector_id, auto_edges)
+
+        # Prints the edges for each graph
+        for graph_id, graph_data in graphs.items():
+            print(f"Graph ID: {graph_id}")
+            for event_id, edge_list in graph_data['edges'].items():
+                print(f"Event {event_id} has edges to: {edge_list}")
+
+        return graphs
+>>>>>>> 0a3e198 (Added graph algorithm)

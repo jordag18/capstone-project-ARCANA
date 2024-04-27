@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
 from datetime import datetime
 from collections.abc import Mapping
@@ -73,8 +73,11 @@ class ProjectCreate(BaseModel):
 
 
 class Graph(BaseModel):
-    nodes: Mapping[str, dict]
-    edges: Mapping[str, List[str]]
+    nodes: Dict[str, List[dict]] = Field(default_factory=dict)
+    edges: Dict[str, List[str]] = Field(default_factory=dict)
+    last_event: Optional[str] = None
+    last_red: Optional[str] = None
+    unconnected_blues: List[str] = Field(default_factory=list)
     malformed_key: str = ""
 
 

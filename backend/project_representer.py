@@ -1,4 +1,5 @@
 from log_ingestor import LogIngestor
+import json
 from event_representer import EventRepresenter
 from events_manager import EventsManager
 
@@ -8,16 +9,7 @@ from datetime import datetime
 from graph import GraphManager
 from collections import defaultdict
 from typing import List, Optional
-import os
-from mongoengine import (
-    Document,
-    StringField,
-    ListField,
-    DictField,
-    DateTimeField,
-    ReferenceField,
-    EmbeddedDocumentField,
-)
+from mongoengine import Document, StringField, ListField, DictField, DateTimeField, ReferenceField, EmbeddedDocumentField
 
 
 ##########################################################################################
@@ -61,8 +53,13 @@ class ProjectRepresenter(Document):
                 "white team activity": {"image": "Whitecard.png", "isDefault": True}
             },
         }
+<<<<<<< HEAD
     )
     project_graph = DictField(default={"nodes": {}, "edges": {}})
+=======
+    })
+    project_graph = DictField(default={})
+>>>>>>> 0a3e198 (Added graph algorithm)
 
     meta = {"collection": "Projects", "ordering": ["-timestamp"]}
 
@@ -90,25 +87,74 @@ class ProjectRepresenter(Document):
         else:
             print("Updating graph with auto_edges:", auto_edges)
             GraphManager.build_graph(self, auto_edges)  # Using static method directly
+<<<<<<< HEAD
         self.project_graph = {
             "nodes": GraphManager.nodes,
             "edges": dict(GraphManager.edges),
         }
+=======
+        self.project_graph = {'nodes': GraphManager.nodes, 'edges': dict(GraphManager.edges)}
+    
+    def update_graph(self, graph_data):
+        self.project_graph = json.loads(json.dumps(graph_data, default=str))  # Serialize complex objects
+>>>>>>> 0a3e198 (Added graph algorithm)
 
+
+
+    def get_graph(self, auto_edges=True, delete_id=None, edited_id=None, edited_data=None):
+        # Get the current state of the project graphs
+        graphs = GraphManager.get_project_graphs(self, auto_edges)
+
+        # Retrieve the vector_id from the event for delete or edit operations
+        def find_vector_id(event_id):
+            for event in self.event_list:
+                if event.id == event_id:
+                    return event.vector_id
+            return None
+
+        # Handle deletion of an event if a delete_id is provided
+        if delete_id:
+            vector_id = find_vector_id(delete_id)
+            if vector_id:
+                GraphManager.delete_node(graphs, vector_id, delete_id)
+
+        # Handle editing of an event if edited_id and edited_data are provided
+        if edited_id and edited_data:
+            vector_id = find_vector_id(edited_id)
+            if vector_id:
+                GraphManager.edit_event(graphs, vector_id, edited_id, edited_data)
+
+        # Return the possibly modified graph
+        return graphs
+    
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
+<<<<<<< HEAD
         files_ingested = log_ingestor.ingest_logs()
         for log_file in files_ingested:
             self.record_to_logger(
                 "ingested_logs", data_source=os.path.basename(log_file)
             )
+=======
+        log_ingestor.ingest_logs()
+
+>>>>>>> 0a3e198 (Added graph algorithm)
         # Log activity when logs are ingested
+        self.record_to_logger("ingested_logs",data_source=directory)
         for event in self.event_manager.event_representer_list.events:
+<<<<<<< HEAD
 
             # event.save() removed as it returns an empty array of events
             self.event_list.append(event)
 
         self.update_graph(auto_edges=True)
+=======
+            #event.save() removed as it returns an empty array of events
+            self.event_list.append(event)
+        
+        graph_data = self.get_graph(True)
+        self.update_graph(graph_data)
+>>>>>>> 0a3e198 (Added graph algorithm)
         self.save()
 
     def get_event_representers_info(self):
@@ -149,6 +195,7 @@ class ProjectRepresenter(Document):
                     EventsManager.group_events_by(group, group_by).values()
                 )
 
+<<<<<<< HEAD
         return output_list
 
     def add_event_to_project(self, event: EventRepresenter):
@@ -156,6 +203,15 @@ class ProjectRepresenter(Document):
         if event:
             self.record_to_logger("added_event", event_id=event.id)
             return event
+=======
+            return output_list
+    
+    def add_event_to_project(self,event:EventRepresenter):
+        new_event = self.event_manager.create_event(event)
+        if new_event:
+            self.record_to_logger("added_event",event_id=new_event.id)
+            return new_event
+>>>>>>> 0a3e198 (Added graph algorithm)
         else:
             return None
 
