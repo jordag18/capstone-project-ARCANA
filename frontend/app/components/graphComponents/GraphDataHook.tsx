@@ -46,17 +46,16 @@ const useGraphData = (projectName: string) => {
     setRefreshIndex((index) => index + 1);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setGraphData((prevData) => ({ ...prevData, isLoading: true }));
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/${projectName}/graphs`
-        );
-        const data = await response.json();
-
-        const eventNodes = createEventNodes(data.nodes);
-        const projectEdges = createEdges(data.edges);
+    useEffect(() => {
+        const fetchData = async () => {
+            setGraphData((prevData) => ({ ...prevData, isLoading: true }));
+            try {
+                const response = await fetch(`http://localhost:8000/api/${projectName}/graphs`);
+                console.log("RESP ", response)
+                const data = await response.json();
+                console.log("sdsadas ", data)
+                const eventNodes = createEventNodes(data.nodes);
+                const projectEdges = createEdges(data.edges);
 
         setGraphData({
           nodes: eventNodes,
