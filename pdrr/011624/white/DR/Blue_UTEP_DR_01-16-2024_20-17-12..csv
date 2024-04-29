@@ -1,0 +1,13 @@
+dateCreated,description,sourceHost,targetHost,team,location,initials,vectorId,lastModified
+1/16/2024 21:14,"The initial code injection was caught by the system and subsequently santizied, defending the system from the reverse shell",,,Blue,UTEP,DR,UTEP-GMLRS,1/16/2024 21:14
+1/16/2024 22:21,an ARP scan was discovered by the NOC team and was blocked upon existing the first network hop,10.10.14.4,10.129.229.28,Blue,UTEP,DR,UTEP-LIGHTNING,1/16/2024 22:21
+1/16/2024 22:28,NOC team disabled network access to offending IP,10.10.14.4,10.129.229.28,Blue,UTEP,DR,UTEP-LIGHTNING,1/16/2024 22:28
+1/16/2024 22:30,NOC team reached out to sysadmin to restore system,10.129.229.28,,Blue,UTEP,DR,UTEP-LIGHTNING,1/16/2024 22:30
+1/16/2024 22:35,Port scan detected and generated alert,10.129.229.5,10.10.14.6,Blue,UTEP,DR,UTEP-STRYKER,1/16/2024 22:35
+1/16/2024 22:40,Whitecard generated to enable access back to IP: 10.10.14.4,,10.10.14.4,Blue,UTEP,DR,UTEP-LIGHTNING,1/16/2024 22:40
+1/16/2024 22:35,assessment standown due to storm out in field at 1530,,,Blue,UTEP,DR, ,1/16/2024 22:35
+1/16/2024 23:05,Network access revoked by automated system,,10.10.14.4,Blue,UTEP,DR,UTEP-STRYKER,1/16/2024 23:05
+1/16/2024 23:15,Access manually returned due to pre-existing whitecard,,10.10.14.4,Blue,UTEP,DR,UTEP-STRYKER,1/16/2024 23:15
+01/17/2024 0:10:00,"storm ended, assessment continued",,,Blue,UTEP,DR, ,01/17/2024 0:10:00
+01/17/2024 0:15:00,Sysadmins successfully reverted to last known stable version of OS on compromised lightning machine,10.129.229.28,,Blue,UTEP,DR,UTEP-LIGHTNING,01/17/2024 0:15:00
+01/17/2024 1:30:00,NOC Team informed me that the issue with IP that was flagged by Stryker team was not an intentional defense,,,Blue,UTEP,DR,UTEP-STRYKER,01/17/2024 1:30:00
