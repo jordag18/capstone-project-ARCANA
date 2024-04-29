@@ -292,34 +292,40 @@ class DatabaseManager:
                 if category in icon_library and name in icon_library[category]:
                     # Delete the icon from the icon library
                     del icon_library[category][name]
-                    project.save()
 
-                    # Get the default icon for the team category
+                    # Find the default icon for the category
                     default_icon = None
-                    if category in icon_library:
-                        for name, icon_info in icon_library[category].items():
-                            if icon_info["isDefault"]:
-                                default_icon = icon_info["image"]
-                                break
+                    default_action_title = None
+                    for icon_name, icon_info in icon_library[category].items():
+                        if icon_name != name and icon_info.get("isDefault"):
+                            default_icon = icon_info["image"]
+                            default_action_title = icon_name
+                            break
 
+                    # If no default icon was found, set a generic default
+                    if not default_icon:
+                        default_icon = f"{category.lower().replace(' ', '-')}-team-activity.png"
+                        default_action_title = f"{category.capitalize()} Team Activity"
                     # Iterate over each event in the project's event list
-                    events = project.event_list
-                    for event in events:
+                    for event in project.event_list:
                         # Check if the event's action title and team match the deleted icon
-                        if event.action_title == name and event.team == category:
+                        if event.action_title.lower() == name and event.team.lower() == category:
                             # Update the event's action title and icon with replacement values
-                            event.action_title = f"{category.capitalize()} Team Activity"
-                            event.icon = default_icon or f"{category.lower().replace(' ', '-')}-team-activity.png"
+                            event.action_title = default_action_title
+                            event.icon = default_icon
+
+                            project.update_graph(True, None, event.get_id(), event.get_event_info())
+                    
+                    # Save the updated project
+                    project.save()
                     return True
                 else:
                     print(f"Icon '{name}' in category '{category}' not found in the icon library.")
                     return False
             except Exception as e:
-                print("An error occurred while deleting the icon from the icon library:", e)
+                print(f"Failed to delete the icon due to an error: {str(e)}")
                 return False
-        else:
-            print(f"Project with id '{project_id}' not found.")
-            return False
+
 
     def undo_last_action(self, project_id):
         try:

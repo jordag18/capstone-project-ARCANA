@@ -89,14 +89,20 @@ const CreateEventModal: React.FC<createEventProp> = ({
   };
 
   const handleIconChange = (iconName, iconInfo, team) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      action_title: iconName,
-      icon: `/Icons/${iconInfo.image}`,
-      team: team
-    }))
-    setSelectedIcon(iconName)
-  }
+    setFormData((prevFormData) => {
+        const newFormData = {
+            ...prevFormData,
+            action_title: iconName,
+            icon: iconInfo.image,// Ensure this is just 'RedTeam_Activity.png'
+            team: team
+        };
+        console.log("Icon selected:", iconInfo.image);// This will log what icon is being stored
+        return newFormData;
+    });
+    setSelectedIcon(iconName);
+  };
+
+
     
 
     useEffect(() => {
@@ -111,7 +117,6 @@ const CreateEventModal: React.FC<createEventProp> = ({
     useEffect(() => {
       fetchIconLibrary();
     }, [project.id])
-
     return (
       <dialog id='create_event_modal' className='modal' style={{ width: '100%', height: '100%', marginTop: '1rem'}}>
         <div className='modal-box'>
@@ -253,7 +258,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
                                 <div className={`hover:bg-gray-200 ${selectedIcon === iconName ? 'bg-yellow-200' : ''}`} 
                                     key={iconName} style={{marginLeft: '1rem', marginRight: '2rem', marginBottom: '1rem'}} 
                                     onClick={() => handleIconChange(iconName, iconInfo, team)}>
-                                    <img src={`/Icons/${iconInfo.image}`} alt={iconName} style={{ width: '50px', height: '50px'}}/>
+                                    <img src={`/Icons/${iconInfo.image}`}  alt={iconName} style={{ width: '50px', height: '50px'}}/>
                                     <p>{iconName}</p>
                                     {iconInfo.isDefault && <p style={{ color: 'gray', fontSize: '12px'}}> default</p>}
                                 </div>

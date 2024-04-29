@@ -31,7 +31,7 @@ const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
            whiteSpace: 'normal', // Allows text to wrap
          }}>
       <Handle type="target" position={Position.Top} />
-      <img src={`${data.icon}`} alt="Event Icon" style={{ width: '100%', height: 'auto', marginBottom: '8px' }} />
+      <img src={`/Icons/${data.icon}`} alt="Event Icon" style={{ width: '100%', height: 'auto', marginBottom: '8px' }} />
       <div><strong>Initials:</strong> {data.initials}</div>
       <div><strong>Team:</strong> {data.team}</div>
       <div><strong>Timestamp:</strong> {data.timestamp}</div>

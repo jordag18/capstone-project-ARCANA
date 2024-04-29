@@ -82,16 +82,28 @@ const IconLibrary = () => {
     // Sends the team and iconName(as in the action title)
     const handleDeleteIcon = async (team: string, iconName: string) => {
         try {
-            const countsBefore = countDefaults(team)
-            if (countsBefore < 2) {
-                alert('Default count should be greater than 1. Please edit another icon to be the new default.')
-                return
+            // Fetch the current icon library to check for default status and counts
+            const responseFetch = await axios.get(`http://localhost:8000/api/project/${project.id}/icon-libraries`);
+            const iconLibrary = responseFetch.data[team] || {};
+            
+            // Check if the icon to be deleted is default and count other icons
+            const isDefault = iconLibrary[iconName]?.isDefault;
+            const otherIcons = Object.entries(iconLibrary).filter(([key, value]) => key !== iconName);
+            const defaultCount = otherIcons.filter(([key, value]) => value.isDefault).length;
+    
+            // Condition to prevent deletion if it's the default icon and no other defaults are available
+            if (isDefault && defaultCount < 1) {
+                alert('This is the default icon and no other default icons are available. Please set another icon as default before deleting this one.');
+                return;
             }
-            const response = await axios.delete(
+    
+            // Proceed with deletion if it's not default or other defaults are available
+            const responseDelete = await axios.delete(
                 `http://localhost:8000/api/project/${project.id}/delete-icon?team=${team}&iconName=${iconName}`
             );
-            if (response.status === 200) {
+            if (responseDelete.status === 200) {
                 fetchIconLibrary();
+                console.log('Icon deleted successfully');
             } else {
                 throw new Error("Failed to delete icon");
             }

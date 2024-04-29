@@ -110,7 +110,13 @@ const EventMenu = ({ criteria, sortCriterion}) => {
             <tr key={index} className="hover:bg-slate-200 " >
               {/* Each <td> is a cell for the project's attribute */}
               <td>{event.id}</td>
-              <td>{event.icon}</td>
+              <td>
+                <img 
+                  src={`${event.icon.startsWith('/Icons/') ? '' : '/Icons/'}${event.icon}`}
+                  alt="Event Icon" 
+                  style={{ maxWidth: '100%', maxHeight: '50px', height: 'auto' }}
+                />
+              </td>
               <td>{event.action_title}</td>
               <td>{event.initials}</td>
               <td>{event.team}</td>
