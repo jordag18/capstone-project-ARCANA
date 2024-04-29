@@ -28,13 +28,17 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   const handleSaveEvent = async () => {
     console.log("Save Event", formData, "body", JSON.stringify(formData));
     try {
-      const response = await fetch(`http://localhost:8000/api/editEvent/${project.name}/${formData.id}`, { //response to update event in project in database
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData), //fills body of json response with updated event information
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/editEvent/${project.name}/${formData.id}`,
+        {
+          //response to update event in project in database
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData), //fills body of json response with updated event information
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update the event.");
@@ -68,7 +72,9 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   };
 
   useEffect(() => {
-    const modal = document.getElementById("edit_event_modal") as HTMLDialogElement | null
+    const modal = document.getElementById(
+      "edit_event_modal"
+    ) as HTMLDialogElement | null;
     if (modal) {
       if (isModalOpen) {
         modal.showModal();
@@ -97,8 +103,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
         <form method="dialog">
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={onClose}
-          >
+            onClick={onClose}>
             ✕
           </button>
         </form>
@@ -242,14 +247,16 @@ const EditEventModal: React.FC<selectedEventProp> = ({
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
-              }
-            ></textarea>
+              }></textarea>
           </div>
           <div className="flex flex-row justify-between w-full p-4">
             <button className="btn" onClick={handleSaveEvent}>
               Save Event
             </button>
-            <DeleteEventButton selectedEvent={selectedEvent}  onClose={onClose} />
+            <DeleteEventButton
+              selectedEvent={selectedEvent}
+              onClose={onClose}
+            />
           </div>
         </div>
       </div>

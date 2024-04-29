@@ -1,4 +1,3 @@
-
 from collections import defaultdict
 from events_manager import EventsManager
 from model import Graph
@@ -18,36 +17,53 @@ class GraphManager:
         if event_id_str in GraphManager.nodes:
             # Extract and update node data from updated_data dictionary
             node = GraphManager.nodes[event_id_str]
-            node.update({
-                "initials": updated_data.get('initials', node.get('initials')),
-                "team": updated_data.get('team', node.get('team')),
-                "icon": updated_data.get('icon', node.get('icon')),
-                "vector_id": updated_data.get('vector_id', node.get('vector_id')),
-                "description": updated_data.get('description', node.get('description')),
-                "data_source": updated_data.get('data_source', node.get('data_source')),
-                "action_title": updated_data.get('action_title', node.get('action_title')),
-                "last_modified": updated_data.get('last_modified', node.get('last_modified')),
-                "source_host": updated_data.get('source_host', node.get('source_host')),
-                "target_host_list": updated_data.get('target_host_list', node.get('target_host_list')),
-                "location": updated_data.get('location', node.get('location')),
-                "posture": updated_data.get('posture', node.get('posture')),
-                "timestamp": updated_data.get('timestamp', node.get('timestamp')),
-                "is_malformed": updated_data.get('is_malformed', node.get('is_malformed')),
-            })
+            node.update(
+                {
+                    "initials": updated_data.get("initials", node.get("initials")),
+                    "team": updated_data.get("team", node.get("team")),
+                    "icon": updated_data.get("icon", node.get("icon")),
+                    "vector_id": updated_data.get("vector_id", node.get("vector_id")),
+                    "description": updated_data.get(
+                        "description", node.get("description")
+                    ),
+                    "data_source": updated_data.get(
+                        "data_source", node.get("data_source")
+                    ),
+                    "action_title": updated_data.get(
+                        "action_title", node.get("action_title")
+                    ),
+                    "last_modified": updated_data.get(
+                        "last_modified", node.get("last_modified")
+                    ),
+                    "source_host": updated_data.get(
+                        "source_host", node.get("source_host")
+                    ),
+                    "target_host_list": updated_data.get(
+                        "target_host_list", node.get("target_host_list")
+                    ),
+                    "location": updated_data.get("location", node.get("location")),
+                    "posture": updated_data.get("posture", node.get("posture")),
+                    "timestamp": updated_data.get("timestamp", node.get("timestamp")),
+                    "is_malformed": updated_data.get(
+                        "is_malformed", node.get("is_malformed")
+                    ),
+                }
+            )
 
             # Optionally handle changes affecting edge connections
-            current_team = node.get('team')
-            new_team = updated_data.get('team', current_team)
+            current_team = node.get("team")
+            new_team = updated_data.get("team", current_team)
             if new_team != current_team:
                 # This simplistic example assumes you might need to reprocess edges
-                if new_team == 'Red':
-                    GraphManager.last_red = None  # or recalculate/redraw edges as needed
+                if new_team == "Red":
+                    GraphManager.last_red = (
+                        None  # or recalculate/redraw edges as needed
+                    )
                 else:
                     GraphManager.last_blue = None  # Adjust similarly for other teams
             print(f"Event {event_id_str} updated in graph with new data.")
         else:
             print(f"No node found for event_id {event_id_str} to update.")
-
 
     @staticmethod
     def delete_event(event_id):
@@ -93,11 +109,15 @@ class GraphManager:
                 GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
             elif event.team == "red":
                 if GraphManager.last_red is not None:
-                    GraphManager.edges[GraphManager.last_red.get_id()].append(event.get_id())
+                    GraphManager.edges[GraphManager.last_red.get_id()].append(
+                        event.get_id()
+                    )
                 GraphManager.last_red = event
             else:
                 if GraphManager.last_blue is not None:
-                    GraphManager.edges[GraphManager.last_blue.get_id()].append(event.get_id())
+                    GraphManager.edges[GraphManager.last_blue.get_id()].append(
+                        event.get_id()
+                    )
                 GraphManager.last_blue = event
         else:
             if event.team == "red":

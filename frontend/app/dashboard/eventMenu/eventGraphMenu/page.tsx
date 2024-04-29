@@ -32,7 +32,12 @@ const edgeTypes = {
   buttonEdge: ButtonEdge,
 };
 
-const FilterModal = ({ isOpen, onClose, filterCriteria, setFilterCriteria }) => {
+const FilterModal = ({
+  isOpen,
+  onClose,
+  filterCriteria,
+  setFilterCriteria,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -42,13 +47,18 @@ const FilterModal = ({ isOpen, onClose, filterCriteria, setFilterCriteria }) => 
         {Object.keys(filterCriteria).map((key) => (
           <div key={key} className="mb-3">
             <label className="block text-gray-700 text-sm font-bold mb-2 capitalize">
-              {key.replace(/_/g, ' ')}
+              {key.replace(/_/g, " ")}
             </label>
             <input
               type="text"
               placeholder={`Filter by ${key}`}
               value={filterCriteria[key]}
-              onChange={(e) => setFilterCriteria(prev => ({ ...prev, [key]: e.target.value }))}
+              onChange={(e) =>
+                setFilterCriteria((prev) => ({
+                  ...prev,
+                  [key]: e.target.value,
+                }))
+              }
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
@@ -56,14 +66,14 @@ const FilterModal = ({ isOpen, onClose, filterCriteria, setFilterCriteria }) => 
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Close
           </button>
           <button
-            onClick={() => { onClose(); }} // This can be replaced with a function that applies filters explicitly if needed.
-            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
+            onClick={() => {
+              onClose();
+            }} // This can be replaced with a function that applies filters explicitly if needed.
+            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
             Apply Filters
           </button>
         </div>
@@ -71,7 +81,6 @@ const FilterModal = ({ isOpen, onClose, filterCriteria, setFilterCriteria }) => 
     </div>
   );
 };
-
 
 const Flow = () => {
   const { project } = useProject();
@@ -103,7 +112,7 @@ const Flow = () => {
     setEdges(edges);
   }, [nodes, edges]);
 
-  const filteredNodes = nodesState.filter(node => {
+  const filteredNodes = nodesState.filter((node) => {
     return Object.entries(filterCriteria).every(([key, value]) => {
       return value === "" || node.data[key]?.includes(value);
     });
@@ -255,20 +264,17 @@ const Flow = () => {
         <div className="button-group mt-4 flex justify-center space-x-4">
           <button
             onClick={createNode}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-          >
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Create Event Node
           </button>
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-          >
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Import Graph
           </button>
           <button
             onClick={() => setIsFilterModalOpen(true)} // This button triggers the filter modal
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-          >
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Filter Nodes
           </button>
           <ExportGraphData
@@ -288,8 +294,7 @@ const Flow = () => {
           onNodeContextMenu={onNodeContextMenu}
           onConnect={onConnect}
           fitView
-          fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}
-        >
+          fitViewOptions={{ padding: 1.0, includeHiddenNodes: true }}>
           <Controls />
           {selectedNode && (
             <EventNodeContextMenu

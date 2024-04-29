@@ -124,8 +124,7 @@ const IngestLogDialog = ({
       <Modal.Footer>
         <Button
           variant="secondary"
-          onClick={() => handleCloseDialog("ingestLog")}
-        >
+          onClick={() => handleCloseDialog("ingestLog")}>
           Cancel
         </Button>
         <Button
@@ -133,8 +132,7 @@ const IngestLogDialog = ({
           onClick={() => {
             handleIngestLogs();
             handleCloseDialog("ingestLog");
-          }}
-        >
+          }}>
           Ingest Logs
         </Button>
         {/* Clear Logs Button */}

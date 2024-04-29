@@ -20,7 +20,7 @@ const ProjectMenu: React.FC<ProjectMenuProps> = ({ refreshProjects }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        console.log("First Time")
+        console.log("First Time");
         const response = await fetch("http://localhost:8000/api/projects", {
           cache: "no-store",
         });
@@ -30,7 +30,7 @@ const ProjectMenu: React.FC<ProjectMenuProps> = ({ refreshProjects }) => {
             "Network response was not ok: " + response.statusText
           );
         }
-        
+
         const projectsData: Project[] = await response.json(); // Type assertion
         console.log("Loaded Projects:", projectsData); //used for testing
 
@@ -73,8 +73,11 @@ const ProjectMenu: React.FC<ProjectMenuProps> = ({ refreshProjects }) => {
                 <td>{project.initials}</td>
                 <td>
                   {/* New <td> for the details component */}
-                  <ProjectDetails selectedProject={project} refreshProjects={refreshProjects} />
-                    </td>
+                  <ProjectDetails
+                    selectedProject={project}
+                    refreshProjects={refreshProjects}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>

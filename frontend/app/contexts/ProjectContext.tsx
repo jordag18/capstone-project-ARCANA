@@ -1,7 +1,13 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ProjectContextInterface } from './ProjectContextInterface';
-import { Project } from '../components/projectComponents/project-interface';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { ProjectContextInterface } from "./ProjectContextInterface";
+import { Project } from "../components/projectComponents/project-interface";
 import { Event } from "../components/eventComponents/event-interface";
 
 const defaultEvent: Event = {
@@ -32,11 +38,15 @@ const defaultProject: Project = {
   events: [defaultEvent],
 };
 
-const ProjectContext = createContext<ProjectContextInterface | undefined>(undefined);
+const ProjectContext = createContext<ProjectContextInterface | undefined>(
+  undefined
+);
 
-const localStorageKey = 'currentProject';
+const localStorageKey = "currentProject";
 
-export const ProjectProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [project, setProject] = useState<Project>(defaultProject);
 
   useEffect(() => {
@@ -54,7 +64,7 @@ export const ProjectProvider: React.FC<{children: ReactNode}> = ({ children }) =
 
   const updateEvent = (eventId: string, updatedEventData: Event) => {
     setProject((currentProject) => {
-      const updatedEvents = currentProject.events.map((event) => 
+      const updatedEvents = currentProject.events.map((event) =>
         event.id === eventId ? { ...event, ...updatedEventData } : event
       );
       return { ...currentProject, events: updatedEvents };
@@ -63,13 +73,15 @@ export const ProjectProvider: React.FC<{children: ReactNode}> = ({ children }) =
 
   const value = { project, setProject, updateEvent };
 
-  return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
+  return (
+    <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
+  );
 };
 
 export const useProject = () => {
   const context = useContext(ProjectContext);
   if (context === undefined) {
-    throw new Error('useProject must be used within a ProjectProvider');
+    throw new Error("useProject must be used within a ProjectProvider");
   }
   return context;
 };

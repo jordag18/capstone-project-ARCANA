@@ -7,8 +7,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-      <main>
-      <h1>Welcome to ARCANA</h1> 
-      </main>
+    <main>
+      <h1>Welcome to ARCANA</h1>
+    </main>
   );
 }

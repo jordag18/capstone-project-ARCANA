@@ -11,7 +11,11 @@ export function FontSizeSetter() {
     <>
       <Card>
         <Card.Body>
-          <Card.Title> <h2>Font Size</h2><hr/> </Card.Title>
+          <Card.Title>
+            {" "}
+            <h2>Font Size</h2>
+            <hr />{" "}
+          </Card.Title>
           <Card.Text>
             <p>Specify the size of the font in the GUI.</p>
             <p>[Default: 18]</p>

@@ -2,13 +2,16 @@ import React from "react";
 import { useProject } from "@/app/contexts/ProjectContext";
 import { Event } from "./event-interface";
 
-interface selectedEventProp{
-    selectedEvent: Event;
-    onClose: () => void;
+interface selectedEventProp {
+  selectedEvent: Event;
+  onClose: () => void;
 }
 
-const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent, onClose}) => {
-  const { project, setProject} = useProject();
+const DeleteEventButton: React.FC<selectedEventProp> = ({
+  selectedEvent,
+  onClose,
+}) => {
+  const { project, setProject } = useProject();
 
   const handleConfirmDelete = async () => {
     if (selectedEvent && project) {
@@ -23,13 +26,15 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent, onClose}
         if (!response.ok) {
           throw new Error("Failed to delete the event");
         }
-        
+
         alert(`Successfully deleted event with ID: ${selectedEvent.id}`);
 
-        const updatedEvents = project.events.filter(event => event.id !== selectedEvent.id);
+        const updatedEvents = project.events.filter(
+          (event) => event.id !== selectedEvent.id
+        );
         // Update the project with the new events array
         setProject({ ...project, events: updatedEvents });
-        onClose()
+        onClose();
       } catch (error) {
         console.error("Error deleting event:", error);
         alert("Error deleting event");
@@ -38,9 +43,9 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({selectedEvent, onClose}
   };
   return (
     <button className="btn bg-red-500 text-white" onClick={handleConfirmDelete}>
-        Delete
+      Delete
     </button>
-)
+  );
 };
 
 export default DeleteEventButton;

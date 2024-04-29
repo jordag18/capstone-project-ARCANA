@@ -7,14 +7,16 @@ interface CreateProjectModalProps {
   onProjectCreated: () => void;
 }
 
-const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onProjectCreated }) => {
-  // these are to reset the fields after a project is reloaded 
+const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
+  onProjectCreated,
+}) => {
+  // these are to reset the fields after a project is reloaded
   const initialInputState = {
     projectName: "",
     projectLocation: "",
     dateStart: "",
     dateEnd: "",
-    initials: ""
+    initials: "",
   };
 
   const resetForm = () => {
@@ -23,10 +25,12 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onProjectCreate
     setDateStart(initialInputState.dateStart);
     setDateEnd(initialInputState.dateEnd);
     setInitials(initialInputState.initials);
-  }
+  };
 
   const [projectName, setProjectName] = useState(initialInputState.projectName);
-  const [projectLocation, setProjectLocation] = useState(initialInputState.projectLocation);
+  const [projectLocation, setProjectLocation] = useState(
+    initialInputState.projectLocation
+  );
   const [dateStart, setDateStart] = useState(initialInputState.dateStart);
   const [dateEnd, setDateEnd] = useState(initialInputState.dateEnd);
   const [initials, setInitials] = useState(initialInputState.initials);
@@ -136,10 +140,13 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onProjectCreate
               className="btn"
               onClick={() => {
                 handleSubmit();
-                const modalElement = document.getElementById("create_projet_modal") as HTMLDialogElement | null
-                if (modalElement) { modalElement.close() }
-              }}
-            >
+                const modalElement = document.getElementById(
+                  "create_projet_modal"
+                ) as HTMLDialogElement | null;
+                if (modalElement) {
+                  modalElement.close();
+                }
+              }}>
               Create Project
             </button>
           </div>

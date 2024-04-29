@@ -8,7 +8,8 @@ from datetime import datetime
 from typing import List, Optional, Union
 from pymongo import MongoClient
 from model import *
-#from log_ingestor import LogIngestor
+
+# from log_ingestor import LogIngestor
 from typing import List
 import uvicorn
 from pydantic import BaseModel
@@ -17,20 +18,19 @@ from graph import GraphManager
 from user_activity_logger import userActivityLogger
 
 
-
 ##########################################################################################
 # Here in the main I feel as though certain sections warrant there own context descriptions
 # because everythin stems from this file. For example everything from lines 26-85 would
 # warrant their own context description and so on with the chunks of code that have the http
 # methods. As I said in some of my other notes I think global variables warrant thier own
-# description and anything not working for us in terms of improvement should be outlined 
+# description and anything not working for us in terms of improvement should be outlined
 # in its own section.
 ##########################################################################################
 
 # app object
 app = FastAPI()
-#client = MongoClient("mongodb://localhost:27017/")
-#b = client["ARCANA"]
+# client = MongoClient("mongodb://localhost:27017/")
+# b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
 
 from database import (
@@ -54,7 +54,9 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ARCANA API"}
-#Ingest logs API
+
+
+# Ingest logs API
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
     try:
@@ -69,7 +71,9 @@ async def ingest_logs(files: List[UploadFile] = File(...)):
         return {"error_message": f"Error occurred: {e}"}
     else:
         return {"message": "Logs ingested successfully", **timestamps}
-#Retrieves all projects in DB
+
+
+# Retrieves all projects in DB
 @app.get("/api/projects", response_model=List[Project])
 async def get_all_projects():
     try:
@@ -77,7 +81,8 @@ async def get_all_projects():
         return projects
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+
 # #FIXME not implemented fully
 # @app.get("/api/project{project_name}", response_model=Project)
 # async def get_project_by_name(project_name):
@@ -104,7 +109,8 @@ async def get_all_projects():
 #         return response
 #     raise HTTPException(404, f"No project found with the name {project_name}")
 
-#Create Project in the database
+
+# Create Project in the database
 @app.post("/api/project/", response_model=ProjectCreate)
 async def create_project(project: ProjectCreate):
     try:
@@ -113,20 +119,22 @@ async def create_project(project: ProjectCreate):
             start_date=project.start_date,
             end_date=project.end_date,
             location=project.location,
-            initials=project.initials
+            initials=project.initials,
         )
-        
+
         return created_project
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-#Deletes project from the database
+
+# Deletes project from the database
 @app.delete("/api/deleteProject/{project_name}")
 def delete_project(project_name: str):
     response = db_manager.delete_project(project_name)
     if response:
         return f"Successfully deleted {project_name}"
     raise HTTPException(404, f"No project found with the name {project_name}")
+
 
 @app.get("/api/events", response_model=List[Event])
 async def get_events(project_name: str):
@@ -136,14 +144,19 @@ async def get_events(project_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.patch("/api/editEvent/{project_name}/{event_id}")
-async def edit_event(project_name: str, event_id: str, event_update: EventUpdate = Body(...)):
+async def edit_event(
+    project_name: str, event_id: str, event_update: EventUpdate = Body(...)
+):
     updated_data = event_update.model_dump(exclude_unset=True)
     try:
         # Call modify_event_from_project from DatabaseManager
         print("update 1")
         print(project_name)
-        success = db_manager.modify_event_from_project(project_name, event_id, updated_data)
+        success = db_manager.modify_event_from_project(
+            project_name, event_id, updated_data
+        )
         print("update 2")
         if success:
             print("update 3")
@@ -153,28 +166,42 @@ async def edit_event(project_name: str, event_id: str, event_update: EventUpdate
             print("update 5")
             return success
         else:
-            raise HTTPException(status_code=404, detail="Event not found or no changes made")
+            raise HTTPException(
+                status_code=404, detail="Event not found or no changes made"
+            )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-@app.patch("/api/createEvent/{project_name}", response_model=EventCreate, status_code=201)
-async def create_event(project_name: str, event_create: EventCreate = Body(...), auto_edges: AutoEdge = Body(...)):
+
+
+@app.patch(
+    "/api/createEvent/{project_name}", response_model=EventCreate, status_code=201
+)
+async def create_event(
+    project_name: str,
+    event_create: EventCreate = Body(...),
+    auto_edges: AutoEdge = Body(...),
+):
     print("EventCreate: ", event_create)
     print("AutoEdges: ", auto_edges.auto_edge)
     created_data = event_create.model_dump(exclude_unset=True)
     try:
         print("event add")
         project = db_manager.get_project_representer(project_name)
-        created_event = db_manager.add_event_to_project(project_name, created_data,  auto_edges.auto_edge)
-       
+        created_event = db_manager.add_event_to_project(
+            project_name, created_data, auto_edges.auto_edge
+        )
+
         if created_event:
             project.add_event_to_project(created_event)
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
-        raise HTTPException(status_code=404, detail="Project not found or event creation failed")
+        raise HTTPException(
+            status_code=404, detail="Project not found or event creation failed"
+        )
     except HTTPException as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-        
+
+
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
     try:
@@ -184,7 +211,9 @@ async def delete_event(project_name: str, event_id: str):
             project.delete_event_from_project(event_id)
             return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
         else:
-            raise HTTPException(404, f"No event found with ID: {event_id} in project: {project_name}")
+            raise HTTPException(
+                404, f"No event found with ID: {event_id} in project: {project_name}"
+            )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -192,11 +221,12 @@ async def delete_event(project_name: str, event_id: str):
 @app.get("/api/{project_name}/graphs", response_model=Graph)
 async def get_project_graphs(project_name: str):
     try:
-     
+
         return db_manager.fetch_project_graph(project_name)
 
     except Exception as e:
         raise HTTPException(detail=str(e))
+
 
 # @app.get("/api/{project_name}/graphs", response_model=Graph)
 # async def get_project_graphs(project_name: str):
@@ -209,25 +239,30 @@ async def get_project_graphs(project_name: str):
 #         return {"error_message": f"Invalid project name: {project_name}"}
 #     return db_manager.update_project_graph(project)
 
-@app.get("/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse)
+
+@app.get(
+    "/api/project/{project_name}/icon-libraries", response_model=IconLibraryResponse
+)
 async def get_project_icon_libraries(project_name: str):
     try:
         response = db_manager.get_icon_library_from_project(project_name)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+
 @app.post("/api/project/{project_name}/create-toa")
 async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
     try:
         print("uydsss")
-        team = data['team']
-        action_title = data['actionTitle']
-        image_name = data['imageName']
-        
-        
+        team = data["team"]
+        action_title = data["actionTitle"]
+        image_name = data["imageName"]
+
         # Save the icon to the icon library
-        db_manager.add_icon_to_icon_library(project_name, team, action_title, image_name)
+        db_manager.add_icon_to_icon_library(
+            project_name, team, action_title, image_name
+        )
 
     except Exception as e:
         return {"error_message": f"Error occurred: {e}"}
@@ -245,19 +280,20 @@ async def delete_icon(project_name: str, team: str, iconName: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#WORKING
+
+# WORKING
 @app.post("/api/project/{project_name}/edit-toa")
 async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
     try:
-        team = data['team']
-        action_title = data['actionTitle']
-        image_name = data['imageName']
-        is_default = data['isDefault']
-        old_team = data['oldTeam']
-        old_action_title = data['oldActionTitle']
-        old_image_name = data['oldImageName']
-        old_is_default = data['oldIsDefault']
-        
+        team = data["team"]
+        action_title = data["actionTitle"]
+        image_name = data["imageName"]
+        is_default = data["isDefault"]
+        old_team = data["oldTeam"]
+        old_action_title = data["oldActionTitle"]
+        old_image_name = data["oldImageName"]
+        old_is_default = data["oldIsDefault"]
+
         # Check which new data fields match the corresponding old data fields and set them to None
         if team == old_team:
             team = None
@@ -268,14 +304,22 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
         if is_default == old_is_default:
             is_default = None
 
-
-        db_manager.edit_icon(project_name, old_team, old_action_title, team, action_title, image_name, is_default)
+        db_manager.edit_icon(
+            project_name,
+            old_team,
+            old_action_title,
+            team,
+            action_title,
+            image_name,
+            is_default,
+        )
 
     except Exception as e:
         return {"error_message": f"Error occurred: {e}"}
     else:
         return {"message": "Icon has been modified successfully"}
-    
+
+
 @app.post("/api/undo/{project_id}")
 async def undo(project_id: str):
     """
@@ -291,6 +335,7 @@ async def undo(project_id: str):
             raise HTTPException(status_code=404, detail="No actions to undo")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/redo/{project_id}")
 async def redo(project_id: str):
@@ -310,65 +355,69 @@ async def redo(project_id: str):
 @app.get("/api/userActivityLog")
 def get_user_activity_logs():
     """
-        This API Endpoint allows the frontend to get the User Activity List from the database
+    This API Endpoint allows the frontend to get the User Activity List from the database
     """
     try:
         logs = userActivityLogger.get_log_list()
         log_data = []
         for log in logs:
-            log_data.append({
-                'initials': log.initials,
-                'timestamp': log.timestamp,
-                'statement': log.statement
-            })
+            log_data.append(
+                {
+                    "initials": log.initials,
+                    "timestamp": log.timestamp,
+                    "statement": log.statement,
+                }
+            )
         return log_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/api/userActivityLog")
 async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: str):
     """
-        This API call allows the frontend to add a User Log to the Activity List
+    This API call allows the frontend to add a User Log to the Activity List
     """
     try:
-        userActivityLogger.add_user_activity_log(initials=initials,
-                            timestamp=timestamp,
-                            statement=log_entry
-                            )
+        userActivityLogger.add_user_activity_log(
+            initials=initials, timestamp=timestamp, statement=log_entry
+        )
         return {"message": "Log entry added successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # ------------------------------------------------------------
 @app.post("/insert_analyst_initials")
 def insert_analyst_initials(initials: str):
-    #analyst_collection.insert_one({"initials": initials})
+    # analyst_collection.insert_one({"initials": initials})
     return {"message": "Analyst initials added successfully"}
 
 
 @app.delete("/delete_analyst_initials")
 def delete_analyst_initials(initials: str):
-    #analyst_collection.delete_one({"initials": initials})
+    # analyst_collection.delete_one({"initials": initials})
     return {"message": "Analyst initials deleted successfully"}
 
 
 @app.put("/update_analyst_initials")
 def update_analyst_initials(initials: str, new_initials: str):
-    #analyst_collection.update_one(
-        #{"initials": initials}, {"$set": {"initials": new_initials}}
-    #)
+    # analyst_collection.update_one(
+    # {"initials": initials}, {"$set": {"initials": new_initials}}
+    # )
     return {"message": "Analyst initials updated successfully"}
 
 
 @app.get("/get_all_analyst_initials/")
 def get_analyst_initials():
     initials_list = []
-    #for initials in analyst_collection.find():
-        #initials_list.append(initials["initials"])
+    # for initials in analyst_collection.find():
+    # initials_list.append(initials["initials"])
     return {"analyst_initials": initials_list}
 
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5005, log_level="debug")
+    uvicorn.run("main:app", host="0.0.0.0", log_level="debug")
 
 
 # ---------- OTHER HTTP METHODS ---------------- #
@@ -439,4 +488,3 @@ The TRACE method performs a message loop-back test along the path to the target 
 # 504 Gateway Timeout
 # 505 HTTP Version Not Supported
 # 511 Network Authentication Required
-

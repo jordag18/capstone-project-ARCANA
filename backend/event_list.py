@@ -1,5 +1,6 @@
 from event_representer import EventRepresenter
 
+
 class EventList:
     def __init__(self):
         self.events = list()

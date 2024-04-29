@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import ActivityLogErrorAlert from "@/app/ui/activityLogErrorAlert";
 
 interface Log {
@@ -13,14 +13,18 @@ function UserLogTable() {
   useEffect(() => {
     const fetchUserActivityList = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/userActivityLog');
+        const response = await fetch(
+          "http://localhost:8000/api/userActivityLog"
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok: ' + response.statusText);
+          throw new Error(
+            "Network response was not ok: " + response.statusText
+          );
         }
         const activityData: [] = await response.json(); // Type assertion
         setUserActivityLog(activityData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 

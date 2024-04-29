@@ -21,6 +21,7 @@ class Event(BaseModel):
     timestamp: datetime
     is_malformed: bool
 
+
 class EventUpdate(BaseModel):
     location: Optional[str] = None
     initials: Optional[str] = None
@@ -51,16 +52,17 @@ class EventCreate(BaseModel):
     icon: str
     is_malformed: Optional[bool] = None
     description: str
-    
+
 
 class Project(BaseModel):
-    id: str 
+    id: str
     name: str
     start_date: datetime
     end_date: datetime
-    location: str 
-    initials: str 
+    location: str
+    initials: str
     events: List[Event] = []
+
 
 class ProjectCreate(BaseModel):
     name: str
@@ -69,10 +71,12 @@ class ProjectCreate(BaseModel):
     location: str = ""
     initials: str = ""
 
+
 class Graph(BaseModel):
     nodes: Mapping[str, dict]
     edges: Mapping[str, List[str]]
     malformed_key: str = ""
+
 
 class Icon(BaseModel):
     image: str
