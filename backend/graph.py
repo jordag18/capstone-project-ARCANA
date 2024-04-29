@@ -60,27 +60,6 @@ class GraphManager:
         events[event_id].append(event_info)
 
         if auto_edges:
-<<<<<<< HEAD
-            if event.is_malformed:
-                GraphManager.edges[GraphManager.malformed_key].append(event.get_id())
-            elif event.team == "red":
-                if GraphManager.last_red is not None:
-                    GraphManager.edges[GraphManager.last_red.get_id()].append(
-                        event.get_id()
-                    )
-                GraphManager.last_red = event
-            else:
-                if GraphManager.last_blue is not None:
-                    GraphManager.edges[GraphManager.last_blue.get_id()].append(
-                        event.get_id()
-                    )
-                GraphManager.last_blue = event
-        else:
-            if event.team == "red":
-                GraphManager.last_red = None
-            else:
-                GraphManager.last_blue = None
-=======
             if event.team == "blue":
                 if last_red:
                     edges[last_red].append(event_id)  # Connect current blue to the last red
@@ -126,4 +105,3 @@ class GraphManager:
                 print(f"Event {event_id} has edges to: {edge_list}")
 
         return graphs
->>>>>>> 0a3e198 (Added graph algorithm)
