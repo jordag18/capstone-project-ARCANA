@@ -51,9 +51,8 @@ const useGraphData = (projectName: string) => {
             setGraphData((prevData) => ({ ...prevData, isLoading: true }));
             try {
                 const response = await fetch(`http://localhost:8000/api/${projectName}/graphs`);
-                console.log("RESP ", response)
                 const data = await response.json();
-                console.log("sdsadas ", data)
+                console.log(data)
                 const eventNodes = createEventNodes(data.nodes);
                 const projectEdges = createEdges(data.edges);
 
