@@ -3,20 +3,28 @@ import { EventNode } from "./EventNodeInterface";
 import { Event } from "../eventComponents/event-interface";
 import { Edge } from "reactflow";
 
-const createEventNodes = (eventsObject: Record<string, Event>): EventNode[] => {
+const createEventNodes = (eventsObject) => {
   const gridSize = 300;
-  return Object.keys(eventsObject).map((key, index) => {
-    const event = eventsObject[key];
+  // Map over keys in the eventsObject
+  return Object.keys(eventsObject).flatMap((key, index) => {
+    // Access the first element of the array to get the actual event object
+    const event = eventsObject[key][0];
+    if (!event.id) {
+      console.error('Event missing ID:', event);
+      return [];  // Return an empty array to keep flatMap clean
+    }
     const x = (index % 10) * gridSize;
     const y = Math.floor(index / 10) * gridSize;
-    return {
-      id: event.id,
-      type: "customEventNode",
+    return [{
+      id: event.id.toString(),  // Ensure the ID is a string
+      type: 'customEventNode',
       position: { x, y },
-      data: event,
-    };
-  });
+      data: event
+    }];
+  });  // Using flatMap to flatten the arrays into a single array
 };
+
+
 const createEdges = (edgesObject: Record<string, string[]>): Edge[] => {
   let edges = []; // Initialize edges as an array
 
@@ -55,6 +63,7 @@ const useGraphData = (projectName: string) => {
                 const data = await response.json();
                 console.log(data)
                 const initialGraphKey = Object.keys(data.graphs)[0];
+                console.log("Here",data.graphs[initialGraphKey].events)
                 const nodes = createEventNodes(data.graphs[initialGraphKey].events);
                 const edges = createEdges(data.graphs[initialGraphKey].edges);
                 console.log("Created nodes:", nodes);  // Log created nodes
