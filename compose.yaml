@@ -1,0 +1,45 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8001"
+    volumes:
+      - ./backend:/home/app/backend  # Corrected volume path
+    command: bash -c "python main.py"
+    environment:
+      MONGODB_URL: mongodb://arcana-db:27017
+      DB_NAME: ARCANA
+    depends_on:
+      - mongodb
+    networks:
+      - app_net  # Added network
+
+  frontend:
+    build: ./frontend # Changed to match the exposed port of the frontend
+    environment:
+      API_URL: "http://backend:8000"  # Point frontend to backend service using the container name
+    volumes:
+      - ./frontend:/home/app/frontend  # Corrected volume path
+    ports:
+      - "5005:3000"  # Changed to match the exposed port of the frontend
+    command: bash -c "npm run dev"
+    networks:
+      - app_net  # Added network
+
+  mongodb:
+    container_name: arcana-db
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - arcana-db-data:/data/db
+    networks:
+      - app_net  # Added network
+
+networks:
+  app_net:  # Defined Docker network
+    driver: bridge
+
+volumes:
+  arcana-db-data:

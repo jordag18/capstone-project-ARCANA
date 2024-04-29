@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from file_handler import FileHandler
 from graph import GraphManager
 from user_activity_logger import userActivityLogger
+import socket
 
 
 ##########################################################################################
@@ -416,8 +417,12 @@ def get_analyst_initials():
     return {"analyst_initials": initials_list}
 
 
+localhost = socket.gethostbyname(socket.gethostname())
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", log_level="debug")
+    uvicorn.run(
+        "main:app", host=localhost, port=8000, log_level="debug"
+    )  # Run the app using uvicorn as the server with debug logging
+    # host and port can be specified as arguments to uvicorn.run if needed (default is localhost:8000)
 
 
 # ---------- OTHER HTTP METHODS ---------------- #
