@@ -34,13 +34,14 @@ const createEdges = (edgesObject: Record<string, string[]>): Edge[] => {
 };
 
 const useGraphData = (projectName: string) => {
-  const [graphData, setGraphData] = useState({
-    nodes: [],
-    edges: [],
-    isLoading: true,
-    error: null,
-  });
-  const [refreshIndex, setRefreshIndex] = useState(0);
+ const [graphData, setGraphData] = useState({
+        graphs: {},
+        selectedGraph: null,
+        nodes: [],
+        edges: [],
+        isLoading: true,
+        error: null
+    });    const [refreshIndex, setRefreshIndex] = useState(0);
 
   const refresh = useCallback(() => {
     setRefreshIndex((index) => index + 1);
@@ -48,37 +49,57 @@ const useGraphData = (projectName: string) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            setGraphData((prevData) => ({ ...prevData, isLoading: true }));
+            setGraphData(prev => ({ ...prev, isLoading: true }));
             try {
                 const response = await fetch(`http://localhost:8000/api/${projectName}/graphs`);
                 const data = await response.json();
                 console.log(data)
-                const eventNodes = createEventNodes(data.nodes);
-                const projectEdges = createEdges(data.edges);
-
-        setGraphData({
-          nodes: eventNodes,
-          edges: projectEdges,
-          isLoading: false,
-          error: null,
-        });
-      } catch (error) {
-        console.error("Error fetching graph data:", error);
-        setGraphData({
-          nodes: [],
-          edges: [],
-          isLoading: false,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    };
+                const initialGraphKey = Object.keys(data.graphs)[0];
+                const nodes = createEventNodes(data.graphs[initialGraphKey].events);
+                const edges = createEdges(data.graphs[initialGraphKey].edges);
+                console.log("Created nodes:", nodes);  // Log created nodes
+                console.log("Created edges:", edges);  // Log created edges
+                setGraphData({
+                    graphs: data.graphs,
+                    selectedGraph: initialGraphKey,
+                    nodes: nodes,
+                    edges: edges,
+                    isLoading: false,
+                    error: null
+                });
+            } catch (error) {
+                console.error("Error fetching graph data:", error);
+                setGraphData({
+                    graphs: {},
+                    selectedGraph: null,
+                    nodes: [],
+                    edges: [],
+                    isLoading: false,
+                    error: error instanceof Error ? error.message : String(error)
+                });
+            }
+        };
 
     if (projectName) {
       fetchData();
     }
   }, [projectName, refreshIndex]);
 
-  return { ...graphData, refresh };
+    
+ const setSelectedGraph = (graphKey) => {
+        console.log(`Changing selected graph to: ${graphKey}`);  // Log graph selection change
+        const selectedNodes = createEventNodes(graphData.graphs[graphKey].events);
+        const selectedEdges = createEdges(graphData.graphs[graphKey].edges);
+        console.log("Updated nodes for selected graph:", selectedNodes);  // Log updated nodes for the new graph
+        console.log("Updated edges for selected graph:", selectedEdges);  // Log updated edges for the new graph
+        setGraphData(prev => ({
+            ...prev,
+            selectedGraph: graphKey,
+            nodes: selectedNodes,
+            edges: selectedEdges
+        }));
+    };
+    return { ...graphData, setSelectedGraph };
 };
 
 export default useGraphData;
