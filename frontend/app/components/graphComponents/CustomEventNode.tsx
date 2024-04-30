@@ -33,7 +33,7 @@ const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
     }}>
     <Handle type="target" position={Position.Top} />
     <img
-      src={`${data.icon}`}
+      src={`/Icons/${data.icon}`}
       alt="Event Icon"
       style={{ width: "30%", height: "10%", marginBottom: "8px" }}
     />
