@@ -27,7 +27,6 @@ const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
     style={{
       width: "250px", // Set a fixed width
       maxWidth: "250px", // Ensure the node does not exceed this width
-      height: "800px",
       overflow: "hidden", // Prevents content from spilling out
       textOverflow: "ellipsis", // Adds ellipsis if text overflows (applies to single line)
       whiteSpace: "normal", // Allows text to wrap
