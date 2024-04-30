@@ -27,15 +27,16 @@ const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
     style={{
       width: "250px", // Set a fixed width
       maxWidth: "250px", // Ensure the node does not exceed this width
+      height: "800px",
       overflow: "hidden", // Prevents content from spilling out
       textOverflow: "ellipsis", // Adds ellipsis if text overflows (applies to single line)
       whiteSpace: "normal", // Allows text to wrap
     }}>
     <Handle type="target" position={Position.Top} />
     <img
-      src={`/Icons/${data.icon}`}
+      src={`${data.icon}`}
       alt="Event Icon"
-      style={{ width: "100%", height: "auto", marginBottom: "8px" }}
+      style={{ width: "30%", height: "10%", marginBottom: "8px" }}
     />
     <div>
       <strong>Initials:</strong> {data.initials}
