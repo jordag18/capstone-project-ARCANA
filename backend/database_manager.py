@@ -93,7 +93,9 @@ class DatabaseManager:
             new_event = EventRepresenter(**event_data)
             print(new_event)
             project.event_list.append(new_event)
-            project.update_graph(auto_edges)
+            #project.update_graph(auto_edges)
+            graph_data = project.get_graph(project, auto_edges)
+            project.update_graph(graph_data)
             project.save()  # Save the updated project
 
             EventActionLog(
@@ -521,33 +523,7 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
-    # def no_edge_node(self, project_name, event_id, auto_edges):
-    #     print("no edge ")
-    #     project = ProjectRepresenter.objects(name=project_name).first()
-    #     if not auto_edges:
-    #         events = project.event_list
-    #         for event in events:
-    #             if event.get_id() == event_id:
-    #                 send_event = event
-    #         project_graph = GraphManager.get_project_graphs(project, send_event)
-    #         project.project_graph = project_graph
-    #         project.save()
-
-    # def graph_algorithm(self, project_name):
-    #     print("graph_algo ")
-    #     project = ProjectRepresenter.objects(name=project_name).first()
-    #     if project:
-    #         project_graph = GraphManager.get_project_graphs(project)
-    #         project.project_graph = project_graph
-    #     return project.project_graph
-
-    def update_project_graph(self, project):
-        project_graph = GraphManager.get_project_graphs(project)
-        project.project_graph = project_graph
-        project.save()
-
-        return project_graph
-
+ 
     def fetch_project_graph(self, project_name):
         print("fetch graph ")
         project = ProjectRepresenter.objects(name=project_name).first()

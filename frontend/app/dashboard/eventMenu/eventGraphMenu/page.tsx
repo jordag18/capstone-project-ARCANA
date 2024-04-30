@@ -24,14 +24,6 @@ import CustomEventNode from "@/app/components/graphComponents/CustomEventNode";
 import ButtonEdge from "@/app/components/graphComponents/ButtonEdge";
 import { CreateEvent } from "@/app/components/eventComponents/event-interface";
 
-const nodeTypes = {
-  customEventNode: CustomEventNode,
-};
-
-const edgeTypes = {
-  buttonEdge: ButtonEdge,
-};
-
 const FilterModal = ({
   isOpen,
   onClose,
@@ -73,7 +65,8 @@ const FilterModal = ({
             onClick={() => {
               onClose();
             }} // This can be replaced with a function that applies filters explicitly if needed.
-            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
             Apply Filters
           </button>
         </div>
@@ -82,9 +75,17 @@ const FilterModal = ({
   );
 };
 
+const nodeTypes = {
+  customEventNode: CustomEventNode,
+};
+
+const edgeTypes = {
+  buttonEdge: ButtonEdge,
+};
+
 const Flow = () => {
   const { project } = useProject();
-  const { nodes, edges, isLoading, error } = useGraphData(project.name);
+  const { graphs, selectedGraph, nodes, edges, isLoading, error, setSelectedGraph } = useGraphData(project.name);
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -108,6 +109,7 @@ const Flow = () => {
   const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
+    console.log("Setting initial nodes and edges from hook:", nodes, edges);
     setNodes(nodes as EventNode[]);
     setEdges(edges);
   }, [nodes, edges]);
@@ -119,12 +121,20 @@ const Flow = () => {
   });
 
   const onNodesChange = useCallback(
-    (changes) => setNodes(applyNodeChanges(changes, nodesState)),
+    (changes) => {
+      const newNodes = applyNodeChanges(changes, nodesState);
+      console.log("Nodes after change:", newNodes);
+      setNodes(newNodes);
+    },
     [nodesState]
   );
 
   const onEdgesChange = useCallback(
-    (changes) => setEdges(applyEdgeChanges(changes, edgesState)),
+    (changes) => {
+      const newEdges = applyEdgeChanges(changes, edgesState);
+      console.log("Edges after change:", newEdges);
+      setEdges(newEdges);
+    },
     [edgesState]
   );
 
@@ -255,11 +265,28 @@ const Flow = () => {
     setEdges(parsedEdges);
   };
 
+  const handleGraphChange = (event) => {
+    setSelectedGraph(event.target.value);
+  };
+
+  const renderGraphSelector = () => (
+    <select onChange={handleGraphChange} value={selectedGraph} className="mb-4">
+      {Object.keys(graphs).map(graphKey => (
+        <option key={graphKey} value={graphKey}>{graphKey}</option>
+      ))}
+    </select>
+  );
+
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!selectedGraph) return <div>No Graph Selected</div>;
+
 
   return (
     <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
+      {renderGraphSelector()}
+
       <div className="w-full h-full" ref={reactFlowWrapper}>
         <div className="button-group mt-4 flex justify-center space-x-4">
           <button

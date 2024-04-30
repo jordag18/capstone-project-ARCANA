@@ -193,7 +193,7 @@ async def create_event(
         )
 
         if created_event:
-            project.add_event_to_project(created_event)
+            
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(
@@ -219,14 +219,15 @@ async def delete_event(project_name: str, event_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/{project_name}/graphs", response_model=Graph)
+@app.get("/api/{project_name}/graphs", response_model=ProjectGraphs)
 async def get_project_graphs(project_name: str):
     try:
-
-        return db_manager.fetch_project_graph(project_name)
+        graph_data = db_manager.fetch_project_graph(project_name) 
+        project_graphs = ProjectGraphs(graphs=graph_data)
+        return project_graphs
 
     except Exception as e:
-        raise HTTPException(detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # @app.get("/api/{project_name}/graphs", response_model=Graph)

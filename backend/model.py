@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import List, Optional, Dict
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 from collections.abc import Mapping
 
@@ -21,6 +21,22 @@ class Event(BaseModel):
     timestamp: datetime
     is_malformed: bool
 
+class EventGraph(BaseModel):
+    id: str
+    initials: str
+    team: str
+    icon: str
+    vector_id: str
+    description: str
+    data_source: str
+    action_title: str
+    last_modified: str  # or datetime if you parse the string to datetime object
+    source_host: Optional[str]
+    target_host_list: List[str]
+    location: str
+    posture: Optional[str]
+    timestamp: str  # or datetime
+    is_malformed: bool
 
 class EventUpdate(BaseModel):
     location: Optional[str] = None
@@ -73,9 +89,14 @@ class ProjectCreate(BaseModel):
 
 
 class Graph(BaseModel):
-    nodes: Mapping[str, dict]
-    edges: Mapping[str, List[str]]
-    malformed_key: str = ""
+    events: Dict[str, List[EventGraph]]  # Mapping of event ID to list of event info
+    edges: Dict[str, List[str]]         # Mapping of event ID to list of connected event IDs
+    last_event: str
+    last_red: Optional[str] = None  # Allow None for last_red
+    unconnected_blues: List[Any]       # Adjust the type as needed based on actual data
+
+class ProjectGraphs(BaseModel):
+    graphs: Dict[str, Graph]  
 
 
 class Icon(BaseModel):
