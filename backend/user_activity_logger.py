@@ -45,6 +45,15 @@ class UserActivityLogger(Document):
 
     def get_log_list(self):
         return self.user_activity_log_list
+    #Log entry for sync request
+    def sync_request_log(self, initials, timestamp, character):
+        statement = f"Sync request sent - Projects: {character}"
+        self.add_user_activity_log(initials, timestamp, statement)
+    
+    #Log entry for accepted sync projects
+    def accepted_sync_projects_log(self, initials, timestamp, character):
+        statement = f"Projects from sync request accepted - Projects: {character}"
+        self.add_user_activity_log(initials, timestamp, character)
 
 
 # userActivityLogger = UserActivityLogger()
@@ -99,3 +108,10 @@ def export_event(initials, timestamp):
 
 def import_event(initials, timestamp):
     userActivityLogger.add_user_activity_log(initials, timestamp, "Event imported")
+
+#Sync
+def sync_request_log(initials, timestamp, character):
+    userActivityLogger.sync_request_log(initials, timestamp, character)
+
+def accepted_sync_projects_log(initials, timestamp, character):
+    userActivityLogger.accepted_sync_projects_log(initials, timestamp, character)
