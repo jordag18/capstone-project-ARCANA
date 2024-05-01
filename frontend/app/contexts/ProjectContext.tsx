@@ -50,16 +50,21 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
   const [project, setProject] = useState<Project>(defaultProject);
 
   useEffect(() => {
-    // Try to load the stored project from localStorage when the component mounts
-    const storedProject = localStorage.getItem(localStorageKey);
-    if (storedProject) {
-      setProject(JSON.parse(storedProject));
+    // Ensuring this runs only on the client side
+    if (typeof window !== 'undefined') {
+      const storedProject = localStorage.getItem(localStorageKey);
+      console.log("Stored Project: ", storedProject)
+      if (storedProject && storedProject != 'undefined') {
+        setProject(JSON.parse(storedProject));
+      }
     }
   }, []);
 
   useEffect(() => {
-    // Save the project to localStorage whenever it changes
-    localStorage.setItem(localStorageKey, JSON.stringify(project));
+    if (typeof window !== 'undefined') {
+      // Save the project to localStorage whenever it changes
+      localStorage.setItem(localStorageKey, JSON.stringify(project));
+    }
   }, [project]);
 
   const updateEvent = (eventId: string, updatedEventData: Event) => {
