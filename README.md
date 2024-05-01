@@ -103,6 +103,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - User will be taken to the Events Management page where they can create an event, modify an event, delete an event
 - User will have access to a toolbar that will direct them to the Event Graph and the TOA Manager
 - User will have access to import and export functions in the Graph Manager
+- User will have the ability to modify Event nodes like they would in the Event Manager.
+- User will have the ability to delete, create, or modify TOA icons as well.
 
 ###### Documentation:
 
