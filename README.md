@@ -6,7 +6,8 @@
 
 GitHub repository for Software Engineering Design and Implementation CS-4311 capstone project:
 
-The **ARCANA** system helps DAC CEAD analysts assess blue team performance (PMR) against red team cyber-attacks in exercises. It analyzes event data during the exercise, presenting a visual timeline of attacks and blue team responses.
+The **ARCANA** system helps DAC CEAD analysts assess blue team performance (PMR) against red team cyber-attacks in exercises.
+It analyzes event data during the exercise, presenting a visual timeline of attacks and blue team responses.
 
 ---
 
@@ -20,7 +21,6 @@ The system intends to provide a means of conducting the analysis of events that 
 
 ## Getting Started
 ### Running the Project
-#### Project Setup
 
 ***Prerequisites:***
 
@@ -32,6 +32,20 @@ The system intends to provide a means of conducting the analysis of events that 
 #### Packages and Dependencies
 
 ###### Python Library Dependencies:
+
+### From file
+
+    You can install all dependencies using the following commands:
+    cd backend
+    pip install -r requirements.txt
+
+### Installing manually
+
+    You can install the backend dependencies by using the following command:
+    cd backend
+
+    Then copy and paste the following into the terminal: 
+
     pip install pymongo 
     pip install fastapi
     pip install "uvicorn[standard]"
@@ -40,66 +54,6 @@ The system intends to provide a means of conducting the analysis of events that 
     pip install python-multipart
     pip install pandas
     pip install motormongo
-
-###### Then run the following commands
-
-***Start the backend***
-
-    cd backend
-    python main.py
-    uvicorn main:app --reload
-
-    uvicorn main:app --reload
-    pipenv shell
-
-###### Node.Js Packages and Modules Dependencies:
-
-To build and run the react you need to change directory to `~/frontend/arcana`
-
-###### Then run the following commands
-
-***Development Build:***
-
-    npm install -save-dev
-    npm run dev
-
-
-***Production Build:***
-
-    npm install -save
-    npm run build
-    npm run start
-
-***Necessary Modules:***
-
-    npm install react-bootstrap
-    npm install react-bootstrap-icons
-    npm install react-dom
-
-##### Getting Started
-https://fastapi.tiangolo.com/
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-###### Next.js documentation:
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-
-###### Uvicorn Server:
 
 ##### Getting Started
 
@@ -113,6 +67,47 @@ Check that the uvicorn server is running on `http://127.0.0.1:8000`
 
 Uvicorn server should be running within the terminal and ready to recieve api calls from frontend application.
 
+###### Then run the following commands
+
+***Start the backend***
+
+    cd backend
+    uvicorn main:app --reload
+
+###### Node.Js Packages and Modules Dependencies:
+
+In a different terminal change directory to the frontend.
+
+###### Then run the following commands
+
+***Development Build:***
+
+    npm install -save-dev
+    npm run dev
+
+***Production Build:***
+
+    npm install -save
+    npm run build
+    npm run start
+
+
+Once the product is doen building a URL will present itself in the terminal.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+###### Running ARCANA
+
+- User will first be prompted for their first and last initials ONLY.
+- User will be taken to the Project Manager page.
+- User can create a project, or, if a project is listed, click modify and open.
+- User will be taken to the Events Management page where they can create an event, modify an event, delete an event
+- User will have access to a toolbar that will direct them to the Event Graph and the TOA Manager
+- User will have access to import and export functions in the Graph Manager
+
+###### Documentation:
+
+- [React Documentation](https://react.dev/reference/react)
+- [Next.js Documentation](https://nextjs.org/docs)
 ---
 
 ### Credits
