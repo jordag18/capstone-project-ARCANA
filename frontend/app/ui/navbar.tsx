@@ -15,7 +15,7 @@ const TopNav = () => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal p-0">
           <li className="hover:bg-stone-600 rounded-md">
-            <MoveToNav linkTo="/dashboard" buttonText="ARCANA" />
+            <MoveToNav linkTo="/" buttonText="ARCANA" />
           </li>
           <li className="hover:bg-stone-600 rounded-md">
             <MoveToNav
