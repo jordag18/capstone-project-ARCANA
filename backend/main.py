@@ -33,6 +33,7 @@ app = FastAPI()
 # client = MongoClient("mongodb://localhost:27017/")
 # b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
+initials: str
 
 from database import (
     fetch_one_project,
@@ -59,9 +60,8 @@ def read_root():
 #set initials
 @app.post("/api/setInitials")
 async def set_initials():
-    initials: str = Body(...)
+    initials = Body(...)
     print(initials)
-
 
 # Ingest logs API
 @app.post("/api/ingestLogs")
