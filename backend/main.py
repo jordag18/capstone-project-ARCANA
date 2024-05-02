@@ -56,6 +56,12 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to ARCANA API"}
 
+#set initials
+@app.post("/api/setInitials")
+async def set_initials():
+    initials: str = Body(...)
+    print(initials)
+
 
 # Ingest logs API
 @app.post("/api/ingestLogs")
