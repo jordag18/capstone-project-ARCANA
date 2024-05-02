@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ProjectMenu from "./components/projectComponents/ProjectMenu";
 
 export default function Home() {
 
   const [initialData, setInitialData] = useState('');
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInitialData(e.target.value);
   }
 
   const handleSubmit = () => {
-    navigate('/dashboard/projectsMenu', { state: {initials: initialData}})
+    
   }
 
   return (
@@ -30,7 +27,7 @@ export default function Home() {
             onChange={handleChange}
           />
         </label>
-        <button style={{marginTop: '1rem'}} className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600">Submit</button>
+        <button style={{marginTop: '1rem'}} onClick={handleSubmit} className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600">Submit</button>
       </div>
     </main>
   );
