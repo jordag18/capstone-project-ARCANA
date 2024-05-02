@@ -98,11 +98,15 @@ class DatabaseManager:
             project.update_graph(graph_data)
             project.save()  # Save the updated project
 
-            EventActionLog(
-                action_type="create",
-                event_after=new_event,
-                project=project,
-            ).save()
+
+            # Log event removal
+            self.log_action(
+                project_id=str(project.id),
+                action_type='create',
+                event_before=None,
+                event_after=new_event
+            )
+
             return new_event
         return None
 
@@ -128,24 +132,47 @@ class DatabaseManager:
     #             return None
     #     except Exception as e:
     #         return None
-
+    
     def remove_event_from_project(self, project_name, event_id):
         try:
             event_id_obj = ObjectId(event_id)
-            # Update the project in the database to remove the event
-            self.projects_collection.update_one(
-                {"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}}
-            )
-            project = self.get_project(project_name)
-            print(type(project), project_name)
+            # First fetch the event to log it before deletion
             project = ProjectRepresenter.objects(name=project_name).first()
-            if project:
-                project.event_list = [
-                    event for event in project.event_list if str(event.id) != event_id
-                ]
-                project.update_graph(False, event_id)
-                project.save()
-                return True
+            if not project:
+                print("Project not found")
+                return False
+
+            # Find the event to be removed
+            event_to_remove = None
+            for event in project.event_list:
+                if str(event.id) == str(event_id_obj):
+                    event_to_remove = copy.deepcopy(event)
+                    break
+
+            if not event_to_remove:
+                print("Event not found")
+                return False
+
+            # Perform the removal
+            update_result = project.update(pull__event_list__id=event_id_obj)
+            if update_result == 0:
+                print("Failed to remove the event")
+                return False
+
+            # Log event removal
+            self.log_action(
+                project_id=str(project.id),
+                action_type='delete',
+                event_before=event_to_remove,
+                event_after=None #No event after deletion
+            )
+
+            #I assume this is supposed to call graphManager delete_node function through project_representer update_graph function but it does not exist
+            #commented out to prevent error on frontend when deleting event
+            #project.update_graph(False, event_id)
+
+            print("Event successfully removed and logged")
+            return True
         except Exception as e:
             print("An error occurred:", e)
             return False

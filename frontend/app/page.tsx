@@ -1,18 +1,19 @@
+"use client";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import ProjectMenu from "./components/projectComponents/ProjectMenu";
 
 export default function Home() {
 
   const [initialData, setInitialData] = useState('');
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInitialData(e.target.value);
   }
 
   const handleSubmit = () => {
-    navigate('/dashboard/projectsMenu', { state: {initials: initialData}})
+    //navigate('/dashboard/projectsMenu', { state: {initials: initialData}})
   }
 
   return (
