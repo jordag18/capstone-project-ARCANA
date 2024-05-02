@@ -20,8 +20,8 @@ const EventsList = () => {
   const refreshEvents = () => {
     setRefreshTrigger(!refreshTrigger);
   };
-  const handleCreateModal = (createEvent: CreateEvent) => {
-    setNewEvent(createEvent);
+  const handleCreateModal = () => {
+    console.log(isModalOpen);
     setIsModalOpen(true);
   };
 

@@ -76,7 +76,21 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const value = { project, setProject, updateEvent };
+  const addEvent = (newEvent: Event) => {
+    setProject((currentProject) => ({
+      ...currentProject,
+      events: [...currentProject.events, newEvent],
+    }));
+  };
+
+  const deleteEvent = (eventId: string) => {
+    setProject((currentProject) => ({
+      ...currentProject,
+      events: currentProject.events.filter(event => event.id !== eventId),
+    }));
+  };
+
+  const value = { project, setProject, updateEvent, addEvent, deleteEvent };
 
   return (
     <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>

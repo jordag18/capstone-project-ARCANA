@@ -15,8 +15,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   isModalOpen,
   onClose,
 }) => {
-  const { project } = useProject();
-  const { updateEvent } = useProject();
+  const { project, updateEvent } = useProject();
   const [formData, setFormData] = useState<Event>({
     ...selectedEvent,
     target_host_list:

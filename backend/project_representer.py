@@ -45,6 +45,7 @@ class ProjectRepresenter(Document):
         }
     })
     project_graph = DictField(default={})
+    graphbe = {}
 
     meta = {
         'collection': 'Projects',
@@ -65,25 +66,14 @@ class ProjectRepresenter(Document):
         GraphManager.last_blue = None
         GraphManager.last_red = None
 
-    def update_graph(self, auto_edges, delete_node=None, edited_id=None, edited_data=None):
-        if delete_node is not None:
-            GraphManager.delete_event(delete_node)
-        elif edited_id and edited_data is not None:
-            GraphManager.edit_event(edited_id, edited_data)
-        else:
-            print("Updating graph with auto_edges:", auto_edges)
-            GraphManager.build_graph(self, auto_edges)  # Using static method directly
-        self.project_graph = {'nodes': GraphManager.nodes, 'edges': dict(GraphManager.edges)}
     
     def update_graph(self, graph_data):
         self.project_graph = json.loads(json.dumps(graph_data, default=str))  # Serialize complex objects
 
 
 
-    def get_graph(self, auto_edges=True, delete_id=None, edited_id=None, edited_data=None):
+    def get_graph(self, auto_edges=True, delete_id=None, edited_id=None, edited_data=None, new_event_id = None, new_event=None):
         # Get the current state of the project graphs
-        graphs = GraphManager.get_project_graphs(self, auto_edges)
-
         # Retrieve the vector_id from the event for delete or edit operations
         def find_vector_id(event_id):
             for event in self.event_list:
@@ -95,15 +85,18 @@ class ProjectRepresenter(Document):
         if delete_id:
             vector_id = find_vector_id(delete_id)
             if vector_id:
-                GraphManager.delete_node(graphs, vector_id, delete_id)
-
+                graphs = GraphManager.delete_node(self, vector_id, delete_id)
+                return graphs
         # Handle editing of an event if edited_id and edited_data are provided
-        if edited_id and edited_data:
+        elif edited_id and edited_data:
             vector_id = find_vector_id(edited_id)
             if vector_id:
-                GraphManager.edit_event(graphs, vector_id, edited_id, edited_data)
-
-        # Return the possibly modified graph
+                graphs = GraphManager.edit_node(self, vector_id, edited_id, edited_data)
+                return graphs
+        # Handle the create node
+        else:
+            vector_id = find_vector_id(new_event_id)
+            graphs = GraphManager.add_node(self, new_event, vector_id, auto_edges)
         return graphs
     
     def ingestLogsToProject(self, directory):
@@ -116,7 +109,7 @@ class ProjectRepresenter(Document):
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
         
-        graph_data = self.get_graph(True)
+        graph_data = GraphManager.get_project_graphs(self, True)
         self.update_graph(graph_data)
         self.save()
 

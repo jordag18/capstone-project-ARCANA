@@ -25,7 +25,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
   isModalOpen,
   onClose,
 }) => {
-  const { project } = useProject();
+  const { project, addEvent } = useProject();
   const [formData, setFormData] = useState<CreateEvent>(newEvent);
   const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
   const [autoEdge, setAutoEdge] = useState(false);
@@ -74,8 +74,9 @@ const CreateEventModal: React.FC<createEventProp> = ({
         return;
       }
 
-      const data = await response.json();
-      console.log("Event created successfully:", data);
+      const createdEvent = await response.json();
+      addEvent(createdEvent);
+      console.log("Event created successfully:", createdEvent);
       onClose();
     } catch (error) {
       console.error("Error creating event: ", error);
