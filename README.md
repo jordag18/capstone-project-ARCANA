@@ -20,7 +20,7 @@ The system intends to provide a means of conducting the analysis of events that 
 - Synchronization features to preserve Analysts' work in real-time.
 
 
-#### Justification of CAT 1 STIG Vulnerabilities
+## Justification of CAT 1 STIG Vulnerabilities
 | VULNERABILITY ID | DESCRIPTION | MITIGATING REASON |
 |------------------|-------------|-------------------|
 | V – 222400 | Validity periods must be verified on all application messages using WS-Security or SAML assertions. | This is a security measure to prevent the use of outdated or expired security tokens. This ID would not apply on this project due to the project not having a need for security tokens &/or passwords. |
