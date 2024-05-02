@@ -85,7 +85,7 @@ const edgeTypes = {
 
 const Flow = () => {
   const { project } = useProject();
-  const { graphs, selectedGraph, nodes, edges, isLoading, error, setSelectedGraph } = useGraphData(project.name);
+  const { graphs, selectedGraph, nodes, edges, isLoading, error, refresh, setSelectedGraph } = useGraphData(project.name);
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -293,6 +293,11 @@ const Flow = () => {
             onClick={createNode}
             className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
             Create Event Node
+          </button>
+          <button
+            onClick={refresh}
+            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+            Refresh Data
           </button>
           <button
             onClick={() => setIsImportModalOpen(true)}

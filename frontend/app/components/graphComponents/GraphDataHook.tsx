@@ -108,7 +108,7 @@ const useGraphData = (projectName: string) => {
             edges: selectedEdges
         }));
     };
-    return { ...graphData, setSelectedGraph };
+    return { ...graphData, setSelectedGraph, refresh };
 };
 
 export default useGraphData;

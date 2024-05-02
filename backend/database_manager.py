@@ -93,10 +93,10 @@ class DatabaseManager:
             new_event = EventRepresenter(**event_data)
             print(new_event)
             project.event_list.append(new_event)
-            #project.update_graph(auto_edges)
-            graph_data = project.get_graph(project, auto_edges)
-            project.update_graph(graph_data)
             project.save()  # Save the updated project
+            graph_data = project.get_graph(auto_edges, delete_id=None, edited_id=None, edited_data=None, new_event_id=new_event.get_id(), new_event=new_event)
+            project.update_graph(graph_data)
+            project.save()
 
             EventActionLog(
                 action_type="create",
@@ -106,45 +106,25 @@ class DatabaseManager:
             return new_event
         return None
 
-    # def create_event_to_project(self, project, event_data):
-    #     try:
-    #         new_event = EventRepresenter(id=ObjectId(), **event_data)
-    #         new_event.save()
-
-    #         result = self.projects_collection.update_one(
-    #             {"name": project.name},
-    #             {"$push": {"event_list": new_event.id}}
-    #         )
-    #         project.event_list.append(new_event)
-    #         project.save()  # Save the updated project
-    #         if result.modified_count == 1:
-    #             EventActionLog(
-    #                 action_type='create',
-    #                 event_after=new_event,
-    #                 project=project,
-    #             ).save()
-    #             return new_event
-    #         else:
-    #             return None
-    #     except Exception as e:
-    #         return None
 
     def remove_event_from_project(self, project_name, event_id):
         try:
             event_id_obj = ObjectId(event_id)
-            # Update the project in the database to remove the event
+            project = ProjectRepresenter.objects(name=project_name).first()
+            # Delete the Graph's node 
+            graph_data = project.get_graph(auto_edges=True, delete_id=str(event_id))  
+            project.update_graph(graph_data)
+            project.save()
+           # Update the project in the database to remove the event
             self.projects_collection.update_one(
                 {"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}}
             )
-            project = self.get_project(project_name)
-            print(type(project), project_name)
-            project = ProjectRepresenter.objects(name=project_name).first()
+      
+           
             if project:
                 project.event_list = [
                     event for event in project.event_list if str(event.id) != event_id
                 ]
-                project.update_graph(False, event_id)
-                project.save()
                 return True
         except Exception as e:
             print("An error occurred:", e)
@@ -172,6 +152,9 @@ class DatabaseManager:
                     # Update the event with new data
                     for key, value in updated_data.items():
                         setattr(event, key, value)
+
+                    graph_data = project.get_graph(True, None, str(event_id), event)
+                    project.update_graph(graph_data)
                     
                     project.save()  # Save the updated project
                     
