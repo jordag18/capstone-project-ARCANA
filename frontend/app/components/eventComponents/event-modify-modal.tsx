@@ -124,19 +124,6 @@ const EditEventModal: React.FC<selectedEventProp> = ({
                 </label>
               </div>
               <div className="flex-col">
-                <h2>Initials</h2>
-                <label className="input input-bordered flex items-center gap-2">
-                  <input
-                    type="text"
-                    name="initials"
-                    className="grow"
-                    placeholder="Initials"
-                    value={formData.initials}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
-              <div className="flex-col">
                 <h2>Team</h2>
                 <label className="input input-bordered flex items-center gap-2">
                   <input
