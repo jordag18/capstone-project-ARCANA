@@ -101,12 +101,17 @@ class ProjectRepresenter(Document):
             vector_id = find_vector_id(new_event_id)
             graphs = GraphManager.add_node(self, new_event, vector_id, auto_edges)
         return graphs
+
+    # def ingest_log_logger(directory: str, initials: str):
+    #     print("lol")
+    #     self.record_to_logger("ingested_logs",data_source=directory, initials=initials)
+        
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
 
         # Log activity when logs are ingested
-        self.record_to_logger("ingested_logs",data_source=directory)
+        
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
@@ -157,6 +162,7 @@ class ProjectRepresenter(Document):
             return output_list
     
     def add_event_to_project(self, event: EventRepresenter, initials: str):
+        print("111")
         new_event = self.event_manager.create_event(event)
         if new_event:
             self.record_to_logger("added_event", initials, event_id=new_event.id)
@@ -170,7 +176,6 @@ class ProjectRepresenter(Document):
 
 
     def update_event_in_project(self, event_id: str, initials: str):
-        print("inid ", initials)
         self.record_to_logger("update_event", initials, event_id=event_id)
     
         
