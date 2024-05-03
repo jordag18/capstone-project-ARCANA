@@ -35,7 +35,7 @@ function UserLogTable() {
     <>
       <div className="flex items-center justify-center overflow-auto rounded-lg">
         <div>
-          <table className="table w-full" style={{maxHeight: '90%', overflowY: 'auto'}}>
+          <table className="table w-full">
             <thead className="bg-slate-300 border-b-2 border-slate-500">
               <tr>
                 <th className="border-r-2 border-slate-200">Initials</th>
@@ -43,7 +43,7 @@ function UserLogTable() {
                 <th className="border-r-2 border-slate-200">Description</th>
               </tr>
             </thead>
-            <tbody className="bg-base-200">
+            <tbody className="bg-base-200" style={{maxHeight: '90%', overflowY: 'auto'}}>
               {userActivityLog.map((log, index) => (
                 <tr key={index}>
                   <td>{log.initials}</td>
