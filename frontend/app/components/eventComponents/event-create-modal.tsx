@@ -30,6 +30,29 @@ const CreateEventModal: React.FC<createEventProp> = ({
   const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
   const [autoEdge, setAutoEdge] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
+  // State to store fetched initials
+  const [initials, setInitials] = useState('');
+
+  // Function to fetch initials from the API
+  const fetchInitials = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/getInitials');
+      setInitials(response.data.initials); // Assuming the API returns an object with an 'initials' field
+    } catch (error) {
+      console.error('Failed to fetch initials:', error);
+    }
+  };
+
+  // Fetch initials when the component mounts
+  useEffect(() => {
+    fetchInitials();
+  }, []);
+
+  useEffect(() => {
+    if (initials) {
+      setFormData(prevFormData => ({...prevFormData, initials}))
+    }
+  }, [initials])
 
   const fetchIconLibrary = async () => {
     try {
@@ -131,6 +154,8 @@ const CreateEventModal: React.FC<createEventProp> = ({
   useEffect(() => {
     fetchIconLibrary();
   }, [project.id]);
+
+
   return (
     <dialog
       id="create_event_modal"
@@ -151,17 +176,9 @@ const CreateEventModal: React.FC<createEventProp> = ({
           <div className="flex flex-row space-x-2">
             <div className="flex-1 flex-col">
               <div className="flex-col"></div>
-              <div className="flex-col">
-                <h2>Initials</h2>
-                <label className="input input-bordered flex items-center gap-2">
-                  <input
-                    type="text"
-                    name="initials"
-                    className="grow"
-                    placeholder="Initials"
-                    value={formData?.initials}
-                    onChange={handleChange}
-                  />
+              <div className="flex-col" style={{marginBottom: '1rem'}}>
+                <label className="flex items-center gap-2">
+                  Initials: {initials}
                 </label>
               </div>
               <div className="flex-col"></div>

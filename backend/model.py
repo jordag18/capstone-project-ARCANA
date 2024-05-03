@@ -113,3 +113,6 @@ class IconLibraryResponse(BaseModel):
 
 class AutoEdge(BaseModel):
     auto_edge: bool
+
+class InitialsData(BaseModel):
+    initials: str

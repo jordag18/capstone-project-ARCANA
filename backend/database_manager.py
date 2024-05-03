@@ -45,12 +45,15 @@ class DatabaseManager:
             name, start_date, end_date, location, initials
         )
 
-    def delete_project(self, project_id):
+    def delete_project(self, project_name):
         # Delete a project by name
-        project = ProjectRepresenter.objects(id=project_id).first()
+        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
+            project.graphbe = {}
+            project.project_graph = {}
+            project.save()
             project.delete()  # This deletes the project from the database
-            self.project_manager.delete_project(project_id, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
 
@@ -380,9 +383,9 @@ class DatabaseManager:
                             event.action_title = default_action_title
                             event.icon = default_icon
 
-                            project.update_graph(
-                                True, None, event.get_id(), event.get_event_info()
-                            )
+                            graph_data = project.get_graph(True, None, event.get_id(), event)
+                            project.update_graph(graph_data)
+                            project.save()
 
                     # Save the updated project
                     project.save()
@@ -542,7 +545,9 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
- 
+    def ingest_log_logger(self, directory: str, initials: str):
+        self.ingest_log_logger(directory, initials=initials)
+        
     def fetch_project_graph(self, project_name):
         print("fetch graph ")
         project = ProjectRepresenter.objects(name=project_name).first()

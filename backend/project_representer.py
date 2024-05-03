@@ -55,9 +55,12 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        if not self.id:   
+        if not self.id:
             self.reset_graph()
             self.ingestLogsToProject("uploads")
+
+
+
 
     def reset_graph(self):
         # Reset graph data in GraphManager
@@ -98,13 +101,17 @@ class ProjectRepresenter(Document):
             vector_id = find_vector_id(new_event_id)
             graphs = GraphManager.add_node(self, new_event, vector_id, auto_edges)
         return graphs
-    
+
+    # def ingest_log_logger(directory: str, initials: str):
+    #     print("lol")
+    #     self.record_to_logger("ingested_logs",data_source=directory, initials=initials)
+        
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
 
         # Log activity when logs are ingested
-        self.record_to_logger("ingested_logs",data_source=directory)
+        
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
@@ -154,27 +161,31 @@ class ProjectRepresenter(Document):
 
             return output_list
     
-    def add_event_to_project(self,event:EventRepresenter):
+    def add_event_to_project(self, event: EventRepresenter, initials: str):
+        print("111")
         new_event = self.event_manager.create_event(event)
         if new_event:
-            self.record_to_logger("added_event",event_id=new_event.id)
+            self.record_to_logger("added_event", initials, event_id=new_event.id)
             return new_event
         else:
             return None
         
-    def delete_event_from_project(self,event_id):
+    def delete_event_from_project(self, event_id: str, initials: str):
         self.event_manager.delete_event(event_id)
-        self.record_to_logger("delete_event",event_id=event_id) 
+        self.record_to_logger("delete_event", initials, event_id=event_id)
 
-    def update_event_in_project(self,event_id):
-        self.record_to_logger("update_event",event_id=event_id)
 
+    def update_event_in_project(self, event_id: str, initials: str):
+        self.record_to_logger("update_event", initials, event_id=event_id)
+    
+    def ingested_log(self, initials: str):
+        self.record_to_logger("ingested_logs", initials, data_source="Uploads")
         
-    def record_to_logger(self,change,data_source=None,event_id=None,):
+    def record_to_logger(self, change, initials, data_source=None, event_id=None):
         try:
             match (change):
                 case "ingested_logs":
-                    statement = f"Ingested log file {data_source} in Project {self.name}" 
+                    statement = f"Ingested log files {data_source} in Project {self.name}" 
                 case "added_event":
                     statement = f"Added Event {event_id} to Project {self.name}"
                 case "delete_event":
@@ -183,14 +194,15 @@ class ProjectRepresenter(Document):
                     statement = f"Updated Event {event_id} on Project {self.name}"
                 case _:
                     statement = "Default Log Recording"
-            
 
-            userActivityLogger.add_user_activity_log(initials="SYS",
-                            timestamp=datetime.now(),
-                            statement=statement
-                            )
+            # Using the passed initials directly in the logging function
+            userActivityLogger.add_user_activity_log(
+                initials=initials,
+                timestamp=datetime.now(),
+                statement=statement
+            )
         except Exception as error:
-            print(error)
+            print(f"Error logging activity: {error}")
         
     
     def add_toa_icon(self, team, action_title, icon_filename, is_default=False):

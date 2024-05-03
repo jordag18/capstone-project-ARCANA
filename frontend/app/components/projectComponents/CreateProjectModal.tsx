@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IngestLogModal from "../IngestLogModal";
+import axios from 'axios'
 
 //passes refresh trigger to main project menu page to refresh the table
 interface CreateProjectModalProps {
@@ -33,7 +34,22 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   );
   const [dateStart, setDateStart] = useState(initialInputState.dateStart);
   const [dateEnd, setDateEnd] = useState(initialInputState.dateEnd);
-  const [initials, setInitials] = useState(initialInputState.initials);
+  const [initials, setInitials] = useState('');
+
+  // Function to fetch initials from the API
+  const fetchInitials = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/getInitials');
+      setInitials(response.data.initials);  // Assuming the API returns an object with an 'initials' field
+    } catch (error) {
+      console.error('Failed to fetch initials:', error);
+    }
+  };
+
+  // Fetch initials when the component mounts
+  useEffect(() => {
+    fetchInitials();
+  }, []);
 
   const handleSubmit = async () => {
     const projectData = {
@@ -119,14 +135,8 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                   onChange={(e) => setDateEnd(e.target.value)}
                 />
               </label>
-              <label className="input input-bordered flex items-center gap-2">
-                <input
-                  type="text"
-                  className="grow"
-                  placeholder="Initials"
-                  value={initials}
-                  onChange={(e) => setInitials(e.target.value)}
-                />
+              <label className="flex items-center gap-2">
+                Initials: {initials}
               </label>
             </div>
           </div>

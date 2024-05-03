@@ -2,26 +2,30 @@
 import { useState } from "react";
 import axios from "axios";
 
-
 export default function Home() {
 
   const [initials, setInitials] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInitials(e.target.value);
   }
 
   const handleSubmit = async () => {
+    if (initials.length != 2) {
+      setMessage("Error: Initials must be 2 characters long.")
+      return
+    }
     try {
       const response = await axios.post(
         `http://localhost:8000/api/setInitials/`,
-        initials
+        { initials }
       )
       if (response.status != 200) {
-        throw Error
+        throw error
       }
     } catch (error) {
-      alert("Error setting initials. Try again.")
+      setMessage("Error setting initials. Try again.")
     }
   }
 
@@ -41,6 +45,9 @@ export default function Home() {
           />
         </label>
         <button style={{marginTop: '1rem'}} onClick={handleSubmit} className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600">Submit</button>
+        {message && <div style={{ marginTop: '1rem', fontWeight: 'bold', color: message.startsWith("Error") ? 'red' : 'green' }}>
+            {message}
+          </div>}
       </div>
     </main>
   );

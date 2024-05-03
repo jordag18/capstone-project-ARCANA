@@ -33,7 +33,6 @@ app = FastAPI()
 # client = MongoClient("mongodb://localhost:27017/")
 # b = client["ARCANA"]
 db_manager = DatabaseManager(db_name="ARCANA")
-initials: str
 
 from database import (
     fetch_one_project,
@@ -57,17 +56,26 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to ARCANA API"}
 
+stored_initials = ""
+
 #set initials
 @app.post("/api/setInitials")
-async def set_initials():
-    initials = Body(...)
-    print(initials)
+async def set_initials(data: InitialsData):
+    global stored_initials
+    stored_initials = data.initials
+
+#get initials
+@app.get("/api/getInitials", response_model=InitialsData)
+async def get_initials():
+    return InitialsData(initials=stored_initials)
 
 # Ingest logs API
 @app.post("/api/ingestLogs")
 async def ingest_logs(files: List[UploadFile] = File(...)):
     try:
         fh = FileHandler("uploads")
+
+    
         # Clear the contents of the uploads folder before saving new files
         fh.delete_all_files()
         for file in files:
@@ -138,7 +146,11 @@ async def create_project(project: ProjectCreate):
             initials=project.initials,
         )
 
-        return created_project
+
+
+        project = created_project
+        project.ingested_log(stored_initials)
+        return project
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -161,32 +173,6 @@ async def get_events(project_name: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.patch("/api/editEvent/{project_name}/{event_id}")
-async def edit_event(
-    project_name: str, event_id: str, event_update: EventUpdate = Body(...)
-):
-    updated_data = event_update.model_dump(exclude_unset=True)
-    try:
-        # Call modify_event_from_project from DatabaseManager
-        print("update 1")
-        print(project_name)
-        success = db_manager.modify_event_from_project(
-            project_name, event_id, updated_data
-        )
-        print("update 2")
-        if success:
-            print("update 3")
-            project = db_manager.get_project_representer(project_name)
-            print("update 4")
-            project.update_event_in_project(event_id)
-            print("update 5")
-            return success
-        else:
-            raise HTTPException(
-                status_code=404, detail="Event not found or no changes made"
-            )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.patch(
@@ -203,9 +189,11 @@ async def create_event(
     try:
         print("event add")
         project = db_manager.get_project_representer(project_name)
+
         created_event = db_manager.add_event_to_project(
             project_name, created_data, auto_edges.auto_edge
         )
+        project.add_event_to_project(created_event, stored_initials)
 
         if created_event:
             return created_event
@@ -216,6 +204,32 @@ async def create_event(
     except HTTPException as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+@app.patch("/api/editEvent/{project_name}/{event_id}")
+async def edit_event(
+    project_name: str, event_id: str, event_update: EventUpdate = Body(...)
+):
+    updated_data = event_update.model_dump(exclude_unset=True)
+    try:
+        # Call modify_event_from_project from DatabaseManager
+        
+
+        print(project_name)
+        success = db_manager.modify_event_from_project(
+            project_name, event_id, updated_data
+        )
+
+        if success:
+            project = db_manager.get_project_representer(project_name)
+            project.update_event_in_project(event_id, stored_initials)
+            return success
+        else:
+            raise HTTPException(
+                status_code=404, detail="Event not found or no changes made"
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @app.delete("/api/deleteEvent/{project_name}/{event_id}")
 async def delete_event(project_name: str, event_id: str):
@@ -223,7 +237,7 @@ async def delete_event(project_name: str, event_id: str):
         project = db_manager.get_project_representer(project_name)
         response = db_manager.remove_event_from_project(project_name, event_id)
         if response:
-            project.delete_event_from_project(event_id)
+            project.delete_event_from_project(event_id, stored_initials)
             return f"Successfully deleted event with ID: {event_id} from project: {project_name}"
         else:
             raise HTTPException(
@@ -280,23 +294,26 @@ async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
             project_name, team, action_title, image_name
         )
 
+        #log TOA creation 
+        initials = stored_initials
     except Exception as e:
-        return {"error_message": f"Error occurred: {e}"}
+        return {"error_message": f"Error ocurred: {e}"}
     else:
-        return {"message": "Icon has been saved successfully"}
-
+        userActivityLogger.create_toa_log(initials= initials, timestamp=datetime.now(), toa_name=action_title)
+        return {"message": f"TOA has been created succesfully by {initials}"}
 
 @app.delete("/api/project/{project_name}/delete-icon")
 async def delete_icon(project_name: str, team: str, iconName: str):
+    initials = stored_initials
     try:
         response = db_manager.delete_icon(project_name, team, iconName)
         if response:
+            userActivityLogger.delete_toa_log(initials =initials, timestamp=datetime.now(), iconName=iconName)
             return f"Successfully deleted icon"
         raise HTTPException(404, f"No icon found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
+    
 # WORKING
 @app.post("/api/project/{project_name}/edit-toa")
 async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
@@ -330,10 +347,12 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
             is_default,
         )
 
+        initials = stored_initials
     except Exception as e:
-        return {"error_message": f"Error occurred: {e}"}
-    else:
-        return {"message": "Icon has been modified successfully"}
+      return {"error_message": f"Error ocurred: {e}"}
+    else: 
+        userActivityLogger.modify_toa_log(initials=initials,timestamp=datetime.now(),toa_name= action_title)
+        return {"messsage": f"TOA has been modified succesfully by {initials}"}
 
 
 @app.post("/api/undo/{project_id}")
@@ -390,11 +409,12 @@ def get_user_activity_logs():
 
 
 @app.post("/api/userActivityLog")
-async def add_user_activity_log_entry(initials: str, timestamp: str, log_entry: str):
+async def add_user_activity_log_entry(timestamp: str, log_entry: str):
     """
     This API call allows the frontend to add a User Log to the Activity List
     """
     try:
+        initials = stored_initials
         userActivityLogger.add_user_activity_log(
             initials=initials, timestamp=timestamp, statement=log_entry
         )
