@@ -17,7 +17,7 @@ export default function DashboardLayout({
   return (
     <ProjectProvider>
       <UndoRedoProvider>
-        <div className="bg-base-200 flex flex-auto justify-center m-1 p-1 rounded-3xl">
+        <div className="bg-base-200 flex flex-auto justify-center m-1 p-1 rounded-3xl w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">
           {children}
         </div>
       </UndoRedoProvider>

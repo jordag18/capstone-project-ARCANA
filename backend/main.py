@@ -101,7 +101,6 @@ async def get_all_projects():
 async def get_project_by_name(project_name: str):
     try:
         project = db_manager.get_project_by_name(project_name)
-        print("Here: ", project)
         return project
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -83,45 +83,44 @@ const EventMenu = ({ criteria, sortCriterion }) => {
 
   return (
     <div className="flex overflow-auto rounded-lg">
-      <table className="table w-full">
-        {/* head */}
+      <table className="table w-full table-fixed">
         <thead className="bg-slate-300 border-b-2 border-slate-500">
           <tr>
-            <th className="border-r-2 border-slate-200">Malformed </th>
-            <th className="border-r-2 border-slate-200">Timestamp</th>
-            <th className="border-r-2 border-slate-200">Initials</th>
-            <th className="border-r-2 border-slate-200">Team</th>
-            <th className="border-r-2 border-slate-200">Posture</th>
-            <th className="border-r-2 border-slate-200">Description</th>
-            <th className="border-r-2 border-slate-200">Location</th>
-            <th className="border-r-2 border-slate-200">Source Host</th>
-            <th className="border-r-2 border-slate-200">Target Host List</th>
-            <th className="border-r-2 border-slate-200">Vector ID</th>
-            <th className="border-r-2 border-slate-200">Data Source</th>
-            <th className="border-r-2 border-slate-200">Last Modified</th>
-            <th className="border-r-2 border-slate-200"></th>
+            <th className="w-1/12 min-w-[120px]">Malformed</th>
+            <th className="w-2/12 break-words min-w-[120px]">Timestamp</th>
+            <th className="w-1/12 min-w-[120px]">Initials</th>
+            <th className="w-1/12 min-w-[120px]">Team</th>
+            <th className="w-1/12 min-w-[120px]">Posture</th>
+            <th className="w-3/12 break-words min-w-[120px]">Description</th>
+            <th className="w-1/12 min-w-[120px]">Location</th>
+            <th className="w-1/12 min-w-[120px]">Source Host</th>
+            <th className="w-1/12 break-words min-w-[120px]">Target Host List</th>
+            <th className="w-1/12 min-w-[120px]">Vector ID</th>
+            <th className="w-1/12 break-words min-w-[120px]">Data Source</th>
+            <th className="w-1/12 break-words min-w-[120px]">Last Modified</th>
+            <th className="w-1/12 min-w-[120px]"></th>
           </tr>
         </thead>
         <tbody className="bg-base-200">
           {filteredEvents.map((event: Event, index) => (
-            <tr key={index} className="hover:bg-slate-200 ">
-              {/* Each <td> is a cell for the project's attribute */}
+            <tr key={index} className="hover:bg-slate-200">
               <td>{event.is_malformed}</td>
-              <td>{event.timestamp}</td>
+              <td className="break-words">{event.timestamp}</td>
               <td>{event.initials}</td>
               <td>{event.team}</td>
               <td>{event.posture}</td>
-              <td style={{maxWidth: '200px'}}>{event.description}</td>
+              <td className="break-words">{event.description}</td>
               <td>{event.location}</td>
               <td>{event.source_host}</td>
-              <td>{event.target_host_list}</td>
-              <td>{event.vector_id}</td>
-              <td>{event.data_source}</td>
-              <td>{event.last_modified}</td>
+              <td className="break-words">{event.target_host_list}</td>
+              <td className="break-words">{event.vector_id}</td>
+              <td className="break-words">{event.data_source}</td>
+              <td className="break-words">{event.last_modified}</td>
               <td>
                 <button
                   className="btn bg-gray-300 shadow-md hover:bg-gray-200"
-                  onClick={() => handleOpenModal(event)}>
+                  onClick={() => handleOpenModal(event)}
+                >
                   Modify
                 </button>
                 {selectedEvent && (

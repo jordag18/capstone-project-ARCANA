@@ -97,7 +97,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
       if (!response.ok) {
         throw new Error(fetchedProject.message || 'Failed to fetch the project');
       }
-      console.log("fetched project: ", fetchedProject);
       setProject(fetchedProject);
     } catch (error) {
       console.error("Fetch project error:", error);
