@@ -55,9 +55,12 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        if not self.id:   
+        if not self.id:
             self.reset_graph()
             self.ingestLogsToProject("uploads")
+
+
+
 
     def reset_graph(self):
         # Reset graph data in GraphManager

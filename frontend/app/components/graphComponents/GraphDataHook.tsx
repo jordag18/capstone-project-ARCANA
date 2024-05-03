@@ -4,7 +4,9 @@ import { Event } from "../eventComponents/event-interface";
 import { Edge } from "reactflow";
 
 const createEventNodes = (eventsObject) => {
-  const gridSize = 300;
+  const gridSizeX = 400; // Horizontal spacing remains the same
+  const gridSizeY = 700; // Increase vertical spacing to 600 or more if needed
+
   // Map over keys in the eventsObject
   return Object.keys(eventsObject).flatMap((key, index) => {
     // Access the first element of the array to get the actual event object
@@ -13,8 +15,8 @@ const createEventNodes = (eventsObject) => {
       console.error('Event missing ID:', event);
       return [];  // Return an empty array to keep flatMap clean
     }
-    const x = (index % 10) * gridSize;
-    const y = Math.floor(index / 10) * gridSize;
+    const x = (index % 10) * gridSizeX; // Horizontal spacing
+    const y = Math.floor(index / 10) * gridSizeY; // Vertical spacing
     return [{
       id: event.id.toString(),  // Ensure the ID is a string
       type: 'customEventNode',

@@ -45,12 +45,15 @@ class DatabaseManager:
             name, start_date, end_date, location, initials
         )
 
-    def delete_project(self, project_id):
+    def delete_project(self, project_name):
         # Delete a project by name
-        project = ProjectRepresenter.objects(id=project_id).first()
+        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
+            project.graphbe = {}
+            project.project_graph = {}
+            project.save()
             project.delete()  # This deletes the project from the database
-            self.project_manager.delete_project(project_id, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
 

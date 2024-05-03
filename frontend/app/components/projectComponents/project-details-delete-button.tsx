@@ -11,9 +11,9 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({
 }) => {
   const handleConfirmDelete = async () => {
     try {
-      console.log("Project ID:", selectedProject.id);
+      console.log("Project Name:", selectedProject.name);
       const response = await fetch(
-        `http://localhost:8000/api/deleteProject/${selectedProject.id}`,
+        `http://localhost:8000/api/deleteProject/${selectedProject.name}`,
         {
           method: "DELETE",
         }
