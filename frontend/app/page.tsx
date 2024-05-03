@@ -1,16 +1,28 @@
 'use client'
 import { useState } from "react";
+import axios from "axios";
+import { error } from "console";
 
 export default function Home() {
 
-  const [initialData, setInitialData] = useState('');
+  const [initials, setInitials] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInitialData(e.target.value);
+    setInitials(e.target.value);
   }
 
-  const handleSubmit = () => {
-    
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/setInitials/`,
+        initials
+      )
+      if (response.status != 200) {
+        throw error
+      }
+    } catch (error) {
+      alert("Error setting initials. Try again.")
+    }
   }
 
   return (
@@ -24,7 +36,7 @@ export default function Home() {
             name="initials"
             className="grow"
             placeholder="AA"
-            value={initialData}
+            value={initials}
             onChange={handleChange}
           />
         </label>
