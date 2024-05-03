@@ -178,12 +178,14 @@ class ProjectRepresenter(Document):
     def update_event_in_project(self, event_id: str, initials: str):
         self.record_to_logger("update_event", initials, event_id=event_id)
     
+    def ingested_log(self, initials: str):
+        self.record_to_logger("ingested_logs", initials, data_source="Uploads")
         
     def record_to_logger(self, change, initials, data_source=None, event_id=None):
         try:
             match (change):
                 case "ingested_logs":
-                    statement = f"Ingested log file {data_source} in Project {self.name}" 
+                    statement = f"Ingested log files {data_source} in Project {self.name}" 
                 case "added_event":
                     statement = f"Added Event {event_id} to Project {self.name}"
                 case "delete_event":

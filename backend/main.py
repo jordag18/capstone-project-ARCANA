@@ -81,7 +81,6 @@ async def ingest_logs(files: List[UploadFile] = File(...)):
         for file in files:
             fh.save_file_in_directory(file)
         timestamps = fh.get_earliest_latest_timestamps()
-        #db_manager.ingest_log_logger("uploads", initials=stored_initials)
 
     except Exception as e:
         return {"error_message": f"Error occurred: {e}"}
@@ -138,7 +137,11 @@ async def create_project(project: ProjectCreate):
             initials=project.initials,
         )
 
-        return created_project
+
+
+        project = created_project
+        project.ingested_log(stored_initials)
+        return project
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
