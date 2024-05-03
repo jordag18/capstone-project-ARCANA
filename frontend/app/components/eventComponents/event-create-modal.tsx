@@ -49,7 +49,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
       "autoedge",
       JSON.stringify({ auto_edges: { auto_edge: autoEdge } })
     );
-
+  
     try {
       const response = await fetch(
         `http://localhost:8000/api/createEvent/${project.name}`,
@@ -64,7 +64,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
           }),
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Failed to create event:", errorData);
@@ -73,11 +73,11 @@ const CreateEventModal: React.FC<createEventProp> = ({
         );
         return;
       }
-
+  
       const createdEvent = await response.json();
       addEvent(createdEvent);
       console.log("Event created successfully:", createdEvent);
-      onClose();
+      onClose(); // Close the modal after successful creation
     } catch (error) {
       console.error("Error creating event: ", error);
       alert("Error creating event: " + error.message);
@@ -116,11 +116,15 @@ const CreateEventModal: React.FC<createEventProp> = ({
   };
 
   useEffect(() => {
-    const modal = document.getElementById("create_event_modal");
+    const modal = document.getElementById(
+      "create_event_modal"
+    ) as HTMLDialogElement | null;
     if (modal) {
-      modal.showModal();
-    } else {
-      modal.close();
+      if (isModalOpen) {
+        modal.showModal();
+      } else {
+        modal.close();
+      }
     }
   }, [isModalOpen]);
 
@@ -131,12 +135,14 @@ const CreateEventModal: React.FC<createEventProp> = ({
     <dialog
       id="create_event_modal"
       className="modal"
-      style={{ width: "100%", height: "100%", marginTop: "1rem" }}>
+      style={{ width: "100%", height: "100%", marginTop: "1rem" }}
+    >
       <div className="modal-box">
         <form method="dialog">
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={onClose}>
+            onClick={onClose}
+          >
             X
           </button>
         </form>
@@ -285,9 +291,8 @@ const CreateEventModal: React.FC<createEventProp> = ({
                         marginRight: "2rem",
                         marginBottom: "1rem",
                       }}
-                      onClick={() =>
-                        handleIconChange(iconName, iconInfo, team)
-                      }>
+                      onClick={() => handleIconChange(iconName, iconInfo, team)}
+                    >
                       <img
                         src={`/Icons/${iconInfo.image}`}
                         alt={iconName}
@@ -317,7 +322,8 @@ const CreateEventModal: React.FC<createEventProp> = ({
           <div>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={handleSubmit}>
+              onClick={handleSubmit}
+            >
               Create
             </button>
           </div>

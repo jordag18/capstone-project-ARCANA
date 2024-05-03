@@ -193,7 +193,6 @@ async def create_event(
         )
 
         if created_event:
-            
             return created_event
         # If `add_event_to_project` returns None or False, assume the project was not found
         raise HTTPException(

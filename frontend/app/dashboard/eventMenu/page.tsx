@@ -21,7 +21,6 @@ const EventsList = () => {
     setRefreshTrigger(!refreshTrigger);
   };
   const handleCreateModal = () => {
-    console.log(isModalOpen);
     setIsModalOpen(true);
   };
 
@@ -56,14 +55,16 @@ const EventsList = () => {
           <div className="px-5 py-1 space-x-1 rounded-3xl">
             <button
               className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600"
-              onClick={refreshEvents}>
+              onClick={refreshEvents}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
                 fill="currentColor"
                 className="bi bi-arrow-repeat"
-                viewBox="0 0 16 16">
+                viewBox="0 0 16 16"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -79,18 +80,21 @@ const EventsList = () => {
             </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={() => undo(project.id)}>
+              onClick={() => undo(project.id)}
+            >
               Undo
             </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={() => redo(project.id)}>
+              onClick={() => redo(project.id)}
+            >
               Redo
             </button>
           </div>
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-            onClick={handleCreateModal}>
+            onClick={handleCreateModal}
+          >
             + Create Event
           </div>
           <CreateEventModal
@@ -101,13 +105,15 @@ const EventsList = () => {
           />
           <div
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2" // Added some left margin for spacing
-            onClick={handleOpenFilterDialog}>
+            onClick={handleOpenFilterDialog}
+          >
             Filter Events
           </div>
           <select
             className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
             value={sortCriterion}
-            onChange={handleSortChange}>
+            onChange={handleSortChange}
+          >
             <option value="" disabled>
               Sort By
             </option>

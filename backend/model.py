@@ -55,6 +55,7 @@ class EventUpdate(BaseModel):
 
 
 class EventCreate(BaseModel):
+    id: Optional[str] = ""
     team: str
     action_title: Optional[str] = ""
     data_source: Optional[str] = ""
