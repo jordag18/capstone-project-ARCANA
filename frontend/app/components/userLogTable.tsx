@@ -43,7 +43,7 @@ function UserLogTable() {
                 <th className="border-r-2 border-slate-200">Description</th>
               </tr>
             </thead>
-            <tbody className="bg-base-200" style={{maxHeight: '90%', overflowY: 'auto'}}>
+            <tbody className="bg-base-200">
               {userActivityLog.map((log, index) => (
                 <tr key={index}>
                   <td>{log.initials}</td>
