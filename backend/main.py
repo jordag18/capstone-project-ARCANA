@@ -266,23 +266,24 @@ async def create_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
             project_name, team, action_title, image_name
         )
 
+        #log TOA creation 
     except Exception as e:
-        return {"error_message": f"Error occurred: {e}"}
+        return {"error_message": f"Error ocurred: {e}"}
     else:
-        return {"message": "Icon has been saved successfully"}
-
+        userActivityLogger.create_toa_log(initials= insert_analyst_initials, timestamp=datetime.now(), toa_name=action_title)
+        return {"message": f"TOA has been created succesfully by {insert_analyst_initials}"}
 
 @app.delete("/api/project/{project_name}/delete-icon")
 async def delete_icon(project_name: str, team: str, iconName: str):
     try:
         response = db_manager.delete_icon(project_name, team, iconName)
         if response:
+            userActivityLogger.delete_toa_log(initials =insert_analyst_initials, timestamp=datetime.now(), iconName=iconName)
             return f"Successfully deleted icon"
         raise HTTPException(404, f"No icon found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
+    
 # WORKING
 @app.post("/api/project/{project_name}/edit-toa")
 async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
@@ -316,10 +317,12 @@ async def edit_toa(project_name: str, data: Dict[str, Union[str, bool, str]]):
             is_default,
         )
 
+        
     except Exception as e:
-        return {"error_message": f"Error occurred: {e}"}
-    else:
-        return {"message": "Icon has been modified successfully"}
+      return {"error_message": f"Error ocurred: {e}"}
+    else: 
+        userActivityLogger.modify_toa_log(initials=insert_analyst_initials,timestamp=datetime.now(),toa_name= action_title)
+        return {"messsage": f"TOA has been modified succesfully by {insert_analyst_initials}"}
 
 
 @app.post("/api/undo/{project_id}")

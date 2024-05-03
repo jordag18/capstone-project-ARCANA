@@ -55,6 +55,21 @@ class UserActivityLogger(Document):
         statement = f"Projects from sync request accepted - Projects: {character}"
         self.add_user_activity_log(initials, timestamp, character)
 
+    #log entry for creating TOA
+    def create_toa_log(self, initials, timestamp, toa_name):
+        statement = f"TOA '{toa_name}' created"
+        self.add_user_activity_log(initials, timestamp, statement)
+
+    #log entry for deleting a TOA
+    def delete_toa_log(self, initials, timestamp, iconName):
+        statement = f"TOA {iconName} deleted"
+        self.add_user_activity_log(initials, timestamp, statement)
+    
+    #log entry for modifying TOA
+    def modify(self, initials, timestamp, toa_name):
+        statement = f"TOA '{toa_name}' modified"
+        self.add_user_activity_log(initials, timestamp, statement)
+
 
 # userActivityLogger = UserActivityLogger()
 if UserActivityLogger.objects.first() == None:
