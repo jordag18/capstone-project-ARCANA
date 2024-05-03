@@ -101,7 +101,6 @@ class ProjectRepresenter(Document):
             vector_id = find_vector_id(new_event_id)
             graphs = GraphManager.add_node(self, new_event, vector_id, auto_edges)
         return graphs
-    
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
@@ -157,23 +156,25 @@ class ProjectRepresenter(Document):
 
             return output_list
     
-    def add_event_to_project(self,event:EventRepresenter):
+    def add_event_to_project(self, event: EventRepresenter, initials: str):
         new_event = self.event_manager.create_event(event)
         if new_event:
-            self.record_to_logger("added_event",event_id=new_event.id)
+            self.record_to_logger("added_event", initials, event_id=new_event.id)
             return new_event
         else:
             return None
         
-    def delete_event_from_project(self,event_id):
+    def delete_event_from_project(self, event_id: str, initials: str):
         self.event_manager.delete_event(event_id)
-        self.record_to_logger("delete_event",event_id=event_id) 
+        self.record_to_logger("delete_event", initials, event_id=event_id)
 
-    def update_event_in_project(self,event_id):
-        self.record_to_logger("update_event",event_id=event_id)
 
+    def update_event_in_project(self, event_id: str, initials: str):
+        print("inid ", initials)
+        self.record_to_logger("update_event", initials, event_id=event_id)
+    
         
-    def record_to_logger(self,change,data_source=None,event_id=None,):
+    def record_to_logger(self, change, initials, data_source=None, event_id=None):
         try:
             match (change):
                 case "ingested_logs":
@@ -186,14 +187,15 @@ class ProjectRepresenter(Document):
                     statement = f"Updated Event {event_id} on Project {self.name}"
                 case _:
                     statement = "Default Log Recording"
-            
 
-            userActivityLogger.add_user_activity_log(initials="SYS",
-                            timestamp=datetime.now(),
-                            statement=statement
-                            )
+            # Using the passed initials directly in the logging function
+            userActivityLogger.add_user_activity_log(
+                initials=initials,
+                timestamp=datetime.now(),
+                statement=statement
+            )
         except Exception as error:
-            print(error)
+            print(f"Error logging activity: {error}")
         
     
     def add_toa_icon(self, team, action_title, icon_filename, is_default=False):

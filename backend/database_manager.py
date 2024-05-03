@@ -341,6 +341,7 @@ class DatabaseManager:
 
                             graph_data = project.get_graph(True, None, event.get_id(), event)
                             project.update_graph(graph_data)
+                            project.save()
 
                     # Save the updated project
                     project.save()
@@ -500,7 +501,9 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
- 
+    def ingest_log_logger(self, directory: str, initials: str):
+        self.ingest_log_logger(directory, initials=initials)
+        
     def fetch_project_graph(self, project_name):
         print("fetch graph ")
         project = ProjectRepresenter.objects(name=project_name).first()
