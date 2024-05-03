@@ -21,8 +21,8 @@ function UserLogTable() {
             "Network response was not ok: " + response.statusText
           );
         }
-        const activityData: [] = await response.json(); // Type assertion
-        setUserActivityLog(activityData);
+        const activityData: Log[] = await response.json(); // Type assertion
+        setUserActivityLog(activityData.reverse()); // Reverse the array
       } catch (error) {
         console.error("Error fetching data:", error);
       }

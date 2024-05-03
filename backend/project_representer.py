@@ -187,11 +187,11 @@ class ProjectRepresenter(Document):
                 case "ingested_logs":
                     statement = f"Ingested log files {data_source} in Project {self.name}" 
                 case "added_event":
-                    statement = f"Added Event {event_id} to Project {self.name}"
+                    statement = f"Added Event to Project {self.name}"
                 case "delete_event":
-                    statement = f"Deleted Event {event_id} on Project {self.name}" 
+                    statement = f"Deleted Event on Project {self.name}" 
                 case "update_event":
-                    statement = f"Updated Event {event_id} on Project {self.name}"
+                    statement = f"Updated Event on Project {self.name}"
                 case _:
                     statement = "Default Log Recording"
 

@@ -39,7 +39,6 @@ class ProjectManager:
         # Create an activity log for project creation
         timestamp = datetime.now()
         statement = f"Project '{name}' created"
-        print("now")
         userActivityLogger.add_user_activity_log(
             initials=initials, timestamp=timestamp, statement=statement
         )
