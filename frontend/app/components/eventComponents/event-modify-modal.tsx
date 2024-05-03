@@ -128,7 +128,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
                 <label className="input input-bordered flex items-center gap-2">
                   <input
                     type="text"
-                    name="Team"
+                    name="team"
                     className="grow"
                     value={formData.team}
                     onChange={handleChange}

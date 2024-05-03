@@ -118,7 +118,7 @@ const EventMenu = ({ criteria, sortCriterion }) => {
               <td className="break-words">{event.last_modified}</td>
               <td>
                 <button
-                  className="btn bg-gray-300 shadow-md hover:bg-gray-200"
+                  className="btn bg-gray-300 shadow-md hover:bg-gray-200 w-full sm:w-auto"
                   onClick={() => handleOpenModal(event)}
                 >
                   Modify
