@@ -21,7 +21,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   };
 
   return (
-    <details className="dropdown dropdown-left">
+    <details className="dropdown dropdown-left dropdown-end">
       <summary className="m-1 btn">Modify</summary>
       <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-24">
         <li>
@@ -29,11 +29,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
             onClick={handleOpenClick}
             className="btn bg-sky-500 text-white hover:bg-sky-600">
             Open
-          </button>
-        </li>
-        <li>
-          <button className="btn bg-slate-500 text-white hover:bg-slate-600">
-            Edit {/* Needs Implementation*/}
           </button>
         </li>
         <li>
