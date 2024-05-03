@@ -44,7 +44,7 @@ const ExportGraphData = ({ nodes, edges, projectName }) => {
   return (
     <button
       onClick={handleExport}
-      className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+      className="text-white bg-red-500 hover:bg-grey-700 font-bold py-2 px-4 rounded">
       Export Graph Data
     </button>
   );

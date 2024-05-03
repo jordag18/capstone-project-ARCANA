@@ -9,11 +9,6 @@ import {
 
 import "./buttonedge.css";
 
-const onEdgeClick = (evt, id) => {
-  evt.stopPropagation();
-  alert(`remove ${id}`);
-};
-
 export default function CustomEdge({
   id,
   sourceX,
@@ -39,17 +34,26 @@ export default function CustomEdge({
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
   };
 
+  // Define consistent edge style
+  const consistentStyle = {
+    stroke: '#5488bf', 
+    strokeWidth: 2, 
+    ...style,
+  };
+
   return (
     <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <BaseEdge 
+        path={edgePath} 
+        markerEnd={markerEnd} 
+        style={consistentStyle} // Apply consistent style here
+      />
       <EdgeLabelRenderer>
         <div
           style={{
             position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             fontSize: 12,
-            // everything inside EdgeLabelRenderer has no pointer events by default
-            // if you have an interactive element, set pointer-events: all
             pointerEvents: "all",
           }}
           className="nodrag nopan">

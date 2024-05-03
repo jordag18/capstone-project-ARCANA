@@ -95,14 +95,13 @@ class ProjectManager:
 
     def delete_project(self, project_name, initials=""):
         for project in self.project_representer_list:
-            if project["name"] == project_name:
+            if project['name'] == project_name:
                 self.project_representer_list.remove(project)
 
                 # Create an activity log for project removal
                 timestamp = datetime.now()
                 statement = f"Project '{project_name}' removed"
-                userActivityLogger.add_user_activity_log(
-                    initials=initials, timestamp=timestamp, statement=statement
-                )
+                userActivityLogger.add_user_activity_log(initials=initials,timestamp= timestamp,
+                            statement=statement)
                 return True  # Project removed successfully
-        return False  # Project removal failed
+        return False

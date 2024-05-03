@@ -117,8 +117,8 @@ const EventMenu = ({ criteria, sortCriterion }) => {
                   }`}
                   alt="Event Icon"
                   style={{
-                    maxWidth: "100%",
-                    maxHeight: "50px",
+                    maxWidth: "150%",
+                    maxHeight: "100px",
                     height: "auto",
                   }}
                 />
