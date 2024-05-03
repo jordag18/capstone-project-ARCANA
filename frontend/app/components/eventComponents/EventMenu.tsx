@@ -87,9 +87,6 @@ const EventMenu = ({ criteria, sortCriterion }) => {
         {/* head */}
         <thead className="bg-slate-300 border-b-2 border-slate-500">
           <tr>
-            <th className="border-r-2 border-slate-200">ID</th>
-            <th className="border-r-2 border-slate-200">Icon</th>
-            <th className="border-r-2 border-slate-200">Action Title</th>
             <th className="border-r-2 border-slate-200">Initials</th>
             <th className="border-r-2 border-slate-200">Team</th>
             <th className="border-r-2 border-slate-200">Vector ID</th>
