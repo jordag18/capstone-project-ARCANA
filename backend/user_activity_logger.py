@@ -53,7 +53,7 @@ class UserActivityLogger(Document):
     #Log entry for accepted sync projects
     def accepted_sync_projects_log(self, initials, timestamp, character):
         statement = f"Projects from sync request accepted - Projects: {character}"
-        self.add_user_activity_log(initials, timestamp, character)
+        self.add_user_activity_log(initials, timestamp, statement)
 
     #log entry for creating TOA
     def create_toa_log(self, initials, timestamp, toa_name):
