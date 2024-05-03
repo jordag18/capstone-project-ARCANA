@@ -88,6 +88,15 @@ async def get_all_projects():
         return projects
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/api/getproject/{project_name}", response_model=Project)
+async def get_project_by_name(project_name: str):
+    try:
+        project = db_manager.get_project_by_name(project_name)
+        print("Here: ", project)
+        return project
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # #FIXME not implemented fully
@@ -350,7 +359,7 @@ async def redo(project_id: str):
     Endpoint to redo the previously undone action on a given project.
     """
     try:
-        success = db_manager.redo_last_action(project_id)
+        success = db_manager.redo_last_undone_action(project_id)
         if success:
             return {"message": "Redo successful"}
         else:

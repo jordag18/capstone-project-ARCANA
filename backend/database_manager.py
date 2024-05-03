@@ -59,12 +59,12 @@ class DatabaseManager:
         project = ProjectRepresenter.objects(name=project_name).first()
         if project:
             project_info = {
+                "id": str(project.id),
                 "name": project.name,
                 "start_date": project.start_date,
                 "end_date": project.end_date,
                 "location": project.location,
                 "initials": project.initials,
-                # Add any other project attributes you need
             }
             return project_info
         return False
@@ -85,6 +85,50 @@ class DatabaseManager:
 
     def get_project_representer(self, project_name) -> ProjectRepresenter:
         return ProjectRepresenter.objects(name=project_name).first()
+
+    def get_project_by_name(self, project_name):
+        # Retrieve a single project by name
+        project = ProjectRepresenter.objects(name=project_name).first()
+        if not project:
+            return None  # Return None if no project is found with that name
+
+        # Prepare the project information
+        project_info = {
+            "id": str(project.id),
+            "name": project.name,
+            "start_date": project.start_date,
+            "end_date": project.end_date,
+            "location": project.location,
+            "initials": project.initials,
+            # Add any other project attributes you need
+        }
+
+        # Collect event details from the project's event list
+        event_representers_info = []
+        for event in project.event_list:
+            event_info = {
+                "id": event.id,
+                "location": event.location,
+                "initials": event.initials,
+                "team": event.team,
+                "vector_id": event.vector_id,
+                "description": event.description,
+                "data_source": event.data_source,
+                "action_title": event.action_title,
+                "last_modified": event.last_modified,
+                "icon": event.icon,  # Note: Adjust if needed to handle image fields correctly
+                "source_host": event.source_host,
+                "target_host_list": event.target_host_list,
+                "posture": event.posture,
+                "timestamp": event.timestamp,
+                "is_malformed": event.is_malformed,
+            }
+            event_representers_info.append(event_info)
+
+        # Add the list of events to the project's information
+        project_info["events"] = event_representers_info
+
+        return project_info
 
     def add_event_to_project(self, project_name, event_data, auto_edges):
         # Add an event to a specific project

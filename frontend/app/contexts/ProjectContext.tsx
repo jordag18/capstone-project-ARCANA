@@ -90,12 +90,27 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
-  const value = { project, setProject, updateEvent, addEvent, deleteEvent };
+  const fetchProject = async (projectName: string) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/getproject/${projectName}`);
+      const fetchedProject = await response.json();
+      if (!response.ok) {
+        throw new Error(fetchedProject.message || 'Failed to fetch the project');
+      }
+      console.log("fetched project: ", fetchedProject);
+      setProject(fetchedProject);
+    } catch (error) {
+      console.error("Fetch project error:", error);
+    }
+  };
+
+  const value = { project, setProject, updateEvent, addEvent, deleteEvent, fetchProject };
 
   return (
     <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
   );
 };
+
 
 export const useProject = () => {
   const context = useContext(ProjectContext);

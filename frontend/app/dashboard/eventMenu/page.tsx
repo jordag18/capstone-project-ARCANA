@@ -8,7 +8,7 @@ import { CreateEvent } from "@/app/components/eventComponents/event-interface";
 import { useUndoRedo } from "@/app/contexts/EventHistoryContext";
 
 const EventsList = () => {
-  const { project } = useProject();
+  const { project, fetchProject } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
@@ -17,9 +17,16 @@ const EventsList = () => {
   const { undo, redo } = useUndoRedo();
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
-  const refreshEvents = () => {
-    setRefreshTrigger(!refreshTrigger);
+  const undoEvents = () => {
+    undo(project.id);
+    fetchProject(project.name);
   };
+
+  const redoEvents = () => {
+    redo(project.id);
+    fetchProject(project.name);
+  };
+
   const handleCreateModal = () => {
     setIsModalOpen(true);
   };
@@ -55,7 +62,7 @@ const EventsList = () => {
           <div className="px-5 py-1 space-x-1 rounded-3xl">
             <button
               className="btn bg-blue-500 text-white shadow-md hover:bg-blue-600"
-              onClick={refreshEvents}
+              onClick={() => fetchProject(project.name)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -80,13 +87,13 @@ const EventsList = () => {
             </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={() => undo(project.id)}
+              onClick={undoEvents}
             >
               Undo
             </button>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={() => redo(project.id)}
+              onClick={redoEvents}
             >
               Redo
             </button>

@@ -7,5 +7,5 @@ export interface ProjectContextInterface {
   updateEvent: (eventId: string, updatedEventData: Event) => void;
   addEvent: (newEvent: Event) => void;
   deleteEvent: (eventId: string) => void; 
-
+  fetchProject: (projectName: string) => Promise<void>;
 }

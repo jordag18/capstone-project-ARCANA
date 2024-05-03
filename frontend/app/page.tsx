@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react";
 import axios from "axios";
-import { error } from "console";
+
 
 export default function Home() {
 
@@ -18,7 +18,7 @@ export default function Home() {
         initials
       )
       if (response.status != 200) {
-        throw error
+        throw Error
       }
     } catch (error) {
       alert("Error setting initials. Try again.")
