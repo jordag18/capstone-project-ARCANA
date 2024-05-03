@@ -339,9 +339,8 @@ class DatabaseManager:
                             event.action_title = default_action_title
                             event.icon = default_icon
 
-                            project.update_graph(
-                                True, None, event.get_id(), event.get_event_info()
-                            )
+                            graph_data = project.get_graph(True, None, event.get_id(), event)
+                            project.update_graph(graph_data)
 
                     # Save the updated project
                     project.save()
