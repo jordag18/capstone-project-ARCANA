@@ -35,7 +35,7 @@ function UserLogTable() {
     <>
       <div className="flex items-center justify-center overflow-auto rounded-lg">
         <div>
-          <table className="table w-full">
+          <table className="table w-full" style={{maxHeight: '90%'}}>
             <thead className="bg-slate-300 border-b-2 border-slate-500">
               <tr>
                 <th className="border-r-2 border-slate-200">Initials</th>
