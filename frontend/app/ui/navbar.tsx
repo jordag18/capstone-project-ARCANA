@@ -70,18 +70,6 @@ const TopNav = () => {
           </li>
           <li className="hover:bg-stone-600 rounded-md">
             <MoveToNav
-              linkTo="/dashboard/eventMenu"
-              buttonText="Manage Events"
-            />
-          </li>
-          <li className="hover:bg-stone-600 rounded-md">
-            <MoveToNav
-              linkTo="/dashboard/eventMenu/eventGraphMenu"
-              buttonText="Manage Graphs"
-            />
-          </li>
-          <li className="hover:bg-stone-600 rounded-md">
-            <MoveToNav
               linkTo="/dashboard/systemMenu"
               buttonText="System Settings"
             />

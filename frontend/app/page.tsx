@@ -21,8 +21,11 @@ export default function Home() {
         `http://localhost:8000/api/setInitials/`,
         { initials }
       )
-      if (response.status != 200) {
-        throw error
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      if (response.status == 200) {
+        setMessage("Initials set successfully")
       }
     } catch (error) {
       setMessage("Error setting initials. Try again.")
