@@ -93,11 +93,9 @@ const EventMenu = ({ criteria, sortCriterion }) => {
             <th className="border-r-2 border-slate-200">Team</th>
             <th className="border-r-2 border-slate-200">Posture</th>
             <th className="border-r-2 border-slate-200">Description</th>
-
             <th className="border-r-2 border-slate-200">Location</th>
             <th className="border-r-2 border-slate-200">Source Host</th>
             <th className="border-r-2 border-slate-200">Target Host List</th>
-
             <th className="border-r-2 border-slate-200">Vector ID</th>
             <th className="border-r-2 border-slate-200">Data Source</th>
             <th className="border-r-2 border-slate-200">Last Modified</th>
@@ -108,17 +106,12 @@ const EventMenu = ({ criteria, sortCriterion }) => {
           {filteredEvents.map((event: Event, index) => (
             <tr key={index} className="hover:bg-slate-200 ">
               {/* Each <td> is a cell for the project's attribute */}
-
               <td>{event.is_malformed}</td>
-
               <td>{event.timestamp}</td>
               <td>{event.initials}</td>
               <td>{event.team}</td>
-
               <td>{event.posture}</td>
-
-              <td >{event.description}</td>
-
+              <td style={{maxWidth: '200px'}}>{event.description}</td>
               <td>{event.location}</td>
               <td>{event.source_host}</td>
               <td>{event.target_host_list}</td>
