@@ -11,7 +11,7 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({
   selectedEvent,
   onClose,
 }) => {
-  const { project, setProject } = useProject();
+  const { project, setProject, deleteEvent } = useProject();
 
   const handleConfirmDelete = async () => {
     if (selectedEvent && project) {
@@ -29,11 +29,7 @@ const DeleteEventButton: React.FC<selectedEventProp> = ({
 
         alert(`Successfully deleted event with ID: ${selectedEvent.id}`);
 
-        const updatedEvents = project.events.filter(
-          (event) => event.id !== selectedEvent.id
-        );
-        // Update the project with the new events array
-        setProject({ ...project, events: updatedEvents });
+        deleteEvent(selectedEvent.id);
         onClose();
       } catch (error) {
         console.error("Error deleting event:", error);

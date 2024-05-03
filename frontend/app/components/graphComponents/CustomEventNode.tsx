@@ -23,51 +23,34 @@ interface CustomEventNodeProps {
 
 const CustomEventNode: React.FC<CustomEventNodeProps> = ({ data }) => (
   <div
-    className="custom-node bg-white border shadow rounded p-2 text-xs"
+    className="custom-node bg-gradient-to-r from-blue-100 to-blue-50 border border-blue-300 shadow-xl rounded-lg p-4 text-sm space-y-2"
     style={{
-      width: "250px", // Set a fixed width
-      maxWidth: "250px", // Ensure the node does not exceed this width
-      overflow: "hidden", // Prevents content from spilling out
-      textOverflow: "ellipsis", // Adds ellipsis if text overflows (applies to single line)
-      whiteSpace: "normal", // Allows text to wrap
+      width: "300px",
+      maxWidth: "300px",
+      overflow: "hidden",
+      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.2)'
     }}>
-    <Handle type="target" position={Position.Top} />
-    <img
-      src={`/Icons/${data.icon}`}
-      alt="Event Icon"
-      style={{ width: "30%", height: "10%", marginBottom: "8px" }}
-    />
-    <div>
-      <strong>Initials:</strong> {data.initials}
+    <Handle type="target" position={Position.Top} style={{ backgroundColor: 'rgba(30, 144, 255, 0.9)' }} />
+    <div className="flex justify-center items-center space-x-3">
+      <img
+        src={`/Icons/${data.icon}`}
+        alt="Event Icon"
+        style={{ width: '150px', height: '150px', borderRadius: '50%' }} // Ensuring the icon is circular
+      />
     </div>
-    <div>
-      <strong>Team:</strong> {data.team}
+    <div className="text-gray-800 text-center">
+      <div><strong>Initials:</strong> {data.initials}</div>
+      <div><strong>Team:</strong> {data.team}</div>
+      <div><strong>Timestamp:</strong> {data.timestamp}</div>
+      <div><strong>Location:</strong> {data.location}</div>
+      <div><strong>Posture:</strong> {data.posture}</div>
+      <div><strong>Data Source:</strong> {data.data_source}</div>
+      <div><strong>Vector ID:</strong> {data.vector_id}</div>
+      <div><strong>Source Host:</strong> {data.source_host}</div>
+      <div><strong>Target Hosts:</strong> {data.target_host_list}</div>
+      <div><strong>Description:</strong> {data.description}</div>
     </div>
-    <div>
-      <strong>Timestamp:</strong> {data.timestamp}
-    </div>
-    <div>
-      <strong>Location:</strong> {data.location}
-    </div>
-    <div>
-      <strong>Posture:</strong> {data.posture}
-    </div>
-    <div>
-      <strong>Data Source:</strong> {data.data_source}
-    </div>
-    <div>
-      <strong>Vector ID:</strong> {data.vector_id}
-    </div>
-    <div>
-      <strong>Source Host:</strong> {data.source_host}
-    </div>
-    <div>
-      <strong>Target Host:</strong> {data.target_host_list}
-    </div>
-    <div>
-      <strong>Description:</strong> {data.description}
-    </div>
-    <Handle type="source" position={Position.Bottom} />
+    <Handle type="source" position={Position.Bottom} style={{ backgroundColor: 'rgba(34, 139, 34, 0.9)' }} />
   </div>
 );
 

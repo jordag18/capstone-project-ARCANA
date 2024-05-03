@@ -15,8 +15,7 @@ const EditEventModal: React.FC<selectedEventProp> = ({
   isModalOpen,
   onClose,
 }) => {
-  const { project } = useProject();
-  const { updateEvent } = useProject();
+  const { project, updateEvent } = useProject();
   const [formData, setFormData] = useState<Event>({
     ...selectedEvent,
     target_host_list:
@@ -120,19 +119,6 @@ const EditEventModal: React.FC<selectedEventProp> = ({
                     className="grow"
                     placeholder="Action Title"
                     value={formData.action_title}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
-              <div className="flex-col">
-                <h2>Initials</h2>
-                <label className="input input-bordered flex items-center gap-2">
-                  <input
-                    type="text"
-                    name="initials"
-                    className="grow"
-                    placeholder="Initials"
-                    value={formData.initials}
                     onChange={handleChange}
                   />
                 </label>

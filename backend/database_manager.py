@@ -45,12 +45,15 @@ class DatabaseManager:
             name, start_date, end_date, location, initials
         )
 
-    def delete_project(self, project_id):
+    def delete_project(self, project_name):
         # Delete a project by name
-        project = ProjectRepresenter.objects(id=project_id).first()
+        project = ProjectRepresenter.objects(name=project_name).first()
         if project:
+            project.graphbe = {}
+            project.project_graph = {}
+            project.save()
             project.delete()  # This deletes the project from the database
-            self.project_manager.delete_project(project_id, project.initials)
+            self.project_manager.delete_project(project_name, project.initials)
             return True
         return False
 
@@ -93,59 +96,62 @@ class DatabaseManager:
             new_event = EventRepresenter(**event_data)
             print(new_event)
             project.event_list.append(new_event)
-            #project.update_graph(auto_edges)
-            graph_data = project.get_graph(project, auto_edges)
-            project.update_graph(graph_data)
             project.save()  # Save the updated project
+            graph_data = project.get_graph(auto_edges, delete_id=None, edited_id=None, edited_data=None, new_event_id=new_event.get_id(), new_event=new_event)
+            project.update_graph(graph_data)
+            project.save()
 
-            EventActionLog(
-                action_type="create",
-                event_after=new_event,
-                project=project,
-            ).save()
+            # Log event removal
+            self.log_action(
+                project_id=str(project.id),
+                action_type='create',
+                event_before=None,
+                event_after=new_event
+            )
+
             return new_event
         return None
 
-    # def create_event_to_project(self, project, event_data):
-    #     try:
-    #         new_event = EventRepresenter(id=ObjectId(), **event_data)
-    #         new_event.save()
-
-    #         result = self.projects_collection.update_one(
-    #             {"name": project.name},
-    #             {"$push": {"event_list": new_event.id}}
-    #         )
-    #         project.event_list.append(new_event)
-    #         project.save()  # Save the updated project
-    #         if result.modified_count == 1:
-    #             EventActionLog(
-    #                 action_type='create',
-    #                 event_after=new_event,
-    #                 project=project,
-    #             ).save()
-    #             return new_event
-    #         else:
-    #             return None
-    #     except Exception as e:
-    #         return None
 
     def remove_event_from_project(self, project_name, event_id):
         try:
             event_id_obj = ObjectId(event_id)
-            # Update the project in the database to remove the event
-            self.projects_collection.update_one(
-                {"name": project_name}, {"$pull": {"event_list": {"_id": event_id_obj}}}
-            )
-            project = self.get_project(project_name)
-            print(type(project), project_name)
+            # First fetch the event to log it before deletion
             project = ProjectRepresenter.objects(name=project_name).first()
-            if project:
-                project.event_list = [
-                    event for event in project.event_list if str(event.id) != event_id
-                ]
-                project.update_graph(False, event_id)
-                project.save()
-                return True
+            graph_data = project.get_graph(auto_edges=True, delete_id=str(event_id))  
+            project.update_graph(graph_data)
+            project.save()
+            if not project:
+                print("Project not found")
+                return False
+
+            # Find the event to be removed
+            event_to_remove = None
+            for event in project.event_list:
+                if str(event.id) == str(event_id_obj):
+                    event_to_remove = copy.deepcopy(event)
+                    break
+
+            if not event_to_remove:
+                print("Event not found")
+                return False
+
+            # Perform the removal
+            update_result = project.update(pull__event_list__id=event_id_obj)
+            if update_result == 0:
+                print("Failed to remove the event")
+                return False
+
+            # Log event removal
+            self.log_action(
+                project_id=str(project.id),
+                action_type='delete',
+                event_before=event_to_remove,
+                event_after=None #No event after deletion
+            )
+
+            print("Event successfully removed and logged")
+            return True
         except Exception as e:
             print("An error occurred:", e)
             return False
@@ -172,6 +178,9 @@ class DatabaseManager:
                     # Update the event with new data
                     for key, value in updated_data.items():
                         setattr(event, key, value)
+
+                    graph_data = project.get_graph(True, None, str(event_id), event)
+                    project.update_graph(graph_data)
                     
                     project.save()  # Save the updated project
                     
@@ -330,9 +339,9 @@ class DatabaseManager:
                             event.action_title = default_action_title
                             event.icon = default_icon
 
-                            project.update_graph(
-                                True, None, event.get_id(), event.get_event_info()
-                            )
+                            graph_data = project.get_graph(True, None, event.get_id(), event)
+                            project.update_graph(graph_data)
+                            project.save()
 
                     # Save the updated project
                     project.save()
@@ -492,7 +501,9 @@ class DatabaseManager:
             print(f"An error occurred while logging action: {str(e)}")
             return False
 
- 
+    def ingest_log_logger(self, directory: str, initials: str):
+        self.ingest_log_logger(directory, initials=initials)
+        
     def fetch_project_graph(self, project_name):
         print("fetch graph ")
         project = ProjectRepresenter.objects(name=project_name).first()

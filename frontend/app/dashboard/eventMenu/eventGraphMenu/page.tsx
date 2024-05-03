@@ -58,7 +58,7 @@ const FilterModal = ({
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            className="bg-grey-500 hover:bg-grey-700 text-white font-bold py-2 px-4 rounded">
             Close
           </button>
           <button
@@ -85,7 +85,7 @@ const edgeTypes = {
 
 const Flow = () => {
   const { project } = useProject();
-  const { graphs, selectedGraph, nodes, edges, isLoading, error, setSelectedGraph } = useGraphData(project.name);
+  const { graphs, selectedGraph, nodes, edges, isLoading, error, refresh, setSelectedGraph } = useGraphData(project.name);
   const [nodesState, setNodes] = useState<EventNode[]>(nodes as EventNode[]);
   const [edgesState, setEdges] = useState<Edge[]>(edges);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -270,11 +270,22 @@ const Flow = () => {
   };
 
   const renderGraphSelector = () => (
-    <select onChange={handleGraphChange} value={selectedGraph} className="mb-4">
-      {Object.keys(graphs).map(graphKey => (
-        <option key={graphKey} value={graphKey}>{graphKey}</option>
-      ))}
-    </select>
+    <div className="relative mb-4">
+      <select
+        onChange={handleGraphChange}
+        value={selectedGraph}
+        className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 shadow"
+      >
+        {Object.keys(graphs).map(graphKey => (
+          <option key={graphKey} value={graphKey}>{graphKey}</option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+        </svg>
+      </div>
+    </div>
   );
 
 
@@ -284,24 +295,29 @@ const Flow = () => {
 
 
   return (
-    <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#B8CEFF]">
+    <div className="flex flex-col items-center w-full max-w-screen-xl h-screen mx-auto overflow-auto relative p-5 bg-[#96c1fa]">
       {renderGraphSelector()}
 
       <div className="w-full h-full" ref={reactFlowWrapper}>
         <div className="button-group mt-4 flex justify-center space-x-4">
           <button
             onClick={createNode}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+            className="text-white bg-red-500 hover:bg-black-700 font-bold py-2 px-4 rounded">
             Create Event Node
           </button>
           <button
+            onClick={refresh}
+            className="text-white bg-red-500 hover:bg-grey-700 font-bold py-2 px-4 rounded">
+            Refresh Data
+          </button>
+          <button
             onClick={() => setIsImportModalOpen(true)}
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+            className="text-white bg-red-500 hover:bg-grey-700 font-bold py-2 px-4 rounded">
             Import Graph
           </button>
           <button
             onClick={() => setIsFilterModalOpen(true)} // This button triggers the filter modal
-            className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+            className="text-white bg-red-500 hover:bg-grey-700 font-bold py-2 px-4 rounded">
             Filter Nodes
           </button>
           <ExportGraphData

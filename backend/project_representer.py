@@ -45,6 +45,7 @@ class ProjectRepresenter(Document):
         }
     })
     project_graph = DictField(default={})
+    graphbe = {}
 
     meta = {
         'collection': 'Projects',
@@ -54,9 +55,12 @@ class ProjectRepresenter(Document):
     def __init__(self, *args, **values):
         super(ProjectRepresenter, self).__init__(*args, **values)
         self.event_manager = EventsManager()
-        if not self.id:   
+        if not self.id:
             self.reset_graph()
             self.ingestLogsToProject("uploads")
+
+
+
 
     def reset_graph(self):
         # Reset graph data in GraphManager
@@ -65,25 +69,14 @@ class ProjectRepresenter(Document):
         GraphManager.last_blue = None
         GraphManager.last_red = None
 
-    def update_graph(self, auto_edges, delete_node=None, edited_id=None, edited_data=None):
-        if delete_node is not None:
-            GraphManager.delete_event(delete_node)
-        elif edited_id and edited_data is not None:
-            GraphManager.edit_event(edited_id, edited_data)
-        else:
-            print("Updating graph with auto_edges:", auto_edges)
-            GraphManager.build_graph(self, auto_edges)  # Using static method directly
-        self.project_graph = {'nodes': GraphManager.nodes, 'edges': dict(GraphManager.edges)}
     
     def update_graph(self, graph_data):
         self.project_graph = json.loads(json.dumps(graph_data, default=str))  # Serialize complex objects
 
 
 
-    def get_graph(self, auto_edges=True, delete_id=None, edited_id=None, edited_data=None):
+    def get_graph(self, auto_edges=True, delete_id=None, edited_id=None, edited_data=None, new_event_id = None, new_event=None):
         # Get the current state of the project graphs
-        graphs = GraphManager.get_project_graphs(self, auto_edges)
-
         # Retrieve the vector_id from the event for delete or edit operations
         def find_vector_id(event_id):
             for event in self.event_list:
@@ -95,28 +88,35 @@ class ProjectRepresenter(Document):
         if delete_id:
             vector_id = find_vector_id(delete_id)
             if vector_id:
-                GraphManager.delete_node(graphs, vector_id, delete_id)
-
+                graphs = GraphManager.delete_node(self, vector_id, delete_id)
+                return graphs
         # Handle editing of an event if edited_id and edited_data are provided
-        if edited_id and edited_data:
+        elif edited_id and edited_data:
             vector_id = find_vector_id(edited_id)
             if vector_id:
-                GraphManager.edit_event(graphs, vector_id, edited_id, edited_data)
-
-        # Return the possibly modified graph
+                graphs = GraphManager.edit_node(self, vector_id, edited_id, edited_data)
+                return graphs
+        # Handle the create node
+        else:
+            vector_id = find_vector_id(new_event_id)
+            graphs = GraphManager.add_node(self, new_event, vector_id, auto_edges)
         return graphs
-    
+
+    # def ingest_log_logger(directory: str, initials: str):
+    #     print("lol")
+    #     self.record_to_logger("ingested_logs",data_source=directory, initials=initials)
+        
     def ingestLogsToProject(self, directory):
         log_ingestor = LogIngestor(directory, self.event_manager)
         log_ingestor.ingest_logs()
 
         # Log activity when logs are ingested
-        self.record_to_logger("ingested_logs",data_source=directory)
+        
         for event in self.event_manager.event_representer_list.events:
             #event.save() removed as it returns an empty array of events
             self.event_list.append(event)
         
-        graph_data = self.get_graph(True)
+        graph_data = GraphManager.get_project_graphs(self, True)
         self.update_graph(graph_data)
         self.save()
 
@@ -161,27 +161,31 @@ class ProjectRepresenter(Document):
 
             return output_list
     
-    def add_event_to_project(self,event:EventRepresenter):
+    def add_event_to_project(self, event: EventRepresenter, initials: str):
+        print("111")
         new_event = self.event_manager.create_event(event)
         if new_event:
-            self.record_to_logger("added_event",event_id=new_event.id)
+            self.record_to_logger("added_event", initials, event_id=new_event.id)
             return new_event
         else:
             return None
         
-    def delete_event_from_project(self,event_id):
+    def delete_event_from_project(self, event_id: str, initials: str):
         self.event_manager.delete_event(event_id)
-        self.record_to_logger("delete_event",event_id=event_id) 
+        self.record_to_logger("delete_event", initials, event_id=event_id)
 
-    def update_event_in_project(self,event_id):
-        self.record_to_logger("update_event",event_id=event_id)
 
+    def update_event_in_project(self, event_id: str, initials: str):
+        self.record_to_logger("update_event", initials, event_id=event_id)
+    
+    def ingested_log(self, initials: str):
+        self.record_to_logger("ingested_logs", initials, data_source="Uploads")
         
-    def record_to_logger(self,change,data_source=None,event_id=None,):
+    def record_to_logger(self, change, initials, data_source=None, event_id=None):
         try:
             match (change):
                 case "ingested_logs":
-                    statement = f"Ingested log file {data_source} in Project {self.name}" 
+                    statement = f"Ingested log files {data_source} in Project {self.name}" 
                 case "added_event":
                     statement = f"Added Event {event_id} to Project {self.name}"
                 case "delete_event":
@@ -190,14 +194,15 @@ class ProjectRepresenter(Document):
                     statement = f"Updated Event {event_id} on Project {self.name}"
                 case _:
                     statement = "Default Log Recording"
-            
 
-            userActivityLogger.add_user_activity_log(initials="SYS",
-                            timestamp=datetime.now(),
-                            statement=statement
-                            )
+            # Using the passed initials directly in the logging function
+            userActivityLogger.add_user_activity_log(
+                initials=initials,
+                timestamp=datetime.now(),
+                statement=statement
+            )
         except Exception as error:
-            print(error)
+            print(f"Error logging activity: {error}")
         
     
     def add_toa_icon(self, team, action_title, icon_filename, is_default=False):

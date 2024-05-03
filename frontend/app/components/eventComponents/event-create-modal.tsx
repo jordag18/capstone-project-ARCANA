@@ -25,11 +25,34 @@ const CreateEventModal: React.FC<createEventProp> = ({
   isModalOpen,
   onClose,
 }) => {
-  const { project } = useProject();
+  const { project, addEvent } = useProject();
   const [formData, setFormData] = useState<CreateEvent>(newEvent);
   const [iconLibraries, setIconLibraries] = useState<IconLibrary>({});
   const [autoEdge, setAutoEdge] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
+  // State to store fetched initials
+  const [initials, setInitials] = useState('');
+
+  // Function to fetch initials from the API
+  const fetchInitials = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/getInitials');
+      setInitials(response.data.initials); // Assuming the API returns an object with an 'initials' field
+    } catch (error) {
+      console.error('Failed to fetch initials:', error);
+    }
+  };
+
+  // Fetch initials when the component mounts
+  useEffect(() => {
+    fetchInitials();
+  }, []);
+
+  useEffect(() => {
+    if (initials) {
+      setFormData(prevFormData => ({...prevFormData, initials}))
+    }
+  }, [initials])
 
   const fetchIconLibrary = async () => {
     try {
@@ -49,7 +72,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
       "autoedge",
       JSON.stringify({ auto_edges: { auto_edge: autoEdge } })
     );
-
+  
     try {
       const response = await fetch(
         `http://localhost:8000/api/createEvent/${project.name}`,
@@ -64,7 +87,7 @@ const CreateEventModal: React.FC<createEventProp> = ({
           }),
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Failed to create event:", errorData);
@@ -73,10 +96,11 @@ const CreateEventModal: React.FC<createEventProp> = ({
         );
         return;
       }
-
-      const data = await response.json();
-      console.log("Event created successfully:", data);
-      onClose();
+  
+      const createdEvent = await response.json();
+      addEvent(createdEvent);
+      console.log("Event created successfully:", createdEvent);
+      onClose(); // Close the modal after successful creation
     } catch (error) {
       console.error("Error creating event: ", error);
       alert("Error creating event: " + error.message);
@@ -115,27 +139,35 @@ const CreateEventModal: React.FC<createEventProp> = ({
   };
 
   useEffect(() => {
-    const modal = document.getElementById("create_event_modal");
+    const modal = document.getElementById(
+      "create_event_modal"
+    ) as HTMLDialogElement | null;
     if (modal) {
-      modal.showModal();
-    } else {
-      modal.close();
+      if (isModalOpen) {
+        modal.showModal();
+      } else {
+        modal.close();
+      }
     }
   }, [isModalOpen]);
 
   useEffect(() => {
     fetchIconLibrary();
   }, [project.id]);
+
+
   return (
     <dialog
       id="create_event_modal"
       className="modal"
-      style={{ width: "100%", height: "100%", marginTop: "1rem" }}>
+      style={{ width: "100%", height: "100%", marginTop: "1rem" }}
+    >
       <div className="modal-box">
         <form method="dialog">
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={onClose}>
+            onClick={onClose}
+          >
             X
           </button>
         </form>
@@ -144,17 +176,9 @@ const CreateEventModal: React.FC<createEventProp> = ({
           <div className="flex flex-row space-x-2">
             <div className="flex-1 flex-col">
               <div className="flex-col"></div>
-              <div className="flex-col">
-                <h2>Initials</h2>
-                <label className="input input-bordered flex items-center gap-2">
-                  <input
-                    type="text"
-                    name="initials"
-                    className="grow"
-                    placeholder="Initials"
-                    value={formData?.initials}
-                    onChange={handleChange}
-                  />
+              <div className="flex-col" style={{marginBottom: '1rem'}}>
+                <label className="flex items-center gap-2">
+                  Initials: {initials}
                 </label>
               </div>
               <div className="flex-col"></div>
@@ -284,9 +308,8 @@ const CreateEventModal: React.FC<createEventProp> = ({
                         marginRight: "2rem",
                         marginBottom: "1rem",
                       }}
-                      onClick={() =>
-                        handleIconChange(iconName, iconInfo, team)
-                      }>
+                      onClick={() => handleIconChange(iconName, iconInfo, team)}
+                    >
                       <img
                         src={`/Icons/${iconInfo.image}`}
                         alt={iconName}
@@ -316,7 +339,8 @@ const CreateEventModal: React.FC<createEventProp> = ({
           <div>
             <button
               className="btn bg-gray-300 shadow-md hover:bg-gray-200 ml-2"
-              onClick={handleSubmit}>
+              onClick={handleSubmit}
+            >
               Create
             </button>
           </div>

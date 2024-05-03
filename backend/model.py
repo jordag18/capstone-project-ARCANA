@@ -55,6 +55,7 @@ class EventUpdate(BaseModel):
 
 
 class EventCreate(BaseModel):
+    id: Optional[str] = ""
     team: str
     action_title: Optional[str] = ""
     data_source: Optional[str] = ""
@@ -112,3 +113,6 @@ class IconLibraryResponse(BaseModel):
 
 class AutoEdge(BaseModel):
     auto_edge: bool
+
+class InitialsData(BaseModel):
+    initials: str
