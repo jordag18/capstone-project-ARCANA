@@ -44,30 +44,6 @@ const TopNav = () => {
               buttonText="Manage Projects"
             />
           </li>
-          <li>
-            <details>
-              <summary>
-                <MoveToNav
-                  linkTo="/dashboard/syncMenu"
-                  buttonText="Sync Menu"
-                />
-              </summary>
-              <ul className="p-2 bg-black rounded-t-none">
-                <li>
-                  <MoveToNav
-                    linkTo="/dashboard/syncMenu/syncProjects"
-                    buttonText="Sync Projects"
-                  />
-                </li>
-                <li>
-                  <MoveToNav
-                    linkTo="/dashboard/syncMenu/viewSyncedProjects"
-                    buttonText="View Synced Projects"
-                  />
-                </li>
-              </ul>
-            </details>
-          </li>
           <li className="hover:bg-stone-600 rounded-md">
             <MoveToNav
               linkTo="/dashboard/userActivityMenu"
