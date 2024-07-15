@@ -17,7 +17,7 @@
     "bootstrap": "^5.3.3",
     "daisyui": "^4.9.0",
     "eslint": "^8",
-    "eslint-config-next": "14.1.4",
+    "eslint-config-next": "14.2.5",
     "next": "^14.1.0",
     "postcss": "^8",
     "punycode": "^2.3.1",
